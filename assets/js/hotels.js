@@ -1,9 +1,10 @@
 import { getState } from "./store.js";
+import { loadHotelCatalog } from "./hotel-catalog.js";
 import { animatePage, formatCurrency, initAuthChrome, initHeader, initTheme } from "./ui.js";
 import { initCustomControls } from "./controls.js";
 
 const state = getState();
-const hotels = state.hotels || [];
+const hotels = await loadHotelCatalog(state.hotels || []);
 const form = document.querySelector("[data-hotel-filter-form]");
 const list = document.querySelector("[data-hotels-list]");
 const emptyState = document.querySelector("[data-hotel-empty]");
@@ -152,7 +153,7 @@ function renderHotelCard(hotel) {
         <img src="${escapeAttr(hotel.image)}" alt="${escapeAttr(hotel.name)}" loading="lazy">
         <div class="hotel-badges-container">
           <span class="glass-tag ${badge.class}">${badge.text}</span>
-          <span class="glass-tag rating-badge">
+          <span class="glass-tag glass-rating-badge">
             <svg class="star-icon" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
             <span>${Number(hotel.rating).toFixed(1)}</span>
           </span>
@@ -176,8 +177,7 @@ function renderHotelCard(hotel) {
         <div class="hotel-bottom">
           <span class="price">${formatCurrency(hotel.price)} <small>/ night</small></span>
           <div class="hotel-card-actions">
-            <a class="secondary-button compact" href="${detailsUrl}">Details</a>
-            <a class="primary-button compact" href="${detailsUrl}#booking">Book now</a>
+            <a class="primary-button compact" href="${detailsUrl}">Details</a>
           </div>
         </div>
       </div>

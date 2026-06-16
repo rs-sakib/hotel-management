@@ -50,7 +50,15 @@
         <form class="hotel-filter-panel" data-hotel-filter-form>
           <label class="search-field hotel-search-field">
             <span>Search hotels</span>
-            <input type="search" name="query" data-hotel-search placeholder="Search name, city, amenity..." autocomplete="off" />
+            <div class="hotel-search-control">
+              <span class="hotel-search-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" role="img">
+                  <circle cx="11" cy="11" r="7" />
+                  <path d="m16.2 16.2 4.3 4.3" />
+                </svg>
+              </span>
+              <input type="search" name="query" data-hotel-search placeholder="Search name, city, amenity..." autocomplete="off" />
+            </div>
           </label>
 
           <div class="hotel-filter-grid">

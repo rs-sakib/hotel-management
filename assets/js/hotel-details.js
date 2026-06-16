@@ -1,11 +1,13 @@
 import { createId, findHotel, getCurrentUser, getState, setCurrentUser, updateState } from "./store.js";
+import { loadHotelCatalog } from "./hotel-catalog.js";
 import { animatePage, formatCurrency, initAuthChrome, initHeader, initTheme, showToast } from "./ui.js";
 import { initCustomControls } from "./controls.js";
 
 const params = new URLSearchParams(window.location.search);
 const hotelId = params.get("id");
 const state = getState();
-const hotel = findHotel(state, hotelId);
+const catalogHotels = await loadHotelCatalog(state.hotels || []);
+const hotel = findHotel(state, hotelId) || catalogHotels.find((item) => item.id === hotelId);
 const detailRoot = document.querySelector("[data-hotel-detail]");
 const bookingForm = document.querySelector("[data-detail-booking-form]");
 
@@ -73,6 +75,9 @@ function initBookingForm() {
 
     const formData = new FormData(bookingForm);
     updateState((draft) => {
+      if (!draft.hotels.some((item) => item.id === hotel.id)) {
+        draft.hotels.push(hotel);
+      }
       draft.bookings.unshift({
         id: createId("b"),
         userId: currentUser.id,

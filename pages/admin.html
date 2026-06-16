@@ -24,31 +24,31 @@
       <nav class="admin-nav" aria-label="Admin sections">
         <button class="active" type="button" data-admin-tab="overview">
           <span class="svg-icon nav-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24"><path d="M3 13h9v9H3v-9Zm0-10h9v9H3V3Zm11 10h9v9h-9v-9Zm0-10h9v9h-9V3Z"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1" /><rect width="7" height="5" x="14" y="3" rx="1" /><rect width="7" height="9" x="14" y="12" rx="1" /><rect width="7" height="5" x="3" y="16" rx="1" /></svg>
           </span>
           <span>Overview</span>
         </button>
         <button type="button" data-admin-tab="bookings">
           <span class="svg-icon nav-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2Zm0 16H5V10h14v10Zm0-12H5V6h14v2Z"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4" /><path d="M16 2v4" /><rect width="18" height="18" x="3" y="4" rx="2" /><path d="M3 10h18" /></svg>
           </span>
           <span>Bookings</span>
         </button>
         <button type="button" data-admin-tab="users">
           <span class="svg-icon nav-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3Zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3Zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5Zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5Z"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>
           </span>
           <span>Users</span>
         </button>
         <button type="button" data-admin-tab="hotels">
           <span class="svg-icon nav-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24"><path d="M19 12h-2v3h-2v-3h-2v3h-2v-3H9v7h10v-7Zm-2-7H7v5h10V5Zm3-2H4c-1.1 0-2 .9-2 2v16h20V5c0-1.1-.9-2-2-2Z"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2" /><path d="M9 22v-4h6v4" /><path d="M8 6h.01" /><path d="M16 6h.01" /><path d="M8 10h.01" /><path d="M16 10h.01" /><path d="M8 14h.01" /><path d="M16 14h.01" /></svg>
           </span>
           <span>Hotels</span>
         </button>
         <button type="button" data-admin-tab="trips">
           <span class="svg-icon nav-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7Zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5Z"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" /><circle cx="12" cy="10" r="3" /></svg>
           </span>
           <span>Trips</span>
         </button>
@@ -80,17 +80,52 @@
       <div data-admin-content>
         <section class="admin-section active" data-admin-section="overview">
           <div class="admin-metrics" data-admin-metrics></div>
-          
-          <article class="admin-card chart-card-wrap">
-            <div class="card-heading">
-              <div>
-                <p class="eyebrow">Analytics</p>
-                <h2>Revenue & Booking Trends</h2>
+
+          <div class="admin-analytics-grid">
+            <article class="admin-card chart-card-wrap">
+              <div class="card-heading">
+                <div>
+                  <p class="eyebrow">Revenue</p>
+                  <h2>Property performance</h2>
+                </div>
+                <span data-admin-revenue-total>$0</span>
               </div>
-              <span class="live-indicator"><span class="pulse-dot"></span>Live updates</span>
-            </div>
-            <div class="chart-container" data-admin-chart></div>
-          </article>
+              <div class="chart-container" data-admin-chart></div>
+            </article>
+            <article class="admin-card chart-card-wrap">
+              <div class="card-heading">
+                <div>
+                  <p class="eyebrow">Bookings</p>
+                  <h2>Status mix</h2>
+                </div>
+                <span data-admin-booking-total>0 total</span>
+              </div>
+              <div class="donut-chart-panel" data-status-chart></div>
+            </article>
+          </div>
+
+          <div class="admin-analytics-grid compact">
+            <article class="admin-card">
+              <div class="card-heading">
+                <div>
+                  <p class="eyebrow">Locations</p>
+                  <h2>Top city inventory</h2>
+                </div>
+                <span data-city-total>0 cities</span>
+              </div>
+              <div class="ranked-list" data-city-chart></div>
+            </article>
+            <article class="admin-card">
+              <div class="card-heading">
+                <div>
+                  <p class="eyebrow">Capacity</p>
+                  <h2>Rooms by segment</h2>
+                </div>
+                <span data-room-total>0 rooms</span>
+              </div>
+              <div class="ranked-list" data-room-chart></div>
+            </article>
+          </div>
 
           <div class="admin-grid-two">
             <article class="admin-card">
@@ -103,7 +138,7 @@
             <article class="admin-card">
               <div class="card-heading">
                 <h2>Payment monitor</h2>
-                <span>Live state</span>
+                <span data-payment-total>$0</span>
               </div>
               <div class="compact-list" data-payment-monitor></div>
             </article>
@@ -117,7 +152,8 @@
               <h2>Booking requests</h2>
             </div>
           </div>
-          
+          <div class="admin-section-summary" data-booking-summary></div>
+
           <div class="filter-bar">
             <div class="search-input-wrap">
               <input type="text" data-filter-booking-search placeholder="Search guest, hotel, room type..." />
@@ -160,7 +196,8 @@
               <h2>Users</h2>
             </div>
           </div>
-          
+          <div class="admin-section-summary" data-user-summary></div>
+
           <div class="filter-bar">
             <div class="search-input-wrap">
               <input type="text" data-filter-user-search placeholder="Search users by name, email, phone..." />
@@ -190,6 +227,7 @@
         </section>
 
         <section class="admin-section" data-admin-section="hotels">
+          <div class="admin-section-summary" data-hotel-summary></div>
           <div class="admin-grid-two">
             <article class="admin-card">
               <div class="card-heading">
@@ -199,10 +237,12 @@
               <form class="stack-form" data-hotel-form>
                 <input name="name" placeholder="Hotel name" required />
                 <input name="city" placeholder="City, country" required />
+                <input name="rating" type="number" min="1" max="5" step="0.1" placeholder="Rating" required />
                 <input name="price" type="number" min="1" placeholder="Nightly price" required />
                 <input name="rooms" type="number" min="1" placeholder="Available rooms" required />
                 <input name="image" type="url" placeholder="Image URL" required />
                 <input name="amenities" placeholder="Amenities separated by commas" required />
+                <textarea name="description" rows="3" placeholder="Hotel description" required></textarea>
                 <button class="primary-button" type="submit">Add hotel</button>
               </form>
             </article>
@@ -220,6 +260,7 @@
         </section>
 
         <section class="admin-section" data-admin-section="trips">
+          <div class="admin-section-summary" data-trip-summary></div>
           <div class="admin-grid-two">
             <article class="admin-card">
               <div class="card-heading">
