@@ -30,6 +30,7 @@ if (!isAdminUser(currentUser)) {
   initAdminForms();
   initFilters();
   initConfirmModal();
+  initChartTooltips();
   renderAdminProfile();
   renderAdmin();
 }
@@ -297,6 +298,7 @@ function renderOverviewCharts(state) {
   document.querySelector("[data-room-total]").textContent = `${analysis.totalRooms} rooms`;
 
   renderRevenueChart(state);
+  renderTrendsChart(state);
   renderStatusChart(analysis);
   renderCityChart(state);
   renderRoomChart(state);
@@ -376,7 +378,7 @@ function renderRevenueChart(state) {
     return `
       <g class="chart-point-group">
         <circle cx="${p.x}" cy="${p.y}" r="5" fill="var(--primary)" stroke="var(--surface)" stroke-width="2" class="chart-point" />
-        <circle cx="${p.x}" cy="${p.y}" r="12" fill="transparent" class="chart-hitbox" style="cursor:pointer;" />
+        <circle cx="${p.x}" cy="${p.y}" r="12" fill="transparent" pointer-events="all" class="chart-hitbox" style="cursor:pointer;" data-tooltip-title="${p.label}" data-tooltip-value="${displayVal}" />
         <text x="${p.x}" y="${p.y - 12}" fill="var(--primary-dark)" font-size="10" font-weight="900" text-anchor="middle" class="chart-point-label">${displayVal}</text>
         <text x="${p.x}" y="${height - 15}" fill="var(--muted)" font-size="9" font-weight="800" text-anchor="middle" class="chart-x-label">${p.label}</text>
       </g>
@@ -415,6 +417,210 @@ function renderRevenueChart(state) {
       ${interactiveElements}
     </svg>
   `;
+
+  if (window.gsap) {
+    const linePath = chartContainer.querySelector("path[stroke='var(--primary)']");
+    const areaPath = chartContainer.querySelector("path[fill^='url(#line-area-grad)']");
+    const points = chartContainer.querySelectorAll(".chart-point");
+    const pointLabels = chartContainer.querySelectorAll(".chart-point-label");
+    const xLabels = chartContainer.querySelectorAll(".chart-x-label");
+
+    const tl = window.gsap.timeline();
+
+    if (linePath) {
+      const pathLength = linePath.getTotalLength();
+      tl.fromTo(linePath,
+        { strokeDasharray: pathLength, strokeDashoffset: pathLength },
+        { strokeDashoffset: 0, duration: 1.0, ease: "power2.out" }
+      );
+    }
+    if (areaPath) {
+      tl.from(areaPath, {
+        opacity: 0,
+        duration: 0.8,
+        ease: "power2.out"
+      }, "-=0.6");
+    }
+    if (points.length) {
+      tl.from(points, {
+        scale: 0,
+        transformOrigin: "center",
+        duration: 0.4,
+        stagger: 0.05,
+        ease: "back.out(1.7)"
+      }, "-=0.4");
+    }
+    if (pointLabels.length) {
+      tl.from(pointLabels, {
+        opacity: 0,
+        y: "+=8",
+        duration: 0.4,
+        stagger: 0.05,
+        ease: "power2.out"
+      }, "-=0.3");
+    }
+    if (xLabels.length) {
+      tl.from(xLabels, {
+        opacity: 0,
+        y: "+=6",
+        duration: 0.4,
+        stagger: 0.04,
+        ease: "power2.out"
+      }, "-=0.4");
+    }
+  }
+}
+
+function renderTrendsChart(state) {
+  const chartContainer = document.querySelector("[data-trends-chart]");
+  if (!chartContainer) return;
+
+  const hotelsData = state.hotels.slice(0, 6).map(hotel => {
+    const revenue = state.bookings.reduce((sum, booking) => {
+      if (booking.hotelId !== hotel.id || booking.payment !== "paid") return sum;
+      return sum + Number(hotel.price || 0) * getBookingNights(booking);
+    }, 0);
+    return {
+      label: shortenHotelName(hotel.name),
+      value: revenue
+    };
+  });
+
+  if (!hotelsData.length) {
+    chartContainer.innerHTML = `<div class="empty-state">No hotel data available.</div>`;
+    return;
+  }
+
+  const maxValue = Math.max(...hotelsData.map(item => item.value), 100);
+
+  // Dimensions
+  const width = 800;
+  const height = 220;
+  const paddingLeft = 60;
+  const paddingRight = 40;
+  const paddingTop = 25;
+  const paddingBottom = 40;
+  const plotWidth = width - paddingLeft - paddingRight;
+  const plotHeight = height - paddingTop - paddingBottom;
+  const yBottom = paddingTop + plotHeight;
+
+  // Grid lines
+  let gridHtml = "";
+  const gridSteps = 4;
+  for (let i = 0; i <= gridSteps; i++) {
+    const y = paddingTop + plotHeight - (plotHeight * (i / gridSteps));
+    const val = Math.round(maxValue * (i / gridSteps));
+    gridHtml += `
+      <line x1="${paddingLeft}" y1="${y}" x2="${width - paddingRight}" y2="${y}" stroke="var(--line)" stroke-width="1" stroke-dasharray="4,4" />
+      <text x="${paddingLeft - 12}" y="${y + 4}" fill="var(--muted)" font-size="10" font-weight="800" text-anchor="end">$${val}</text>
+    `;
+  }
+
+  // Draw vertical bars and labels
+  const n = hotelsData.length;
+  const colWidth = plotWidth / n;
+  const barWidth = 46;
+  const r = 6; // rounded corner radius
+
+  const barElements = hotelsData.map((item, index) => {
+    const colCenter = paddingLeft + (index * colWidth) + (colWidth / 2);
+    const barX = colCenter - (barWidth / 2);
+    const y = paddingTop + plotHeight - (item.value / maxValue) * plotHeight;
+    const barHeight = yBottom - y;
+    
+    let barPath = "";
+    if (item.value > 0) {
+      const radius = Math.min(r, barHeight);
+      barPath = `
+        <path d="M ${barX} ${yBottom} L ${barX} ${y + radius} Q ${barX} ${y} ${barX + radius} ${y} L ${barX + barWidth - radius} ${y} Q ${barX + barWidth} ${y} ${barX + barWidth} ${y + radius} L ${barX + barWidth} ${yBottom} Z" 
+              fill="url(#bar-grad)" 
+              class="chart-bar" />
+      `;
+    }
+
+    const displayVal = formatCurrency(item.value);
+    const textY = item.value > 0 ? y - 10 : yBottom - 10;
+    const textColor = item.value > 0 ? "var(--primary)" : "var(--muted)";
+    const fontWeight = item.value > 0 ? "900" : "700";
+
+    return `
+      <g class="chart-bar-group">
+        ${barPath}
+        <rect x="${barX}" y="${Math.min(y, yBottom - 30)}" width="${barWidth}" height="${Math.max(barHeight, 30)}" fill="transparent" pointer-events="all" style="cursor:pointer;" data-tooltip-title="${item.label}" data-tooltip-value="${displayVal}" />
+        <text x="${colCenter}" y="${textY}" fill="${textColor}" font-size="10" font-weight="${fontWeight}" text-anchor="middle" class="chart-bar-label">${displayVal}</text>
+        <text x="${colCenter}" y="${height - 15}" fill="var(--muted)" font-size="9" font-weight="800" text-anchor="middle" class="chart-x-label">${item.label}</text>
+      </g>
+    `;
+  }).join("");
+
+  chartContainer.innerHTML = `
+    <svg viewBox="0 0 ${width} ${height}" width="100%" height="100%" preserveAspectRatio="none" style="overflow: visible;">
+      <defs>
+        <linearGradient id="bar-grad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="var(--primary)" stop-opacity="0.85" />
+          <stop offset="100%" stop-color="var(--primary)" stop-opacity="0.1" />
+        </linearGradient>
+        <style>
+          .chart-bar {
+            transition: all 200ms ease;
+          }
+          .chart-bar:hover {
+            fill: var(--accent);
+            filter: drop-shadow(0 0 4px var(--accent-soft));
+          }
+          .chart-bar-group:hover text.chart-bar-label {
+            fill: var(--accent);
+            font-size: 11px;
+            font-weight: 900;
+          }
+          .chart-bar-label {
+            transition: all 180ms ease;
+          }
+          .chart-x-label {
+            font-weight: 800;
+          }
+        </style>
+      </defs>
+      ${gridHtml}
+      ${barElements}
+    </svg>
+  `;
+
+  if (window.gsap) {
+    const bars = chartContainer.querySelectorAll(".chart-bar");
+    const barLabels = chartContainer.querySelectorAll(".chart-bar-label");
+    const xLabels = chartContainer.querySelectorAll(".chart-x-label");
+
+    const tl = window.gsap.timeline();
+
+    if (bars.length) {
+      tl.from(bars, {
+        scaleY: 0,
+        transformOrigin: "bottom center",
+        duration: 0.8,
+        stagger: 0.08,
+        ease: "power2.out"
+      });
+    }
+    if (barLabels.length) {
+      tl.from(barLabels, {
+        opacity: 0,
+        y: "+=12",
+        duration: 0.5,
+        stagger: 0.08,
+        ease: "power2.out"
+      }, "-=0.6");
+    }
+    if (xLabels.length) {
+      tl.from(xLabels, {
+        opacity: 0,
+        y: "+=8",
+        duration: 0.5,
+        stagger: 0.06,
+        ease: "power2.out"
+      }, "-=0.5");
+    }
+  }
 }
 
 function renderStatusChart(analysis) {
@@ -439,6 +645,24 @@ function renderStatusChart(analysis) {
       ${legendItem("Unpaid", analysis.unpaidBookings, "muted")}
     </div>
   `;
+
+  if (window.gsap) {
+    window.gsap.from(chart.querySelector(".donut-chart"), {
+      scale: 0,
+      opacity: 0,
+      rotation: -90,
+      duration: 0.8,
+      ease: "power2.out"
+    });
+    window.gsap.from(chart.querySelectorAll(".legend-item"), {
+      opacity: 0,
+      x: 12,
+      duration: 0.4,
+      stagger: 0.06,
+      ease: "power2.out",
+      delay: 0.2
+    });
+  }
 }
 
 function renderCityChart(state) {
@@ -781,4 +1005,41 @@ function roomIcon() {
 
 function escapeHtml(value) {
   return String(value ?? "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[char]);
+}
+
+function initChartTooltips() {
+  const tooltip = document.querySelector("[data-chart-tooltip]");
+  if (!tooltip) return;
+
+  document.body.addEventListener("mouseover", (e) => {
+    const trigger = e.target.closest("[data-tooltip-title]");
+    if (!trigger) {
+      tooltip.classList.remove("active");
+      return;
+    }
+
+    const title = trigger.getAttribute("data-tooltip-title");
+    const value = trigger.getAttribute("data-tooltip-value");
+    
+    tooltip.innerHTML = `
+      <strong>${value}</strong>
+      <span>${title}</span>
+    `;
+    tooltip.classList.add("active");
+  });
+
+  document.body.addEventListener("mousemove", (e) => {
+    if (!tooltip.classList.contains("active")) return;
+    
+    // Position tooltip slightly offset from the cursor
+    tooltip.style.left = `${e.pageX}px`;
+    tooltip.style.top = `${e.pageY}px`;
+  });
+
+  document.body.addEventListener("mouseout", (e) => {
+    const trigger = e.target.closest("[data-tooltip-title]");
+    if (trigger) {
+      tooltip.classList.remove("active");
+    }
+  });
 }

@@ -81,6 +81,17 @@
         <section class="admin-section active" data-admin-section="overview">
           <div class="admin-metrics" data-admin-metrics></div>
 
+          <article class="admin-card chart-card-wrap" style="margin-bottom: 0.65rem;">
+            <div class="card-heading">
+              <div>
+                <p class="eyebrow">ANALYTICS</p>
+                <h2>Revenue & Booking Trends</h2>
+              </div>
+              <span class="live-indicator"><span class="pulse-dot"></span>Live updates</span>
+            </div>
+            <div class="chart-container" data-trends-chart></div>
+          </article>
+
           <div class="admin-analytics-grid">
             <article class="admin-card chart-card-wrap">
               <div class="card-heading">
@@ -308,6 +319,8 @@
         </div>
       </div>
     </div>
+
+    <div class="chart-tooltip" data-chart-tooltip></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script type="module" src="../assets/js/admin.js"></script>
