@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hotel Details | AzureStay</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+  </head>
+  <body>
+    <header class="site-header" data-header>
+      <a class="brand" href="../index.html" aria-label="AzureStay home">
+        <span class="brand-mark">A</span>
+        <span>AzureStay</span>
+      </a>
+      <nav class="main-nav" aria-label="Hotel details navigation">
+        <a href="../index.html#hotels">Hotels</a>
+        <a href="../index.html#operations">Operations</a>
+        <a href="../index.html#reviews">Reviews</a>
+      </nav>
+      <div class="header-actions">
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle color theme">
+          <span class="svg-icon" data-theme-icon aria-hidden="true"></span>
+          <span data-theme-label>Light</span>
+        </button>
+        <a class="ghost-button" href="login.html" data-auth-link>Login</a>
+        <a class="primary-button compact" href="signup.html" data-signup-link>Sign up</a>
+      </div>
+    </header>
+
+    <main class="hotel-detail-main" data-hotel-detail>
+      <section class="hotel-detail-hero">
+        <div class="hotel-detail-media">
+          <img data-detail-image alt="" />
+        </div>
+        <div class="hotel-detail-copy">
+          <a class="back-link" href="../index.html#hotels">Back to hotels</a>
+          <p class="eyebrow" data-detail-location></p>
+          <h1 data-detail-name>Hotel details</h1>
+          <p data-detail-description></p>
+          <div class="hotel-detail-meta" data-detail-meta></div>
+          <ul class="amenity-list detail-amenities" data-detail-amenities></ul>
+        </div>
+      </section>
+
+      <section class="hotel-detail-layout">
+        <article class="detail-info-panel">
+          <p class="eyebrow">Stay overview</p>
+          <h2>Designed for smooth arrivals and confident reservations.</h2>
+          <div class="detail-feature-grid" data-detail-features></div>
+        </article>
+
+        <aside class="booking-panel">
+          <div class="booking-panel-heading">
+            <div>
+              <p class="eyebrow">Reservation request</p>
+              <h2>Request this hotel</h2>
+            </div>
+            <span class="price detail-price" data-detail-price></span>
+          </div>
+          <form class="form-grid" data-detail-booking-form>
+            <input type="hidden" name="hotelId" />
+            <label>
+              Check in
+              <input type="date" name="checkIn" required />
+            </label>
+            <label>
+              Check out
+              <input type="date" name="checkOut" required />
+            </label>
+            <label>
+              Guests
+              <input type="number" name="guests" min="1" max="8" value="2" required />
+            </label>
+            <label>
+              Room type
+              <select name="roomType" required>
+                <option>Deluxe King</option>
+                <option>Executive Suite</option>
+                <option>Family Residence</option>
+                <option>Presidential Suite</option>
+              </select>
+            </label>
+            <label class="full-span">
+              Special request
+              <textarea name="note" rows="3" placeholder="Airport pickup, quiet room, early arrival..."></textarea>
+            </label>
+            <fieldset class="payment-choice full-span">
+              <legend>Payment</legend>
+              <label><input type="radio" name="payment" value="paid" checked /> Pay deposit now</label>
+              <label><input type="radio" name="payment" value="pending" /> Pay after approval</label>
+            </fieldset>
+            <button class="primary-button full-span" type="submit">Send booking request</button>
+          </form>
+        </aside>
+      </section>
+    </main>
+
+    <div class="toast-stack" data-toast-stack></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script type="module" src="../assets/js/hotel-details.js"></script>
+  </body>
+</html>

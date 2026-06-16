@@ -19,6 +19,7 @@ initBookingModal();
 initCustomControls();
 initNotifications();
 initReviewSlider();
+initMarquee();
 runHomeAnimations();
 
 function renderHome() {
@@ -49,7 +50,9 @@ function renderHotels(hotels) {
             </ul>
             <div class="hotel-bottom">
               <span class="price">${formatCurrency(hotel.price)} <small>/ night</small></span>
-              <button class="primary-button compact" type="button" data-book-hotel="${hotel.id}">Request booking</button>
+              <div class="hotel-card-actions">
+                <a class="primary-button compact" href="pages/hotel-details.html?id=${hotel.id}">View details</a>
+              </div>
             </div>
           </div>
         </article>
@@ -305,6 +308,18 @@ function initFallbackReviewSlider(slider) {
   }, 3600);
 
   render();
+}
+
+function initMarquee() {
+  document.querySelectorAll("[data-marquee-track]").forEach((track) => {
+    const group = track.querySelector(".marquee-group");
+    if (!group || track.dataset.cloned === "true") return;
+
+    const clone = group.cloneNode(true);
+    clone.setAttribute("aria-hidden", "true");
+    track.append(clone);
+    track.dataset.cloned = "true";
+  });
 }
 
 function runHomeAnimations() {
