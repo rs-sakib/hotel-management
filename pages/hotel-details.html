@@ -12,18 +12,23 @@
   <body>
     <header class="site-header" data-header>
       <a class="brand" href="../index.html" aria-label="AzureStay home">
-        <span class="brand-mark">A</span>
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 21h18" />
+            <path d="M5 21V10a7 7 0 0 1 14 0v11" />
+            <path d="M12 7l1.5 2.5H16l-2 2 1 3-3-2-3 2 1-3-2-2h2.5L12 7z" fill="currentColor" stroke="none" />
+          </svg>
+        </span>
         <span>AzureStay</span>
       </a>
       <nav class="main-nav" aria-label="Hotel details navigation">
-        <a href="../index.html#hotels">Hotels</a>
+        <a href="hotels.html">Hotels</a>
         <a href="../index.html#operations">Operations</a>
         <a href="../index.html#reviews">Reviews</a>
       </nav>
       <div class="header-actions">
         <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle color theme">
           <span class="svg-icon" data-theme-icon aria-hidden="true"></span>
-          <span data-theme-label>Light</span>
         </button>
         <a class="ghost-button" href="login.html" data-auth-link>Login</a>
         <a class="primary-button compact" href="signup.html" data-signup-link>Sign up</a>
@@ -36,7 +41,7 @@
           <img data-detail-image alt="" />
         </div>
         <div class="hotel-detail-copy">
-          <a class="back-link" href="../index.html#hotels">Back to hotels</a>
+          <a class="back-link" href="hotels.html">Back to hotels</a>
           <p class="eyebrow" data-detail-location></p>
           <h1 data-detail-name>Hotel details</h1>
           <p data-detail-description></p>
@@ -52,7 +57,7 @@
           <div class="detail-feature-grid" data-detail-features></div>
         </article>
 
-        <aside class="booking-panel">
+        <aside class="booking-panel" id="booking">
           <div class="booking-panel-heading">
             <div>
               <p class="eyebrow">Reservation request</p>

@@ -17,11 +17,17 @@
 <body>
   <header class="site-header" data-header>
     <a class="brand" href="index.html" aria-label="AzureStay home">
-      <span class="brand-mark">A</span>
+      <span class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 21h18" />
+          <path d="M5 21V10a7 7 0 0 1 14 0v11" />
+          <path d="M12 7l1.5 2.5H16l-2 2 1 3-3-2-3 2 1-3-2-2h2.5L12 7z" fill="currentColor" stroke="none" />
+        </svg>
+      </span>
       <span>AzureStay</span>
     </a>
     <nav class="main-nav" aria-label="Primary navigation">
-      <a href="#hotels">Hotels</a>
+      <a href="pages/hotels.html">Hotels</a>
       <a href="#operations">Operations</a>
       <a href="#reviews">Reviews</a>
       <a href="#trips">Trips</a>
@@ -39,7 +45,6 @@
       </button>
       <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle color theme">
         <span class="svg-icon" data-theme-icon aria-hidden="true"></span>
-        <span data-theme-label>Light</span>
       </button>
       <a class="ghost-button" href="pages/login.html" data-auth-link>Login</a>
       <a class="primary-button compact" href="pages/signup.html" data-signup-link>Sign up</a>
@@ -60,7 +65,7 @@
           workflows into a smooth real-world hotel management experience.
         </p>
         <div class="hero-actions reveal">
-          <a class="primary-button" href="#hotels">Book a stay</a>
+          <a class="primary-button" href="pages/hotels.html">Book a stay</a>
           <a class="secondary-button" href="#operations">Explore features</a>
         </div>
       </div>
@@ -213,7 +218,7 @@
     </section>
 
     <!-- Partner Marquee Section (Hospitality integrations, logo-only) -->
-    <section class="section-shell partners-section legacy-partners" aria-hidden="true">
+    <section class="section-shell partners-section legacy-partners" aria-hidden="true" hidden>
       <div class="partners-marquee">
         <div class="marquee-track">
           <div class="marquee-group">
@@ -466,10 +471,21 @@
     </section>
 
     <section class="section-shell" id="hotels">
-      <div class="section-heading reveal">
-        <p class="eyebrow">Bookable properties</p>
-        <h2>Featured hotels with live-style booking requests.</h2>
-        <p>Select a hotel, choose dates, add guest details, and send a request to the admin approval queue.</p>
+      <div class="section-heading-split reveal">
+        <div>
+          <p class="eyebrow">Bookable properties</p>
+          <h2>Featured hotels with live-style booking requests.</h2>
+          <p>Select a hotel, choose dates, add guest details, and send a request to the admin approval queue.</p>
+        </div>
+        <a class="secondary-button compact" href="pages/hotels.html">
+          <span>Browse all hotels</span>
+          <span class="svg-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up-right">
+              <path d="M7 7h10v10"></path>
+              <path d="M7 17 17 7"></path>
+            </svg>
+          </span>
+        </a>
       </div>
       <div class="hotel-grid" data-hotel-grid></div>
     </section>
@@ -537,31 +553,43 @@
           <article class="swiper-slide review-card">
             <p>"The booking request and approval status were clear from the first minute. It felt like a premium hotel
               app, not a form."</p>
-            <div>
-              <strong>Amina Rahman</strong>
-              <span>Business traveler</span>
+            <div class="review-author">
+              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=120&h=120&q=80" alt="Amina Rahman" class="review-avatar">
+              <div>
+                <strong>Amina Rahman</strong>
+                <span>Business traveler</span>
+              </div>
             </div>
           </article>
           <article class="swiper-slide review-card">
             <p>"Our front desk team can see pending bookings, paid requests, and trip details without switching tools."
             </p>
-            <div>
-              <strong>Farhan Kabir</strong>
-              <span>Hotel operations lead</span>
+            <div class="review-author">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&h=120&q=80" alt="Farhan Kabir" class="review-avatar">
+              <div>
+                <strong>Farhan Kabir</strong>
+                <span>Hotel operations lead</span>
+              </div>
             </div>
           </article>
           <article class="swiper-slide review-card">
             <p>"The admin panel made our approval flow faster, especially for groups and high-value suites."</p>
-            <div>
-              <strong>Nadia Islam</strong>
-              <span>General manager</span>
+            <div class="review-author">
+              <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=120&h=120&q=80" alt="Nadia Islam" class="review-avatar">
+              <div>
+                <strong>Nadia Islam</strong>
+                <span>General manager</span>
+              </div>
             </div>
           </article>
           <article class="swiper-slide review-card">
             <p>"I requested the room, tracked the status, and paid from the notification panel. Very smooth."</p>
-            <div>
-              <strong>Samir Chowdhury</strong>
-              <span>Returning guest</span>
+            <div class="review-author">
+              <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=120&h=120&q=80" alt="Samir Chowdhury" class="review-avatar">
+              <div>
+                <strong>Samir Chowdhury</strong>
+                <span>Returning guest</span>
+              </div>
             </div>
           </article>
         </div>
@@ -582,7 +610,13 @@
     <div class="footer-inner">
       <div class="footer-brand">
         <a class="brand" href="index.html" aria-label="AzureStay home">
-          <span class="brand-mark">A</span>
+          <span class="brand-mark">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M3 21h18" />
+              <path d="M5 21V10a7 7 0 0 1 14 0v11" />
+              <path d="M12 7l1.5 2.5H16l-2 2 1 3-3-2-3 2 1-3-2-2h2.5L12 7z" fill="currentColor" stroke="none" />
+            </svg>
+          </span>
           <span>AzureStay</span>
         </a>
         <p>Premium hotel management for booking approvals, guest records, payments, trip planning, and property
@@ -591,7 +625,7 @@
       <div class="footer-links">
         <div>
           <h3>Platform</h3>
-          <a href="#hotels">Hotels</a>
+          <a href="pages/hotels.html">Hotels</a>
           <a href="#operations">Operations</a>
           <a href="#reviews">Reviews</a>
         </div>

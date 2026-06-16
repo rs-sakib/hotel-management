@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hotels | AzureStay</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+  </head>
+  <body>
+    <header class="site-header" data-header>
+      <a class="brand" href="../index.html" aria-label="AzureStay home">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 21h18" />
+            <path d="M5 21V10a7 7 0 0 1 14 0v11" />
+            <path d="M12 7l1.5 2.5H16l-2 2 1 3-3-2-3 2 1-3-2-2h2.5L12 7z" fill="currentColor" stroke="none" />
+          </svg>
+        </span>
+        <span>AzureStay</span>
+      </a>
+      <nav class="main-nav" aria-label="Hotels navigation">
+        <a href="hotels.html" aria-current="page">Hotels</a>
+        <a href="../index.html#operations">Operations</a>
+        <a href="../index.html#reviews">Reviews</a>
+        <a href="../index.html#trips">Trips</a>
+      </nav>
+      <div class="header-actions">
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle color theme">
+          <span class="svg-icon" data-theme-icon aria-hidden="true"></span>
+        </button>
+        <a class="ghost-button" href="login.html" data-auth-link>Login</a>
+        <a class="primary-button compact" href="signup.html" data-signup-link>Sign up</a>
+      </div>
+    </header>
+
+    <main class="hotels-page">
+      <section class="hotels-hero section-shell">
+        <div class="hotels-hero-copy">
+          <p class="eyebrow">Hotel directory</p>
+          <h1>Find the right stay from every available AzureStay property.</h1>
+          <p>Search by hotel name, city, amenity, or travel style, then narrow the list by price, rating, location, rooms, and service needs.</p>
+        </div>
+        <div class="hotels-hero-stats" data-hotels-stats></div>
+      </section>
+
+      <section class="section-shell hotels-browser" aria-label="Hotel search and filters">
+        <form class="hotel-filter-panel" data-hotel-filter-form>
+          <label class="search-field hotel-search-field">
+            <span>Search hotels</span>
+            <input type="search" name="query" data-hotel-search placeholder="Search name, city, amenity..." autocomplete="off" />
+          </label>
+
+          <div class="hotel-filter-grid">
+            <label>
+              Location
+              <select name="city" data-filter-city>
+                <option value="all">All locations</option>
+              </select>
+            </label>
+            <label>
+              Amenity
+              <select name="amenity" data-filter-amenity>
+                <option value="all">Any amenity</option>
+              </select>
+            </label>
+            <label>
+              Rating
+              <select name="rating" data-filter-rating>
+                <option value="all">Any rating</option>
+                <option value="4.9">4.9 and up</option>
+                <option value="4.8">4.8 and up</option>
+                <option value="4.7">4.7 and up</option>
+                <option value="4.6">4.6 and up</option>
+              </select>
+            </label>
+            <label>
+              Rooms
+              <select name="rooms" data-filter-rooms>
+                <option value="all">Any availability</option>
+                <option value="50">50+ rooms</option>
+                <option value="40">40+ rooms</option>
+                <option value="30">30+ rooms</option>
+                <option value="20">20+ rooms</option>
+              </select>
+            </label>
+            <label>
+              Sort
+              <select name="sort" data-filter-sort>
+                <option value="recommended">Recommended</option>
+                <option value="price-asc">Lowest price</option>
+                <option value="price-desc">Highest price</option>
+                <option value="rating-desc">Best rating</option>
+                <option value="rooms-desc">Most rooms</option>
+                <option value="name-asc">Name A-Z</option>
+              </select>
+            </label>
+            <label class="price-filter">
+              <span>Max price <strong data-price-label>$0</strong></span>
+              <input type="range" name="maxPrice" data-filter-price min="0" max="500" step="5" />
+            </label>
+          </div>
+
+          <div class="hotel-filter-actions">
+            <div class="active-filters" data-active-filters></div>
+            <button class="secondary-button compact" type="reset" data-reset-filters>Reset filters</button>
+          </div>
+        </form>
+
+        <div class="hotel-results-head">
+          <div>
+            <p class="eyebrow">Available stays</p>
+            <h2 data-results-title>All hotels</h2>
+          </div>
+          <span data-results-count>0 hotels</span>
+        </div>
+
+        <div class="hotel-grid hotel-directory-grid" data-hotels-list></div>
+        <div class="empty-state hotel-empty-state" data-hotel-empty hidden>
+          <strong>No hotels match these filters.</strong>
+          <span>Try a broader city, amenity, price, or search term.</span>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <a class="brand" href="../index.html" aria-label="AzureStay home">
+            <span class="brand-mark">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M3 21h18" />
+                <path d="M5 21V10a7 7 0 0 1 14 0v11" />
+                <path d="M12 7l1.5 2.5H16l-2 2 1 3-3-2-3 2 1-3-2-2h2.5L12 7z" fill="currentColor" stroke="none" />
+              </svg>
+            </span>
+            <span>AzureStay</span>
+          </a>
+          <p>Premium hotel management for booking approvals, guest records, payments, trip planning, and property operations.</p>
+        </div>
+        <div class="footer-links">
+          <div>
+            <h3>Platform</h3>
+            <a href="hotels.html">Hotels</a>
+            <a href="../index.html#operations">Operations</a>
+            <a href="../index.html#reviews">Reviews</a>
+          </div>
+          <div>
+            <h3>Access</h3>
+            <a href="login.html">Login</a>
+            <a href="signup.html">Sign up</a>
+            <a href="admin.html">Admin panel</a>
+          </div>
+          <div>
+            <h3>Contact</h3>
+            <a href="mailto:hello@azurestay.example">hello@azurestay.example</a>
+            <a href="tel:+8801700000000">+880 1700 000000</a>
+            <span>Dhaka, Bangladesh</span>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 AzureStay. All rights reserved.</span>
+        <span>Built for modern hotel operations.</span>
+      </div>
+    </footer>
+
+    <div class="toast-stack" data-toast-stack></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script type="module" src="../assets/js/hotels.js"></script>
+  </body>
+</html>

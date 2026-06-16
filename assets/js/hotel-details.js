@@ -100,7 +100,7 @@ function renderMissingHotel() {
       <p class="eyebrow">Hotel unavailable</p>
       <h2>We could not find that hotel.</h2>
       <p class="muted">The property may have been removed or the link is missing a hotel id.</p>
-      <a class="primary-button" href="../index.html#hotels">Browse hotels</a>
+      <a class="primary-button" href="hotels.html">Browse hotels</a>
     </section>
   `;
 }
