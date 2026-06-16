@@ -319,15 +319,6 @@ function runHomeAnimations() {
 
   gsap.from(".hero-media img", { scale: 1.12, duration: 1.4, ease: "power3.out" });
   gsap.from(".hero .reveal", { y: 34, opacity: 0, duration: 0.75, stagger: 0.11, ease: "power3.out" });
-  gsap.to(".float-card", {
-    y: -18,
-    rotate: 0.8,
-    duration: 3.6,
-    ease: "sine.inOut",
-    repeat: -1,
-    yoyo: true,
-    stagger: 0.42
-  });
 
   gsap.utils.toArray(".reveal:not(.hero .reveal)").forEach((item) => {
     gsap.from(item, {

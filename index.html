@@ -1,83 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AzureStay Hotel Management</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-    <link rel="stylesheet" href="assets/css/styles.css" />
-  </head>
-  <body>
-    <header class="site-header" data-header>
-      <a class="brand" href="index.html" aria-label="AzureStay home">
-        <span class="brand-mark">A</span>
-        <span>AzureStay</span>
-      </a>
-      <nav class="main-nav" aria-label="Primary navigation">
-        <a href="#hotels">Hotels</a>
-        <a href="#operations">Operations</a>
-        <a href="#reviews">Reviews</a>
-        <a href="#trips">Trips</a>
-        <a href="#analytics">Analytics</a>
-      </nav>
-      <div class="header-actions">
-        <button class="icon-button" type="button" data-notification-toggle aria-label="Open notifications">
-          <span class="notification-dot" data-notification-dot></span>
-          <span class="svg-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" role="img">
-              <path d="M18 9.8c0-3.1-2-5.7-5-6.4V2h-2v1.4c-3 .7-5 3.3-5 6.4V14l-2 3v1h16v-1l-2-3V9.8ZM8 16V9.8C8 7 9.7 5.1 12 5.1S16 7 16 9.8V16H8Zm1.8 4a2.4 2.4 0 0 0 4.4 0H9.8Z" />
-            </svg>
-          </span>
-        </button>
-        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle color theme">
-          <span class="svg-icon" data-theme-icon aria-hidden="true"></span>
-          <span data-theme-label>Light</span>
-        </button>
-        <a class="ghost-button" href="pages/login.html" data-auth-link>Login</a>
-        <a class="primary-button compact" href="pages/signup.html" data-signup-link>Sign up</a>
-      </div>
-    </header>
 
-    <main>
-      <section class="hero section-shell">
-        <div class="hero-media" aria-hidden="true">
-          <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1800&q=85" alt="" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AzureStay Hotel Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+
+<body>
+  <header class="site-header" data-header>
+    <a class="brand" href="index.html" aria-label="AzureStay home">
+      <span class="brand-mark">A</span>
+      <span>AzureStay</span>
+    </a>
+    <nav class="main-nav" aria-label="Primary navigation">
+      <a href="#hotels">Hotels</a>
+      <a href="#operations">Operations</a>
+      <a href="#reviews">Reviews</a>
+      <a href="#trips">Trips</a>
+      <a href="#analytics">Analytics</a>
+    </nav>
+    <div class="header-actions">
+      <button class="icon-button" type="button" data-notification-toggle aria-label="Open notifications">
+        <span class="notification-dot" data-notification-dot></span>
+        <span class="svg-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" role="img">
+            <path
+              d="M18 9.8c0-3.1-2-5.7-5-6.4V2h-2v1.4c-3 .7-5 3.3-5 6.4V14l-2 3v1h16v-1l-2-3V9.8ZM8 16V9.8C8 7 9.7 5.1 12 5.1S16 7 16 9.8V16H8Zm1.8 4a2.4 2.4 0 0 0 4.4 0H9.8Z" />
+          </svg>
+        </span>
+      </button>
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle color theme">
+        <span class="svg-icon" data-theme-icon aria-hidden="true"></span>
+        <span data-theme-label>Light</span>
+      </button>
+      <a class="ghost-button" href="pages/login.html" data-auth-link>Login</a>
+      <a class="primary-button compact" href="pages/signup.html" data-signup-link>Sign up</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero section-shell">
+      <div class="hero-media" aria-hidden="true">
+        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1800&q=85"
+          alt="" />
+      </div>
+      <div class="hero-content">
+        <p class="eyebrow reveal">Modern hotel operations platform</p>
+        <h1 class="hero-title reveal">Your elegant hotel command center.</h1>
+        <p class="hero-copy reveal">
+          AzureStay brings booking requests, room availability, guest trips, notifications, analytics, and admin
+          workflows into a smooth real-world hotel management experience.
+        </p>
+        <div class="hero-actions reveal">
+          <a class="primary-button" href="#hotels">Book a stay</a>
+          <a class="secondary-button" href="#operations">Explore features</a>
         </div>
-        <div class="hero-content">
-          <p class="eyebrow reveal">Modern hotel operations platform</p>
-          <h1 class="hero-title reveal">Manage stays, guests, payments, and approvals from one elegant command center.</h1>
-          <p class="hero-copy reveal">
-            AzureStay brings booking requests, room availability, guest trips, notifications, analytics, and admin workflows into a smooth real-world hotel management experience.
-          </p>
-          <div class="hero-actions reveal">
-            <a class="primary-button" href="#hotels">Book a stay</a>
-            <a class="secondary-button" href="pages/admin.html">Open admin panel</a>
-          </div>
-        </div>
+      </div>
+      <div class="hero-aside">
         <div class="floating-booking-showcase reveal" aria-label="Animated booking workflow preview">
-          <article class="float-card booking-float-card">
-            <div class="float-card-head">
-              <span class="workflow-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" role="img">
-                  <path d="M4 5h16v14H4V5Zm2 2v10h12V7H6Zm2 2h8v2H8V9Zm0 4h5v2H8v-2Z" />
-                </svg>
-              </span>
-              <div>
-                <strong>Booking request</strong>
-                <small>Ocean Grand Resort</small>
-              </div>
-            </div>
-            <div class="mini-booking-grid">
-              <span>Check-in <strong>Sep 10</strong></span>
-              <span>Guests <strong>02</strong></span>
-            </div>
-            <div class="float-progress">
-              <span style="width: 72%"></span>
-            </div>
-          </article>
           <article class="float-card approve-float-card">
             <span class="workflow-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" role="img">
@@ -87,6 +75,30 @@
             <div>
               <strong>Admin approved</strong>
               <small>Payment verified</small>
+            </div>
+          </article>
+          <article class="float-card checkin-float-card">
+            <span class="workflow-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" role="img">
+                <path
+                  d="M12.65 10C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4H17v4h4v-4h2v-4H12.65ZM7 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2Z" />
+              </svg>
+            </span>
+            <div>
+              <strong>Guest checked in</strong>
+              <small>Room 302 / VIP Guest</small>
+            </div>
+          </article>
+          <article class="float-card housekeeping-float-card">
+            <span class="workflow-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" role="img">
+                <path
+                  d="M12 2.69l1.83 5.62 5.92.05-4.76 3.53 1.8 5.63-4.79-3.47-4.79 3.47 1.8-5.63-4.76-3.53 5.92-.05L12 2.69z" />
+              </svg>
+            </span>
+            <div>
+              <strong>Housekeeping ready</strong>
+              <small>Room 302 verified clean</small>
             </div>
           </article>
           <article class="float-card channel-float-card">
@@ -115,349 +127,367 @@
             <span class="metric-label">pending approvals</span>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <section class="section-shell stat-grid" id="analytics" aria-label="Performance metrics">
-        <article class="stat-card reveal">
-          <span>Revenue managed</span>
-          <strong>$4.8M</strong>
-          <small>+18% from last quarter</small>
-        </article>
-        <article class="stat-card reveal">
-          <span>Check-in speed</span>
-          <strong>2.4 min</strong>
-          <small>Front desk average</small>
-        </article>
-        <article class="stat-card reveal">
-          <span>Guest satisfaction</span>
-          <strong>4.9/5</strong>
-          <small>Across managed stays</small>
-        </article>
-        <article class="stat-card reveal">
-          <span>Rooms synced</span>
-          <strong>8,540</strong>
-          <small>Live inventory updates</small>
-        </article>
-      </section>
+    <section class="section-shell stat-grid" id="analytics" aria-label="Performance metrics">
+      <article class="stat-card reveal">
+        <span>Revenue managed</span>
+        <strong>$4.8M</strong>
+        <small>+18% from last quarter</small>
+      </article>
+      <article class="stat-card reveal">
+        <span>Check-in speed</span>
+        <strong>2.4 min</strong>
+        <small>Front desk average</small>
+      </article>
+      <article class="stat-card reveal">
+        <span>Guest satisfaction</span>
+        <strong>4.9/5</strong>
+        <small>Across managed stays</small>
+      </article>
+      <article class="stat-card reveal">
+        <span>Rooms synced</span>
+        <strong>8,540</strong>
+        <small>Live inventory updates</small>
+      </article>
+    </section>
 
-      <section class="section-shell split-section" id="operations">
-        <div class="section-intro reveal">
-          <p class="eyebrow">Operational depth</p>
-          <h2>Everything a modern hotel team needs to run the day.</h2>
-          <p>
-            From reservations to approvals, AzureStay organizes the busiest hotel workflows into clear, manageable views for guests, staff, and admins.
+    <section class="section-shell split-section" id="operations">
+      <div class="section-intro reveal">
+        <p class="eyebrow">Operational depth</p>
+        <h2>Everything a modern hotel team needs to run the day.</h2>
+        <p>
+          From reservations to approvals, AzureStay organizes the busiest hotel workflows into clear, manageable views
+          for guests, staff, and admins.
+        </p>
+      </div>
+      <div class="feature-grid">
+        <article class="feature-item reveal">
+          <span class="feature-icon">01</span>
+          <h3>Hotel portfolio</h3>
+          <p>Manage properties, room counts, amenities, images, pricing, city data, and availability from one place.</p>
+        </article>
+        <article class="feature-item reveal">
+          <span class="feature-icon">02</span>
+          <h3>Booking approvals</h3>
+          <p>Guests request stays and admins approve, reject, or review payment status through a dedicated admin panel.
           </p>
-        </div>
-        <div class="feature-grid">
-          <article class="feature-item reveal">
-            <span class="feature-icon">01</span>
-            <h3>Hotel portfolio</h3>
-            <p>Manage properties, room counts, amenities, images, pricing, city data, and availability from one place.</p>
-          </article>
-          <article class="feature-item reveal">
-            <span class="feature-icon">02</span>
-            <h3>Booking approvals</h3>
-            <p>Guests request stays and admins approve, reject, or review payment status through a dedicated admin panel.</p>
-          </article>
-          <article class="feature-item reveal">
-            <span class="feature-icon">03</span>
-            <h3>Payment workflow</h3>
-            <p>Users can submit payment with their booking request or settle after approval from the notification center.</p>
-          </article>
-          <article class="feature-item reveal">
-            <span class="feature-icon">04</span>
-            <h3>Trip management</h3>
-            <p>Track business, leisure, and VIP trips with guests, destinations, status, dates, and assignment details.</p>
-          </article>
-        </div>
-      </section>
+        </article>
+        <article class="feature-item reveal">
+          <span class="feature-icon">03</span>
+          <h3>Payment workflow</h3>
+          <p>Users can submit payment with their booking request or settle after approval from the notification center.
+          </p>
+        </article>
+        <article class="feature-item reveal">
+          <span class="feature-icon">04</span>
+          <h3>Trip management</h3>
+          <p>Track business, leisure, and VIP trips with guests, destinations, status, dates, and assignment details.
+          </p>
+        </article>
+      </div>
+    </section>
 
-      <section class="section-shell workflow-section">
-        <div class="section-heading reveal">
-          <p class="eyebrow">Reservation workflow</p>
-          <h2>From guest request to approved stay in one connected flow.</h2>
-          <p>Each operational step is visible to both the guest and the admin team, keeping approvals, payments, and room readiness aligned.</p>
-        </div>
-        <div class="workflow-grid">
-          <article class="workflow-card reveal">
-            <span class="workflow-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" role="img">
-                <path d="M5 4h14v16H5V4Zm2 2v12h10V6H7Zm2 2h6v2H9V8Zm0 4h6v2H9v-2Z" />
-              </svg>
-            </span>
-            <h3>Guest request</h3>
-            <p>Visitors choose dates, room type, guest count, and payment preference from the booking modal.</p>
-          </article>
-          <article class="workflow-card reveal">
-            <span class="workflow-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" role="img">
-                <path d="M3 5h18v4H3V5Zm2 6h7v8H5v-8Zm9 0h5v2h-5v-2Zm0 4h5v2h-5v-2Z" />
-              </svg>
-            </span>
-            <h3>Admin review</h3>
-            <p>Managers approve, reject, mark paid, or remove requests from a compact operations dashboard.</p>
-          </article>
-          <article class="workflow-card reveal">
-            <span class="workflow-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" role="img">
-                <path d="M4 6h16v12H4V6Zm2 3v2h12V9H6Zm0 5v2h5v-2H6Z" />
-              </svg>
-            </span>
-            <h3>Payment status</h3>
-            <p>Guests see payment actions in notifications while admins track verified revenue in real time.</p>
-          </article>
-          <article class="workflow-card reveal">
-            <span class="workflow-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" role="img">
-                <path d="M6 4h12v16H6V4Zm2 2v12h8V6H8Zm2 2h4v2h-4V8Zm0 4h4v2h-4v-2Z" />
-              </svg>
-            </span>
-            <h3>Stay prepared</h3>
-            <p>Hotels, trips, arrivals, and user records remain organized for the front desk and back office.</p>
-          </article>
-        </div>
-      </section>
+    <section class="section-shell workflow-section">
+      <div class="section-heading reveal">
+        <p class="eyebrow">Reservation workflow</p>
+        <h2>From guest request to approved stay in one connected flow.</h2>
+        <p>Each operational step is visible to both the guest and the admin team, keeping approvals, payments, and room
+          readiness aligned.</p>
+      </div>
+      <div class="workflow-grid">
+        <article class="workflow-card reveal">
+          <span class="workflow-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img">
+              <path d="M5 4h14v16H5V4Zm2 2v12h10V6H7Zm2 2h6v2H9V8Zm0 4h6v2H9v-2Z" />
+            </svg>
+          </span>
+          <h3>Guest request</h3>
+          <p>Visitors choose dates, room type, guest count, and payment preference from the booking modal.</p>
+        </article>
+        <article class="workflow-card reveal">
+          <span class="workflow-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img">
+              <path d="M3 5h18v4H3V5Zm2 6h7v8H5v-8Zm9 0h5v2h-5v-2Zm0 4h5v2h-5v-2Z" />
+            </svg>
+          </span>
+          <h3>Admin review</h3>
+          <p>Managers approve, reject, mark paid, or remove requests from a compact operations dashboard.</p>
+        </article>
+        <article class="workflow-card reveal">
+          <span class="workflow-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img">
+              <path d="M4 6h16v12H4V6Zm2 3v2h12V9H6Zm0 5v2h5v-2H6Z" />
+            </svg>
+          </span>
+          <h3>Payment status</h3>
+          <p>Guests see payment actions in notifications while admins track verified revenue in real time.</p>
+        </article>
+        <article class="workflow-card reveal">
+          <span class="workflow-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img">
+              <path d="M6 4h12v16H6V4Zm2 2v12h8V6H8Zm2 2h4v2h-4V8Zm0 4h4v2h-4v-2Z" />
+            </svg>
+          </span>
+          <h3>Stay prepared</h3>
+          <p>Hotels, trips, arrivals, and user records remain organized for the front desk and back office.</p>
+        </article>
+      </div>
+    </section>
 
-      <section class="section-shell" id="hotels">
-        <div class="section-heading reveal">
-          <p class="eyebrow">Bookable properties</p>
-          <h2>Featured hotels with live-style booking requests.</h2>
-          <p>Select a hotel, choose dates, add guest details, and send a request to the admin approval queue.</p>
-        </div>
-        <div class="hotel-grid" data-hotel-grid></div>
-      </section>
+    <section class="section-shell" id="hotels">
+      <div class="section-heading reveal">
+        <p class="eyebrow">Bookable properties</p>
+        <h2>Featured hotels with live-style booking requests.</h2>
+        <p>Select a hotel, choose dates, add guest details, and send a request to the admin approval queue.</p>
+      </div>
+      <div class="hotel-grid" data-hotel-grid></div>
+    </section>
 
-      <section class="section-shell trips-section" id="trips">
-        <div class="section-heading reveal">
-          <p class="eyebrow">Guest journeys</p>
-          <h2>Trips organized for every kind of traveler.</h2>
-        </div>
-        <div class="trip-timeline" data-trip-list></div>
-      </section>
+    <section class="section-shell trips-section" id="trips">
+      <div class="section-heading reveal">
+        <p class="eyebrow">Guest journeys</p>
+        <h2>Trips organized for every kind of traveler.</h2>
+      </div>
+      <div class="trip-timeline" data-trip-list></div>
+    </section>
 
-      <section class="section-shell command-section">
-        <div class="command-copy reveal">
-          <p class="eyebrow">Management command</p>
-          <h2>A practical control layer for hotel teams that need speed and clarity.</h2>
-          <p>AzureStay keeps the most common daily tasks close together: room inventory, booking approvals, payments, customer records, and trip coordination.</p>
-        </div>
-        <div class="command-board reveal">
-          <div class="command-row">
-            <span class="workflow-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" role="img"><path d="M4 6h16v4H4V6Zm0 6h7v6H4v-6Zm9 0h7v6h-7v-6Z" /></svg>
-            </span>
-            <div>
-              <strong>Room inventory</strong>
-              <small>Update rooms, price, amenities, and availability across properties.</small>
-            </div>
-          </div>
-          <div class="command-row">
-            <span class="workflow-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" role="img"><path d="M7 4h10v2H7V4Zm-2 4h14v12H5V8Zm2 2v8h10v-8H7Zm2 2h6v2H9v-2Z" /></svg>
-            </span>
-            <div>
-              <strong>Guest records</strong>
-              <small>Keep registered users, roles, and contact data available to admins.</small>
-            </div>
-          </div>
-          <div class="command-row">
-            <span class="workflow-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" role="img"><path d="M4 17h3V9H4v8Zm5 0h3V5H9v12Zm5 0h3v-6h-3v6Zm5 0h1v2H3v-2h16Z" /></svg>
-            </span>
-            <div>
-              <strong>Revenue snapshot</strong>
-              <small>Review paid bookings and pending approval counts without digging through tables.</small>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="section-shell reviews-section" id="reviews">
-        <div class="section-heading reveal">
-          <p class="eyebrow">Guest reviews</p>
-          <h2>Trusted by travelers and hotel teams.</h2>
-          <p>Swiper powers the review carousel, with smooth autoplay and responsive cards for desktop and mobile.</p>
-        </div>
-        <div class="swiper review-swiper reveal" data-review-swiper>
-          <div class="swiper-wrapper">
-            <article class="swiper-slide review-card">
-              <p>"The booking request and approval status were clear from the first minute. It felt like a premium hotel app, not a form."</p>
-              <div>
-                <strong>Amina Rahman</strong>
-                <span>Business traveler</span>
-              </div>
-            </article>
-            <article class="swiper-slide review-card">
-              <p>"Our front desk team can see pending bookings, paid requests, and trip details without switching tools."</p>
-              <div>
-                <strong>Farhan Kabir</strong>
-                <span>Hotel operations lead</span>
-              </div>
-            </article>
-            <article class="swiper-slide review-card">
-              <p>"The admin panel made our approval flow faster, especially for groups and high-value suites."</p>
-              <div>
-                <strong>Nadia Islam</strong>
-                <span>General manager</span>
-              </div>
-            </article>
-            <article class="swiper-slide review-card">
-              <p>"I requested the room, tracked the status, and paid from the notification panel. Very smooth."</p>
-              <div>
-                <strong>Samir Chowdhury</strong>
-                <span>Returning guest</span>
-              </div>
-            </article>
-          </div>
-          <div class="review-slider-controls">
-            <button class="icon-button review-prev" type="button" aria-label="Previous review">
-              <span class="slider-arrow prev" aria-hidden="true"></span>
-            </button>
-            <div class="swiper-pagination"></div>
-            <button class="icon-button review-next" type="button" aria-label="Next review">
-              <span class="slider-arrow next" aria-hidden="true"></span>
-            </button>
-          </div>
-        </div>
-      </section>
-
-      <section class="section-shell dashboard-preview" data-admin-promo>
-        <div class="section-intro reveal">
-          <p class="eyebrow">Admin visibility</p>
-          <h2>Approve bookings, manage users, edit hotels, and keep the front desk aligned.</h2>
-          <p>Use the admin account to explore the control room: admin@sakib.com / admin1234.</p>
-          <a class="primary-button" href="pages/admin.html">Launch admin panel</a>
-        </div>
-        <div class="preview-board reveal">
-          <div class="preview-row">
-            <span>Pending booking</span>
-            <strong>Ocean Grand Suite</strong>
-            <em>Review</em>
-          </div>
-          <div class="preview-row">
-            <span>Payment received</span>
-            <strong>$1,240 deposit</strong>
-            <em>Verified</em>
-          </div>
-          <div class="preview-row">
-            <span>VIP arrival</span>
-            <strong>June 18, 2026</strong>
-            <em>Assigned</em>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <footer class="site-footer">
-      <div class="footer-inner">
-        <div class="footer-brand">
-          <a class="brand" href="index.html" aria-label="AzureStay home">
-            <span class="brand-mark">A</span>
-            <span>AzureStay</span>
-          </a>
-          <p>Premium hotel management for booking approvals, guest records, payments, trip planning, and property operations.</p>
-        </div>
-        <div class="footer-links">
+    <section class="section-shell command-section">
+      <div class="command-copy reveal">
+        <p class="eyebrow">Management command</p>
+        <h2>A practical control layer for hotel teams that need speed and clarity.</h2>
+        <p>AzureStay keeps the most common daily tasks close together: room inventory, booking approvals, payments,
+          customer records, and trip coordination.</p>
+      </div>
+      <div class="command-board reveal">
+        <div class="command-row">
+          <span class="workflow-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img">
+              <path d="M4 6h16v4H4V6Zm0 6h7v6H4v-6Zm9 0h7v6h-7v-6Z" />
+            </svg>
+          </span>
           <div>
-            <h3>Platform</h3>
-            <a href="#hotels">Hotels</a>
-            <a href="#operations">Operations</a>
-            <a href="#reviews">Reviews</a>
+            <strong>Room inventory</strong>
+            <small>Update rooms, price, amenities, and availability across properties.</small>
           </div>
+        </div>
+        <div class="command-row">
+          <span class="workflow-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img">
+              <path d="M7 4h10v2H7V4Zm-2 4h14v12H5V8Zm2 2v8h10v-8H7Zm2 2h6v2H9v-2Z" />
+            </svg>
+          </span>
           <div>
-            <h3>Access</h3>
-            <a href="pages/login.html">Login</a>
-            <a href="pages/signup.html">Sign up</a>
-            <a href="pages/admin.html">Admin panel</a>
+            <strong>Guest records</strong>
+            <small>Keep registered users, roles, and contact data available to admins.</small>
           </div>
+        </div>
+        <div class="command-row">
+          <span class="workflow-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img">
+              <path d="M4 17h3V9H4v8Zm5 0h3V5H9v12Zm5 0h3v-6h-3v6Zm5 0h1v2H3v-2h16Z" />
+            </svg>
+          </span>
           <div>
-            <h3>Contact</h3>
-            <a href="mailto:hello@azurestay.example">hello@azurestay.example</a>
-            <a href="tel:+8801700000000">+880 1700 000000</a>
-            <span>Dhaka, Bangladesh</span>
+            <strong>Revenue snapshot</strong>
+            <small>Review paid bookings and pending approval counts without digging through tables.</small>
           </div>
         </div>
       </div>
-      <div class="footer-bottom">
-        <span>© 2026 AzureStay. All rights reserved.</span>
-        <span>Built for modern hotel operations.</span>
-      </div>
-    </footer>
+    </section>
 
-    <aside class="notification-panel" data-notification-panel aria-label="Notifications">
-      <div class="panel-header">
+    <section class="section-shell reviews-section" id="reviews">
+      <div class="section-heading reveal">
+        <p class="eyebrow">Guest reviews</p>
+        <h2>Trusted by travelers and hotel teams.</h2>
+        <p>Swiper powers the review carousel, with smooth autoplay and responsive cards for desktop and mobile.</p>
+      </div>
+      <div class="swiper review-swiper reveal" data-review-swiper>
+        <div class="swiper-wrapper">
+          <article class="swiper-slide review-card">
+            <p>"The booking request and approval status were clear from the first minute. It felt like a premium hotel
+              app, not a form."</p>
+            <div>
+              <strong>Amina Rahman</strong>
+              <span>Business traveler</span>
+            </div>
+          </article>
+          <article class="swiper-slide review-card">
+            <p>"Our front desk team can see pending bookings, paid requests, and trip details without switching tools."
+            </p>
+            <div>
+              <strong>Farhan Kabir</strong>
+              <span>Hotel operations lead</span>
+            </div>
+          </article>
+          <article class="swiper-slide review-card">
+            <p>"The admin panel made our approval flow faster, especially for groups and high-value suites."</p>
+            <div>
+              <strong>Nadia Islam</strong>
+              <span>General manager</span>
+            </div>
+          </article>
+          <article class="swiper-slide review-card">
+            <p>"I requested the room, tracked the status, and paid from the notification panel. Very smooth."</p>
+            <div>
+              <strong>Samir Chowdhury</strong>
+              <span>Returning guest</span>
+            </div>
+          </article>
+        </div>
+        <div class="review-slider-controls">
+          <button class="icon-button review-prev" type="button" aria-label="Previous review">
+            <span class="slider-arrow prev" aria-hidden="true"></span>
+          </button>
+          <div class="swiper-pagination"></div>
+          <button class="icon-button review-next" type="button" aria-label="Next review">
+            <span class="slider-arrow next" aria-hidden="true"></span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-shell dashboard-preview" data-admin-promo>
+      <div class="section-intro reveal">
+        <p class="eyebrow">Admin visibility</p>
+        <h2>Approve bookings, manage users, edit hotels, and keep the front desk aligned.</h2>
+        <p>Use the admin account to explore the control room: admin@sakib.com / admin1234.</p>
+        <a class="primary-button" href="pages/admin.html">Launch admin panel</a>
+      </div>
+      <div class="preview-board reveal">
+        <div class="preview-row">
+          <span>Pending booking</span>
+          <strong>Ocean Grand Suite</strong>
+          <em>Review</em>
+        </div>
+        <div class="preview-row">
+          <span>Payment received</span>
+          <strong>$1,240 deposit</strong>
+          <em>Verified</em>
+        </div>
+        <div class="preview-row">
+          <span>VIP arrival</span>
+          <strong>June 18, 2026</strong>
+          <em>Assigned</em>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a class="brand" href="index.html" aria-label="AzureStay home">
+          <span class="brand-mark">A</span>
+          <span>AzureStay</span>
+        </a>
+        <p>Premium hotel management for booking approvals, guest records, payments, trip planning, and property
+          operations.</p>
+      </div>
+      <div class="footer-links">
         <div>
-          <p class="eyebrow">Guest center</p>
-          <h2>Notifications</h2>
+          <h3>Platform</h3>
+          <a href="#hotels">Hotels</a>
+          <a href="#operations">Operations</a>
+          <a href="#reviews">Reviews</a>
         </div>
-        <button class="icon-button" type="button" data-notification-close aria-label="Close notifications">
-          <span class="svg-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" role="img">
-              <path d="m6.4 5 12.6 12.6-1.4 1.4L5 6.4 6.4 5Zm11.2 0L19 6.4 6.4 19 5 17.6 17.6 5Z" />
-            </svg>
-          </span>
-        </button>
-      </div>
-      <div class="panel-body" data-notification-list></div>
-    </aside>
-    <div class="scrim" data-scrim></div>
-
-    <div class="modal" data-booking-modal aria-hidden="true">
-      <div class="modal-card">
-        <button class="icon-button modal-close" type="button" data-modal-close aria-label="Close booking form">
-          <span class="svg-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" role="img">
-              <path d="m6.4 5 12.6 12.6-1.4 1.4L5 6.4 6.4 5Zm11.2 0L19 6.4 6.4 19 5 17.6 17.6 5Z" />
-            </svg>
-          </span>
-        </button>
-        <div class="modal-copy">
-          <p class="eyebrow">Booking request</p>
-          <h2 data-modal-hotel-name>Request stay</h2>
-          <p data-modal-hotel-meta></p>
+        <div>
+          <h3>Access</h3>
+          <a href="pages/login.html">Login</a>
+          <a href="pages/signup.html">Sign up</a>
+          <a href="pages/admin.html">Admin panel</a>
         </div>
-        <form class="form-grid" data-booking-form>
-          <input type="hidden" name="hotelId" />
-          <label>
-            Check in
-            <input type="date" name="checkIn" required />
-          </label>
-          <label>
-            Check out
-            <input type="date" name="checkOut" required />
-          </label>
-          <label>
-            Guests
-            <input type="number" name="guests" min="1" max="8" value="2" required />
-          </label>
-          <label>
-            Room type
-            <select name="roomType" required>
-              <option>Deluxe King</option>
-              <option>Executive Suite</option>
-              <option>Family Residence</option>
-              <option>Presidential Suite</option>
-            </select>
-          </label>
-          <label class="full-span">
-            Special request
-            <textarea name="note" rows="3" placeholder="Airport pickup, honeymoon setup, accessibility needs..."></textarea>
-          </label>
-          <fieldset class="payment-choice full-span">
-            <legend>Payment</legend>
-            <label><input type="radio" name="payment" value="paid" checked /> Pay deposit now</label>
-            <label><input type="radio" name="payment" value="pending" /> Request first, pay after approval</label>
-          </fieldset>
-          <button class="primary-button full-span" type="submit">Send booking request</button>
-        </form>
+        <div>
+          <h3>Contact</h3>
+          <a href="mailto:hello@azurestay.example">hello@azurestay.example</a>
+          <a href="tel:+8801700000000">+880 1700 000000</a>
+          <span>Dhaka, Bangladesh</span>
+        </div>
       </div>
     </div>
+    <div class="footer-bottom">
+      <span>© 2026 AzureStay. All rights reserved.</span>
+      <span>Built for modern hotel operations.</span>
+    </div>
+  </footer>
 
-    <div class="toast-stack" data-toast-stack></div>
+  <aside class="notification-panel" data-notification-panel aria-label="Notifications">
+    <div class="panel-header">
+      <div>
+        <p class="eyebrow">Guest center</p>
+        <h2>Notifications</h2>
+      </div>
+      <button class="icon-button" type="button" data-notification-close aria-label="Close notifications">
+        <span class="svg-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" role="img">
+            <path d="m6.4 5 12.6 12.6-1.4 1.4L5 6.4 6.4 5Zm11.2 0L19 6.4 6.4 19 5 17.6 17.6 5Z" />
+          </svg>
+        </span>
+      </button>
+    </div>
+    <div class="panel-body" data-notification-list></div>
+  </aside>
+  <div class="scrim" data-scrim></div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <script type="module" src="assets/js/home.js"></script>
-  </body>
+  <div class="modal" data-booking-modal aria-hidden="true">
+    <div class="modal-card">
+      <button class="icon-button modal-close" type="button" data-modal-close aria-label="Close booking form">
+        <span class="svg-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" role="img">
+            <path d="m6.4 5 12.6 12.6-1.4 1.4L5 6.4 6.4 5Zm11.2 0L19 6.4 6.4 19 5 17.6 17.6 5Z" />
+          </svg>
+        </span>
+      </button>
+      <div class="modal-copy">
+        <p class="eyebrow">Booking request</p>
+        <h2 data-modal-hotel-name>Request stay</h2>
+        <p data-modal-hotel-meta></p>
+      </div>
+      <form class="form-grid" data-booking-form>
+        <input type="hidden" name="hotelId" />
+        <label>
+          Check in
+          <input type="date" name="checkIn" required />
+        </label>
+        <label>
+          Check out
+          <input type="date" name="checkOut" required />
+        </label>
+        <label>
+          Guests
+          <input type="number" name="guests" min="1" max="8" value="2" required />
+        </label>
+        <label>
+          Room type
+          <select name="roomType" required>
+            <option>Deluxe King</option>
+            <option>Executive Suite</option>
+            <option>Family Residence</option>
+            <option>Presidential Suite</option>
+          </select>
+        </label>
+        <label class="full-span">
+          Special request
+          <textarea name="note" rows="3"
+            placeholder="Airport pickup, honeymoon setup, accessibility needs..."></textarea>
+        </label>
+        <fieldset class="payment-choice full-span">
+          <legend>Payment</legend>
+          <label><input type="radio" name="payment" value="paid" checked /> Pay deposit now</label>
+          <label><input type="radio" name="payment" value="pending" /> Request first, pay after approval</label>
+        </fieldset>
+        <button class="primary-button full-span" type="submit">Send booking request</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast-stack" data-toast-stack></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script type="module" src="assets/js/home.js"></script>
+</body>
+
 </html>

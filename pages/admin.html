@@ -16,12 +16,38 @@
         <span>AzureStay</span>
       </a>
       <nav class="admin-nav" aria-label="Admin sections">
-        <button class="active" type="button" data-admin-tab="overview">Overview</button>
-        <button type="button" data-admin-tab="bookings">Bookings</button>
-        <button type="button" data-admin-tab="users">Users</button>
-        <button type="button" data-admin-tab="hotels">Hotels</button>
-        <button type="button" data-admin-tab="trips">Trips</button>
+        <button class="active" type="button" data-admin-tab="overview">
+          <span class="svg-icon nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M3 13h9v9H3v-9Zm0-10h9v9H3V3Zm11 10h9v9h-9v-9Zm0-10h9v9h-9V3Z"/></svg>
+          </span>
+          <span>Overview</span>
+        </button>
+        <button type="button" data-admin-tab="bookings">
+          <span class="svg-icon nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2Zm0 16H5V10h14v10Zm0-12H5V6h14v2Z"/></svg>
+          </span>
+          <span>Bookings</span>
+        </button>
+        <button type="button" data-admin-tab="users">
+          <span class="svg-icon nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3Zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3Zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5Zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5Z"/></svg>
+          </span>
+          <span>Users</span>
+        </button>
+        <button type="button" data-admin-tab="hotels">
+          <span class="svg-icon nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M19 12h-2v3h-2v-3h-2v3h-2v-3H9v7h10v-7Zm-2-7H7v5h10V5Zm3-2H4c-1.1 0-2 .9-2 2v16h20V5c0-1.1-.9-2-2-2Z"/></svg>
+          </span>
+          <span>Hotels</span>
+        </button>
+        <button type="button" data-admin-tab="trips">
+          <span class="svg-icon nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7Zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5Z"/></svg>
+          </span>
+          <span>Trips</span>
+        </button>
       </nav>
+      <div class="admin-profile-card" data-admin-profile-footer></div>
       <a class="ghost-button" href="../index.html">Back to site</a>
     </aside>
 
@@ -49,6 +75,18 @@
       <div data-admin-content>
         <section class="admin-section active" data-admin-section="overview">
           <div class="admin-metrics" data-admin-metrics></div>
+          
+          <article class="admin-card chart-card-wrap">
+            <div class="card-heading">
+              <div>
+                <p class="eyebrow">Analytics</p>
+                <h2>Revenue & Booking Trends</h2>
+              </div>
+              <span class="live-indicator"><span class="pulse-dot"></span>Live updates</span>
+            </div>
+            <div class="chart-container" data-admin-chart></div>
+          </article>
+
           <div class="admin-grid-two">
             <article class="admin-card">
               <div class="card-heading">
@@ -74,6 +112,25 @@
               <h2>Booking requests</h2>
             </div>
           </div>
+          
+          <div class="filter-bar">
+            <div class="search-input-wrap">
+              <input type="text" data-filter-booking-search placeholder="Search guest, hotel, room type..." />
+            </div>
+            <div class="select-filters">
+              <select data-filter-booking-status>
+                <option value="all">All Statuses</option>
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+              </select>
+              <select data-filter-booking-payment>
+                <option value="all">All Payments</option>
+                <option value="paid">Paid</option>
+                <option value="pending">Unpaid</option>
+              </select>
+            </div>
+          </div>
           <div class="table-wrap">
             <table>
               <thead>
@@ -96,6 +153,19 @@
             <div>
               <p class="eyebrow">People</p>
               <h2>Users</h2>
+            </div>
+          </div>
+          
+          <div class="filter-bar">
+            <div class="search-input-wrap">
+              <input type="text" data-filter-user-search placeholder="Search users by name, email, phone..." />
+            </div>
+            <div class="select-filters">
+              <select data-filter-user-role>
+                <option value="all">All Roles</option>
+                <option value="admin">Admin</option>
+                <option value="guest">Guest</option>
+              </select>
             </div>
           </div>
           <div class="table-wrap">
@@ -136,6 +206,9 @@
                 <h2>Hotel inventory</h2>
                 <span data-hotel-count>0 hotels</span>
               </div>
+              <div class="filter-bar compact-filter">
+                <input type="text" data-filter-hotel-search placeholder="Filter by name or city..." />
+              </div>
               <div class="compact-list" data-admin-hotels></div>
             </article>
           </div>
@@ -167,6 +240,9 @@
                 <h2>Trips</h2>
                 <span data-trip-count>0 trips</span>
               </div>
+              <div class="filter-bar compact-filter">
+                <input type="text" data-filter-trip-search placeholder="Filter by title, guest, or city..." />
+              </div>
               <div class="compact-list" data-admin-trips></div>
             </article>
           </div>
@@ -175,6 +251,18 @@
     </main>
 
     <div class="toast-stack" data-toast-stack></div>
+
+    <div class="confirm-overlay" data-confirm-overlay>
+      <div class="confirm-modal-card">
+        <h3>Are you sure?</h3>
+        <p data-confirm-message>Do you really want to perform this action? This cannot be undone.</p>
+        <div class="confirm-actions">
+          <button class="secondary-button compact" type="button" data-confirm-cancel>Cancel</button>
+          <button class="primary-button compact danger" type="button" data-confirm-ok>Delete</button>
+        </div>
+      </div>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script type="module" src="../assets/js/admin.js"></script>
   </body>
