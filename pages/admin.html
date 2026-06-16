@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Panel | AzureStay</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+  </head>
+  <body class="admin-body">
+    <aside class="admin-sidebar">
+      <a class="brand" href="../index.html">
+        <span class="brand-mark">A</span>
+        <span>AzureStay</span>
+      </a>
+      <nav class="admin-nav" aria-label="Admin sections">
+        <button class="active" type="button" data-admin-tab="overview">Overview</button>
+        <button type="button" data-admin-tab="bookings">Bookings</button>
+        <button type="button" data-admin-tab="users">Users</button>
+        <button type="button" data-admin-tab="hotels">Hotels</button>
+        <button type="button" data-admin-tab="trips">Trips</button>
+      </nav>
+      <a class="ghost-button" href="../index.html">Back to site</a>
+    </aside>
+
+    <main class="admin-main">
+      <header class="admin-topbar">
+        <div>
+          <p class="eyebrow">Admin panel</p>
+          <h1>Operations dashboard</h1>
+        </div>
+        <div class="header-actions">
+          <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle color theme">
+            <span data-theme-icon>☀</span>
+            <span data-theme-label>Light</span>
+          </button>
+          <button class="secondary-button compact" type="button" data-logout>Logout</button>
+        </div>
+      </header>
+
+      <section class="access-warning" data-access-warning hidden>
+        <h2>Admin access required</h2>
+        <p>Please login with admin@azurestay.com / admin123 to manage bookings, users, hotels, and trips.</p>
+        <a class="primary-button" href="login.html">Login as admin</a>
+      </section>
+
+      <div data-admin-content>
+        <section class="admin-section active" data-admin-section="overview">
+          <div class="admin-metrics" data-admin-metrics></div>
+          <div class="admin-grid-two">
+            <article class="admin-card">
+              <div class="card-heading">
+                <h2>Recent booking requests</h2>
+                <span data-pending-count>0 pending</span>
+              </div>
+              <div class="compact-list" data-recent-bookings></div>
+            </article>
+            <article class="admin-card">
+              <div class="card-heading">
+                <h2>Payment monitor</h2>
+                <span>Live state</span>
+              </div>
+              <div class="compact-list" data-payment-monitor></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="admin-section" data-admin-section="bookings">
+          <div class="card-heading wide">
+            <div>
+              <p class="eyebrow">Approval desk</p>
+              <h2>Booking requests</h2>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Guest</th>
+                  <th>Hotel</th>
+                  <th>Dates</th>
+                  <th>Payment</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody data-bookings-table></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="admin-section" data-admin-section="users">
+          <div class="card-heading wide">
+            <div>
+              <p class="eyebrow">People</p>
+              <h2>Users</h2>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Role</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody data-users-table></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="admin-section" data-admin-section="hotels">
+          <div class="admin-grid-two">
+            <article class="admin-card">
+              <div class="card-heading">
+                <h2>Add hotel</h2>
+                <span>Portfolio</span>
+              </div>
+              <form class="stack-form" data-hotel-form>
+                <input name="name" placeholder="Hotel name" required />
+                <input name="city" placeholder="City, country" required />
+                <input name="price" type="number" min="1" placeholder="Nightly price" required />
+                <input name="rooms" type="number" min="1" placeholder="Available rooms" required />
+                <input name="image" type="url" placeholder="Image URL" required />
+                <input name="amenities" placeholder="Amenities separated by commas" required />
+                <button class="primary-button" type="submit">Add hotel</button>
+              </form>
+            </article>
+            <article class="admin-card">
+              <div class="card-heading">
+                <h2>Hotel inventory</h2>
+                <span data-hotel-count>0 hotels</span>
+              </div>
+              <div class="compact-list" data-admin-hotels></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="admin-section" data-admin-section="trips">
+          <div class="admin-grid-two">
+            <article class="admin-card">
+              <div class="card-heading">
+                <h2>Add trip</h2>
+                <span>Guest journey</span>
+              </div>
+              <form class="stack-form" data-trip-form>
+                <input name="title" placeholder="Trip title" required />
+                <input name="guest" placeholder="Guest or group" required />
+                <input name="destination" placeholder="Destination" required />
+                <input name="dates" placeholder="Date range" required />
+                <select name="status" required>
+                  <option>Planning</option>
+                  <option>Confirmed</option>
+                  <option>In progress</option>
+                  <option>Completed</option>
+                </select>
+                <button class="primary-button" type="submit">Add trip</button>
+              </form>
+            </article>
+            <article class="admin-card">
+              <div class="card-heading">
+                <h2>Trips</h2>
+                <span data-trip-count>0 trips</span>
+              </div>
+              <div class="compact-list" data-admin-trips></div>
+            </article>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <div class="toast-stack" data-toast-stack></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script type="module" src="../assets/js/admin.js"></script>
+  </body>
+</html>

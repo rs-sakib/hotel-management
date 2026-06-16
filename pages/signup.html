@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign up | AzureStay</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+  </head>
+  <body class="auth-body">
+    <main class="auth-layout">
+      <section class="auth-art signup-art">
+        <a class="brand" href="../index.html">
+          <span class="brand-mark">A</span>
+          <span>AzureStay</span>
+        </a>
+        <h1>Create an account for bookings, payments, and trip alerts.</h1>
+        <p>Your requests appear instantly in the admin approval queue and your notification panel.</p>
+      </section>
+      <section class="auth-card">
+        <div class="auth-card-header">
+          <div>
+            <p class="eyebrow">Guest onboarding</p>
+            <h2>Sign up</h2>
+          </div>
+          <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle color theme">
+            <span data-theme-icon>☀</span>
+            <span data-theme-label>Light</span>
+          </button>
+        </div>
+        <form class="stack-form" data-signup-form>
+          <label>
+            Full name
+            <input type="text" name="name" placeholder="Amina Rahman" required />
+          </label>
+          <label>
+            Email
+            <input type="email" name="email" placeholder="amina@example.com" required />
+          </label>
+          <label>
+            Phone
+            <input type="tel" name="phone" placeholder="+880 1700 000000" required />
+          </label>
+          <label>
+            Password
+            <input type="password" name="password" minlength="6" placeholder="At least 6 characters" required />
+          </label>
+          <button class="primary-button" type="submit">Create account</button>
+        </form>
+        <p class="form-footer">Already registered? <a href="login.html">Login</a></p>
+        <p class="form-footer"><a href="../index.html">Back to home</a></p>
+      </section>
+    </main>
+    <div class="toast-stack" data-toast-stack></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script type="module" src="../assets/js/auth.js"></script>
+  </body>
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AzureStay Hotel Management</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/css/styles.css" />
+  </head>
+  <body>
+    <header class="site-header" data-header>
+      <a class="brand" href="index.html" aria-label="AzureStay home">
+        <span class="brand-mark">A</span>
+        <span>AzureStay</span>
+      </a>
+      <nav class="main-nav" aria-label="Primary navigation">
+        <a href="#hotels">Hotels</a>
+        <a href="#operations">Operations</a>
+        <a href="#trips">Trips</a>
+        <a href="#analytics">Analytics</a>
+      </nav>
+      <div class="header-actions">
+        <button class="icon-button" type="button" data-notification-toggle aria-label="Open notifications">
+          <span class="notification-dot" data-notification-dot></span>
+          <span aria-hidden="true">🔔</span>
+        </button>
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle color theme">
+          <span data-theme-icon>☀</span>
+          <span data-theme-label>Light</span>
+        </button>
+        <a class="ghost-button" href="pages/login.html" data-auth-link>Login</a>
+        <a class="primary-button compact" href="pages/signup.html">Sign up</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero section-shell">
+        <div class="hero-media" aria-hidden="true">
+          <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1800&q=85" alt="" />
+        </div>
+        <div class="hero-content">
+          <p class="eyebrow reveal">Modern hotel operations platform</p>
+          <h1 class="hero-title reveal">Manage stays, guests, payments, and approvals from one elegant command center.</h1>
+          <p class="hero-copy reveal">
+            AzureStay brings booking requests, room availability, guest trips, notifications, analytics, and admin workflows into a smooth real-world hotel management experience.
+          </p>
+          <div class="hero-actions reveal">
+            <a class="primary-button" href="#hotels">Book a stay</a>
+            <a class="secondary-button" href="pages/admin.html">Open admin panel</a>
+          </div>
+        </div>
+        <div class="hero-panel reveal" aria-label="Live hotel summary">
+          <div>
+            <span class="metric-value" data-count="98">0</span>
+            <span class="metric-label">occupancy score</span>
+          </div>
+          <div>
+            <span class="metric-value" data-count="1240">0</span>
+            <span class="metric-label">active guests</span>
+          </div>
+          <div>
+            <span class="metric-value" data-count="42">0</span>
+            <span class="metric-label">pending approvals</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-shell stat-grid" id="analytics" aria-label="Performance metrics">
+        <article class="stat-card reveal">
+          <span>Revenue managed</span>
+          <strong>$4.8M</strong>
+          <small>+18% from last quarter</small>
+        </article>
+        <article class="stat-card reveal">
+          <span>Check-in speed</span>
+          <strong>2.4 min</strong>
+          <small>Front desk average</small>
+        </article>
+        <article class="stat-card reveal">
+          <span>Guest satisfaction</span>
+          <strong>4.9/5</strong>
+          <small>Across managed stays</small>
+        </article>
+        <article class="stat-card reveal">
+          <span>Rooms synced</span>
+          <strong>8,540</strong>
+          <small>Live inventory updates</small>
+        </article>
+      </section>
+
+      <section class="section-shell split-section" id="operations">
+        <div class="section-intro reveal">
+          <p class="eyebrow">Operational depth</p>
+          <h2>Everything a modern hotel team needs to run the day.</h2>
+          <p>
+            From reservations to approvals, AzureStay organizes the busiest hotel workflows into clear, manageable views for guests, staff, and admins.
+          </p>
+        </div>
+        <div class="feature-grid">
+          <article class="feature-item reveal">
+            <span class="feature-icon">01</span>
+            <h3>Hotel portfolio</h3>
+            <p>Manage properties, room counts, amenities, images, pricing, city data, and availability from one place.</p>
+          </article>
+          <article class="feature-item reveal">
+            <span class="feature-icon">02</span>
+            <h3>Booking approvals</h3>
+            <p>Guests request stays and admins approve, reject, or review payment status through a dedicated admin panel.</p>
+          </article>
+          <article class="feature-item reveal">
+            <span class="feature-icon">03</span>
+            <h3>Payment workflow</h3>
+            <p>Users can submit payment with their booking request or settle after approval from the notification center.</p>
+          </article>
+          <article class="feature-item reveal">
+            <span class="feature-icon">04</span>
+            <h3>Trip management</h3>
+            <p>Track business, leisure, and VIP trips with guests, destinations, status, dates, and assignment details.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section-shell" id="hotels">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Bookable properties</p>
+          <h2>Featured hotels with live-style booking requests.</h2>
+          <p>Select a hotel, choose dates, add guest details, and send a request to the admin approval queue.</p>
+        </div>
+        <div class="hotel-grid" data-hotel-grid></div>
+      </section>
+
+      <section class="section-shell trips-section" id="trips">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Guest journeys</p>
+          <h2>Trips organized for every kind of traveler.</h2>
+        </div>
+        <div class="trip-timeline" data-trip-list></div>
+      </section>
+
+      <section class="section-shell dashboard-preview">
+        <div class="section-intro reveal">
+          <p class="eyebrow">Admin visibility</p>
+          <h2>Approve bookings, manage users, edit hotels, and keep the front desk aligned.</h2>
+          <p>Use the demo admin account to explore the control room: admin@azurestay.com / admin123.</p>
+          <a class="primary-button" href="pages/admin.html">Launch admin panel</a>
+        </div>
+        <div class="preview-board reveal">
+          <div class="preview-row">
+            <span>Pending booking</span>
+            <strong>Ocean Grand Suite</strong>
+            <em>Review</em>
+          </div>
+          <div class="preview-row">
+            <span>Payment received</span>
+            <strong>$1,240 deposit</strong>
+            <em>Verified</em>
+          </div>
+          <div class="preview-row">
+            <span>VIP arrival</span>
+            <strong>June 18, 2026</strong>
+            <em>Assigned</em>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <aside class="notification-panel" data-notification-panel aria-label="Notifications">
+      <div class="panel-header">
+        <div>
+          <p class="eyebrow">Guest center</p>
+          <h2>Notifications</h2>
+        </div>
+        <button class="icon-button" type="button" data-notification-close aria-label="Close notifications">×</button>
+      </div>
+      <div class="panel-body" data-notification-list></div>
+    </aside>
+    <div class="scrim" data-scrim></div>
+
+    <div class="modal" data-booking-modal aria-hidden="true">
+      <div class="modal-card">
+        <button class="icon-button modal-close" type="button" data-modal-close aria-label="Close booking form">×</button>
+        <div class="modal-copy">
+          <p class="eyebrow">Booking request</p>
+          <h2 data-modal-hotel-name>Request stay</h2>
+          <p data-modal-hotel-meta></p>
+        </div>
+        <form class="form-grid" data-booking-form>
+          <input type="hidden" name="hotelId" />
+          <label>
+            Check in
+            <input type="date" name="checkIn" required />
+          </label>
+          <label>
+            Check out
+            <input type="date" name="checkOut" required />
+          </label>
+          <label>
+            Guests
+            <input type="number" name="guests" min="1" max="8" value="2" required />
+          </label>
+          <label>
+            Room type
+            <select name="roomType" required>
+              <option>Deluxe King</option>
+              <option>Executive Suite</option>
+              <option>Family Residence</option>
+              <option>Presidential Suite</option>
+            </select>
+          </label>
+          <label class="full-span">
+            Special request
+            <textarea name="note" rows="3" placeholder="Airport pickup, honeymoon setup, accessibility needs..."></textarea>
+          </label>
+          <fieldset class="payment-choice full-span">
+            <legend>Payment</legend>
+            <label><input type="radio" name="payment" value="paid" checked /> Pay deposit now</label>
+            <label><input type="radio" name="payment" value="pending" /> Request first, pay after approval</label>
+          </fieldset>
+          <button class="primary-button full-span" type="submit">Send booking request</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="toast-stack" data-toast-stack></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script type="module" src="assets/js/home.js"></script>
+  </body>
+</html>
