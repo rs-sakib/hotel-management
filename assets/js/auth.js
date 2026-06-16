@@ -1,4 +1,4 @@
-import { createId, getState, setCurrentUser, updateState } from "./store.js";
+import { ADMIN_EMAIL, ADMIN_PASSWORD, ADMIN_USER_ID, createId, getState, setCurrentUser, updateState } from "./store.js";
 import { animatePage, initTheme, showToast } from "./ui.js";
 
 initTheme();
@@ -14,7 +14,8 @@ if (loginForm) {
     const email = String(formData.get("email")).trim().toLowerCase();
     const password = String(formData.get("password"));
     const state = getState();
-    const user = state.users.find((item) => item.email.toLowerCase() === email && item.password === password);
+    const isAdminLogin = email === ADMIN_EMAIL && password === ADMIN_PASSWORD;
+    const user = isAdminLogin ? state.users.find((item) => item.id === ADMIN_USER_ID) : state.users.find((item) => item.role !== "admin" && item.email.toLowerCase() === email && item.password === password);
 
     if (!user) {
       showToast("Invalid email or password.");
@@ -24,7 +25,7 @@ if (loginForm) {
     setCurrentUser(user.id);
     showToast(`Welcome back, ${user.name}.`);
     setTimeout(() => {
-      window.location.href = user.role === "admin" ? "admin.html" : "../index.html";
+      window.location.href = isAdminLogin ? "admin.html" : "dashboard.html";
     }, 550);
   });
 }
@@ -35,6 +36,11 @@ if (signupForm) {
     const formData = new FormData(signupForm);
     const email = String(formData.get("email")).trim().toLowerCase();
     const state = getState();
+
+    if (email === ADMIN_EMAIL) {
+      showToast("This email is reserved for the admin account.");
+      return;
+    }
 
     if (state.users.some((user) => user.email.toLowerCase() === email)) {
       showToast("An account already exists for this email.");
@@ -56,9 +62,9 @@ if (signupForm) {
     });
 
     setCurrentUser(newUserId);
-    showToast("Account created. You can now book hotels.");
+    showToast("Account created. Opening your dashboard.");
     setTimeout(() => {
-      window.location.href = "../index.html";
+      window.location.href = "dashboard.html";
     }, 650);
   });
 }

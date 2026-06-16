@@ -18,6 +18,7 @@ renderHome();
 initBookingModal();
 initCustomControls();
 initNotifications();
+initReviewSlider();
 runHomeAnimations();
 
 function renderHome() {
@@ -64,7 +65,7 @@ function renderTrips(trips) {
         <article class="trip-item reveal">
           <div>
             <h3>${trip.title}</h3>
-            <p class="trip-meta">${trip.guest} • ${trip.destination} • ${trip.dates}</p>
+            <p class="trip-meta">${trip.guest} / ${trip.destination} / ${trip.dates}</p>
           </div>
           ${statusPill(trip.status.toLowerCase().replaceAll(" ", "-"))}
         </article>
@@ -127,7 +128,7 @@ function openBookingModal(hotelId) {
 
   bookingForm.hotelId.value = hotel.id;
   document.querySelector("[data-modal-hotel-name]").textContent = hotel.name;
-  document.querySelector("[data-modal-hotel-meta]").textContent = `${hotel.city} • ${formatCurrency(hotel.price)} per night • ${hotel.rooms} rooms open`;
+  document.querySelector("[data-modal-hotel-meta]").textContent = `${hotel.city} / ${formatCurrency(hotel.price)} per night / ${hotel.rooms} rooms open`;
   modal.classList.add("open");
   modal.setAttribute("aria-hidden", "false");
   document.body.classList.add("no-scroll");
@@ -204,8 +205,8 @@ function renderNotifications() {
       return `
         <article class="notification-card">
           <strong>${hotel?.name || "Hotel removed"}</strong>
-          <p>${booking.checkIn} to ${booking.checkOut} • ${booking.guests} guest(s) • ${booking.roomType}</p>
-          <p>Status: ${formatStatus(booking.status)} • Payment: ${formatStatus(booking.payment)}</p>
+          <p>${booking.checkIn} to ${booking.checkOut} / ${booking.guests} guest(s) / ${booking.roomType}</p>
+          <p>Status: ${formatStatus(booking.status)} / Payment: ${formatStatus(booking.payment)}</p>
           <div class="action-row">
             ${statusPill(booking.status)}
             ${payAction}
@@ -223,6 +224,89 @@ function updateNotificationDot() {
   notificationDot.classList.toggle("active", Boolean(hasAction));
 }
 
+function initReviewSlider() {
+  const slider = document.querySelector("[data-review-swiper]");
+  if (!slider) return;
+
+  if (!window.Swiper) {
+    initFallbackReviewSlider(slider);
+    return;
+  }
+
+  new window.Swiper("[data-review-swiper]", {
+    loop: true,
+    speed: 650,
+    spaceBetween: 14,
+    grabCursor: true,
+    autoplay: {
+      delay: 3600,
+      disableOnInteraction: false
+    },
+    pagination: {
+      el: ".reviews-section .swiper-pagination",
+      clickable: true
+    },
+    navigation: {
+      nextEl: ".reviews-section .review-next",
+      prevEl: ".reviews-section .review-prev"
+    },
+    breakpoints: {
+      0: {
+        slidesPerView: 1
+      },
+      740: {
+        slidesPerView: 2
+      },
+      1060: {
+        slidesPerView: 3
+      }
+    }
+  });
+}
+
+function initFallbackReviewSlider(slider) {
+  const wrapper = slider.querySelector(".swiper-wrapper");
+  const slides = [...slider.querySelectorAll(".swiper-slide")];
+  const prevButton = slider.querySelector(".review-prev");
+  const nextButton = slider.querySelector(".review-next");
+  const pagination = slider.querySelector(".swiper-pagination");
+  let index = 0;
+
+  slider.classList.add("fallback-swiper");
+  pagination.innerHTML = slides.map((_, itemIndex) => `<button type="button" aria-label="Go to review ${itemIndex + 1}" data-review-dot="${itemIndex}"></button>`).join("");
+
+  const render = () => {
+    wrapper.style.transform = `translateX(-${index * 100}%)`;
+    pagination.querySelectorAll("[data-review-dot]").forEach((dot, itemIndex) => {
+      dot.classList.toggle("active", itemIndex === index);
+    });
+  };
+
+  prevButton.addEventListener("click", () => {
+    index = (index - 1 + slides.length) % slides.length;
+    render();
+  });
+
+  nextButton.addEventListener("click", () => {
+    index = (index + 1) % slides.length;
+    render();
+  });
+
+  pagination.addEventListener("click", (event) => {
+    const dot = event.target.closest("[data-review-dot]");
+    if (!dot) return;
+    index = Number(dot.dataset.reviewDot);
+    render();
+  });
+
+  window.setInterval(() => {
+    index = (index + 1) % slides.length;
+    render();
+  }, 3600);
+
+  render();
+}
+
 function runHomeAnimations() {
   animatePage();
 
@@ -235,6 +319,15 @@ function runHomeAnimations() {
 
   gsap.from(".hero-media img", { scale: 1.12, duration: 1.4, ease: "power3.out" });
   gsap.from(".hero .reveal", { y: 34, opacity: 0, duration: 0.75, stagger: 0.11, ease: "power3.out" });
+  gsap.to(".float-card", {
+    y: -18,
+    rotate: 0.8,
+    duration: 3.6,
+    ease: "sine.inOut",
+    repeat: -1,
+    yoyo: true,
+    stagger: 0.42
+  });
 
   gsap.utils.toArray(".reveal:not(.hero .reveal)").forEach((item) => {
     gsap.from(item, {

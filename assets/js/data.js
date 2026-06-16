@@ -2,10 +2,10 @@ export const seedData = {
   users: [
     {
       id: "u-admin",
-      name: "Nadia Islam",
-      email: "admin@azurestay.com",
+      name: "Sakib Admin",
+      email: "admin@sakib.com",
       phone: "+880 1700 111111",
-      password: "admin123",
+      password: "admin1234",
       role: "admin",
       status: "Active"
     },

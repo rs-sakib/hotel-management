@@ -1,4 +1,4 @@
-import { clearCurrentUser, createId, findHotel, findUser, getCurrentUser, getState, updateState } from "./store.js";
+import { clearCurrentUser, createId, findHotel, findUser, getCurrentUser, getState, isAdminUser, updateState } from "./store.js";
 import { animatePage, formatCurrency, initAuthChrome, initTheme, showToast, statusPill } from "./ui.js";
 import { initCustomControls } from "./controls.js";
 
@@ -11,7 +11,7 @@ initAuthChrome();
 initCustomControls();
 animatePage();
 
-if (!currentUser || currentUser.role !== "admin") {
+if (!isAdminUser(currentUser)) {
   accessWarning.hidden = false;
   adminContent.hidden = true;
 } else {
@@ -192,7 +192,7 @@ function compactBookingItem(state, booking) {
   return `
     <article class="compact-item">
       <h3>${hotel?.name || "Hotel removed"}</h3>
-      <p>${user?.name || "Unknown guest"} • ${booking.checkIn} to ${booking.checkOut}</p>
+      <p>${user?.name || "Unknown guest"} / ${booking.checkIn} to ${booking.checkOut}</p>
       <div class="action-row">
         ${statusPill(booking.status)}
         ${statusPill(booking.payment === "paid" ? "paid" : "unpaid")}
@@ -252,7 +252,7 @@ function renderHotels(state) {
       (hotel) => `
         <article class="compact-item">
           <h3>${hotel.name}</h3>
-          <p>${hotel.city} • ${formatCurrency(hotel.price)} / night • ${hotel.rooms} rooms</p>
+          <p>${hotel.city} / ${formatCurrency(hotel.price)} per night / ${hotel.rooms} rooms</p>
           <div class="action-row">
             ${hotel.amenities.slice(0, 3).map((amenity) => `<span class="status-pill">${amenity}</span>`).join("")}
             <button class="pill-button delete" type="button" data-delete-hotel="${hotel.id}">Delete</button>
@@ -270,7 +270,7 @@ function renderTrips(state) {
       (trip) => `
         <article class="compact-item">
           <h3>${trip.title}</h3>
-          <p>${trip.guest} • ${trip.destination} • ${trip.dates}</p>
+          <p>${trip.guest} / ${trip.destination} / ${trip.dates}</p>
           <div class="action-row">
             ${statusPill(trip.status.toLowerCase().replaceAll(" ", "-"))}
             <button class="pill-button delete" type="button" data-delete-trip="${trip.id}">Delete</button>
