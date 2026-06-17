@@ -4071,20 +4071,70 @@ td small {
 
   .admin-body {
     grid-template-columns: 1fr;
+    padding-top: 0;
   }
 
   .admin-sidebar {
-    position: static;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: 0.6rem 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
     height: auto;
+    gap: 1rem;
+  }
+
+  .admin-sidebar .brand {
+    margin-bottom: 0;
   }
 
   .admin-nav {
-    grid-template-columns: repeat(5, minmax(110px, 1fr));
-    overflow: auto;
+    order: 3;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 0.4rem 0 0.2rem 0;
+    margin-top: 0.4rem;
+    border-top: 1px solid var(--line);
+    gap: 0.35rem;
+    scrollbar-width: none;
+  }
+
+  .admin-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .admin-nav button {
+    flex: 1 0 auto;
+    justify-content: center;
+    white-space: nowrap;
+    padding: 0.48rem 0.8rem;
+    font-size: 0.78rem;
+    min-height: 36px;
+  }
+
+  .admin-profile-card {
+    order: 2;
+    padding: 0;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    margin-left: auto;
+  }
+
+  .admin-profile-card .profile-details {
+    display: none;
   }
 
   .admin-sidebar .ghost-button {
-    margin-top: 0;
+    display: none;
   }
 
   .admin-section-summary {
@@ -4093,12 +4143,44 @@ td small {
 }
 
 @media (max-width: 680px) {
-
-  .site-header,
-  .admin-topbar {
+  .site-header {
     align-items: flex-start;
     flex-direction: column;
     padding: 1rem;
+  }
+
+  .admin-topbar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.65rem 0.8rem;
+    gap: 0.5rem;
+  }
+
+  .admin-topbar h1 {
+    font-size: 1.35rem;
+  }
+
+  .admin-topbar .eyebrow {
+    font-size: 0.68rem;
+  }
+
+  .chart-container {
+    overflow-x: auto;
+    overflow-y: hidden;
+    width: 100%;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .chart-container::-webkit-scrollbar {
+    display: none;
+  }
+
+  .chart-container svg {
+    min-width: 680px;
+    height: 220px;
   }
 
   .header-actions {

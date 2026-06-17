@@ -24,7 +24,7 @@ runHomeAnimations();
 
 function renderHome() {
   const state = getState();
-  renderHotels(state.hotels);
+  renderHotels(state.hotels.slice(0, 6));
   renderTrips(state.trips);
   updateNotificationDot();
 }
