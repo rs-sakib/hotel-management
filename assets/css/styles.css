@@ -180,7 +180,7 @@ img {
 .main-nav {
   gap: 1.1rem;
   color: var(--muted);
-  font-size: 0.82rem;
+  font-size: 1rem;
   font-weight: 800;
   text-transform: uppercase;
 }
