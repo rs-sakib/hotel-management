@@ -61,31 +61,38 @@ function renderAdminProfile() {
 }
 
 function initAdminForms() {
-  document.querySelector("[data-hotel-form]").addEventListener("submit", (event) => {
+  const hotelForm = document.querySelector("[data-hotel-form]");
+  const cancelEditButton = document.querySelector("[data-cancel-hotel-edit]");
+
+  hotelForm.addEventListener("submit", (event) => {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    const editingHotelId = String(formData.get("hotelId") || "").trim();
+    const hotelData = getHotelFormData(formData, editingHotelId || createId("h"));
+
     updateState((state) => {
-      state.hotels.unshift({
-        id: createId("h"),
-        name: String(formData.get("name")).trim(),
-        city: String(formData.get("city")).trim(),
-        rating: Number(formData.get("rating")),
-        price: Number(formData.get("price")),
-        rooms: Number(formData.get("rooms")),
-        image: String(formData.get("image")).trim(),
-        amenities: String(formData.get("amenities"))
-          .split(",")
-          .map((item) => item.trim())
-          .filter(Boolean),
-        description: String(formData.get("description")).trim()
-      });
+      if (editingHotelId) {
+        state.hotels = state.hotels.map((hotel) => hotel.id === editingHotelId ? { ...hotel, ...hotelData } : hotel);
+        return;
+      }
+      state.hotels.unshift(hotelData);
     });
-    event.currentTarget.reset();
+
+    resetHotelForm(form);
+    populateCityFilter();
     renderHotelsPage();
-    showToast("Hotel added to the portfolio.");
+    showToast(editingHotelId ? "Hotel updated." : "Hotel added to the portfolio.");
   });
 
   document.querySelector("[data-admin-hotels]").addEventListener("click", (event) => {
+    const editButton = event.target.closest("[data-edit-hotel]");
+    if (editButton) {
+      const hotel = getState().hotels.find((item) => item.id === editButton.dataset.editHotel);
+      if (hotel) fillHotelForm(hotelForm, hotel);
+      return;
+    }
+
     const deleteButton = event.target.closest("[data-delete-hotel]");
     if (!deleteButton) return;
     const hotelId = deleteButton.dataset.deleteHotel;
@@ -94,10 +101,58 @@ function initAdminForms() {
         state.hotels = state.hotels.filter((hotel) => hotel.id !== hotelId);
         state.bookings = state.bookings.filter((booking) => booking.hotelId !== hotelId);
       });
+      resetHotelForm(hotelForm);
+      populateCityFilter();
       renderHotelsPage();
       showToast("Hotel removed.");
     });
   });
+
+  cancelEditButton.addEventListener("click", () => resetHotelForm(hotelForm));
+}
+
+function getHotelFormData(formData, id) {
+  return {
+    id,
+    name: String(formData.get("name")).trim(),
+    city: String(formData.get("city")).trim(),
+    rating: Number(formData.get("rating")),
+    price: Number(formData.get("price")),
+    rooms: Number(formData.get("rooms")),
+    image: String(formData.get("image")).trim(),
+    amenities: String(formData.get("amenities"))
+      .split(",")
+      .map((item) => item.trim())
+      .filter(Boolean),
+    description: String(formData.get("description")).trim()
+  };
+}
+
+function fillHotelForm(form, hotel) {
+  form.elements.hotelId.value = hotel.id;
+  form.elements.name.value = hotel.name || "";
+  form.elements.city.value = hotel.city || "";
+  form.elements.rating.value = Number(hotel.rating || 0);
+  form.elements.price.value = Number(hotel.price || 0);
+  form.elements.rooms.value = Number(hotel.rooms || 0);
+  form.elements.image.value = hotel.image || "";
+  form.elements.amenities.value = (hotel.amenities || []).join(", ");
+  form.elements.description.value = hotel.description || "";
+  setHotelEditMode(true);
+  form.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function resetHotelForm(form) {
+  form.reset();
+  form.elements.hotelId.value = "";
+  setHotelEditMode(false);
+}
+
+function setHotelEditMode(isEditing) {
+  const submitLabel = document.querySelector("[data-hotel-submit-label]");
+  const cancelEditButton = document.querySelector("[data-cancel-hotel-edit]");
+  if (submitLabel) submitLabel.textContent = isEditing ? "Update hotel" : "Add hotel";
+  if (cancelEditButton) cancelEditButton.hidden = !isEditing;
 }
 
 function populateCityFilter() {
@@ -193,6 +248,7 @@ function renderHotels(state) {
               </div>
               <div class="action-row">
                 ${(hotel.amenities || []).slice(0, 3).map((amenity) => `<span class="status-pill">${escapeHtml(amenity)}</span>`).join("")}
+                <button class="pill-button" type="button" data-edit-hotel="${hotel.id}">Edit</button>
                 <button class="pill-button delete" type="button" data-delete-hotel="${hotel.id}">Delete</button>
               </div>
             </div>

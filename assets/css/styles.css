@@ -2886,6 +2886,7 @@ textarea:focus {
 }
 
 .number-step::before {
+  content: "";
   width: 11px;
   height: 2px;
   border-radius: 999px;
@@ -4392,28 +4393,19 @@ textarea:focus {
   border-radius: var(--radius);
   background: var(--surface);
 }
-
-.compact-list {
-  display: grid;
-  gap: 0.55rem;
+  min-height: unset;
 }
 
-.admin-hotel-manager {
-  display: grid;
-  gap: 1rem;
+.admin-hotel-form .form-field-group > span {
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding-left: 0.1rem;
 }
 
-.admin-hotel-form {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  align-items: start;
-  gap: 0.65rem;
-}
-
-.admin-hotel-form input,
-.admin-hotel-form textarea,
-.admin-hotel-form .custom-number {
-  min-height: 48px;
+.admin-hotel-form .form-field-group .custom-number {
   height: 48px;
 }
 
@@ -4431,7 +4423,7 @@ textarea:focus {
 .admin-hotel-form input[name="city"],
 .admin-hotel-form input[name="image"],
 .admin-hotel-form input[name="amenities"] {
-  grid-column: span 2;
+  grid-column: 1 / -1;
 }
 
 .admin-hotel-form textarea {
@@ -4441,18 +4433,15 @@ textarea:focus {
   resize: vertical;
 }
 
-.admin-hotel-form button {
-  grid-column: 1 / -1;
-}
-
 .admin-hotel-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 0.72rem;
 }
 
 .admin-hotel-card {
   overflow: hidden;
+  padding: 0.5rem;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--surface-strong);
@@ -4460,14 +4449,31 @@ textarea:focus {
 
 .admin-hotel-card > img {
   width: 100%;
-  height: 150px;
+  height: 128px;
   object-fit: cover;
+  border-radius: calc(var(--radius) - 6px);
 }
 
 .admin-hotel-card-body {
   display: grid;
   gap: 0.62rem;
-  padding: 0.72rem;
+  padding: 0.68rem 0.12rem 0.12rem;
+}
+
+.admin-form-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.55rem;
+}
+
+.admin-form-actions .primary-button,
+.admin-form-actions .secondary-button {
+  width: auto;
+  min-width: 132px;
+  min-height: 42px;
+  height: 42px;
+  padding: 0.68rem 1.15rem;
 }
 
 .admin-hotel-card-body h3,
@@ -5847,6 +5853,15 @@ td small {
     grid-column: 1 / -1;
   }
 
+  .admin-form-actions {
+    flex-direction: column;
+  }
+
+  .admin-form-actions .primary-button,
+  .admin-form-actions .secondary-button {
+    width: 100%;
+  }
+
   .admin-trip-card > img {
     height: 180px;
     min-height: 180px;
@@ -6286,6 +6301,10 @@ td small {
 }
 
 @media (max-width: 1280px) {
+  .admin-hotel-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
   .transaction-admin-grid {
     grid-template-columns: 1fr;
   }
