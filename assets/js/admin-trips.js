@@ -7,7 +7,7 @@ const adminContent = document.querySelector("[data-admin-content]");
 const currentUser = getCurrentUser();
 
 const filters = {
-  trips: { search: "" }
+  trips: { search: "", status: "all", type: "all", sort: "default" }
 };
 
 let currentConfirmAction = null;
@@ -164,6 +164,18 @@ function initFilters() {
     filters.trips.search = event.target.value.toLowerCase().trim();
     renderTripsPage();
   });
+  bindFilter("[data-filter-trip-status]", "change", (event) => {
+    filters.trips.status = event.target.value;
+    renderTripsPage();
+  });
+  bindFilter("[data-filter-trip-type]", "change", (event) => {
+    filters.trips.type = event.target.value;
+    renderTripsPage();
+  });
+  bindFilter("[data-filter-trip-sort]", "change", (event) => {
+    filters.trips.sort = event.target.value;
+    renderTripsPage();
+  });
 }
 
 function bindFilter(selector, eventName, handler) {
@@ -247,7 +259,18 @@ function renderTrips(state) {
           </article>
         `)
       .join("")
-    : `<div class="empty-state">No trips found.</div>`;
+    : `
+      <div class="grid-empty-state">
+        <div class="empty-state-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
+            <circle cx="12" cy="10" r="3"></circle>
+          </svg>
+        </div>
+        <strong>No trips found</strong>
+        <p>We couldn't find any trip plans matching your filter. Try adjusting your search query or plan a new trip.</p>
+      </div>
+    `;
 }
 
 function renderTripsSummary(state) {
@@ -272,10 +295,23 @@ function renderTripsSummary(state) {
 }
 
 function getFilteredTrips(state) {
-  return state.trips.filter((trip) => {
-    const search = filters.trips.search;
+  const { search, status, type, sort } = filters.trips;
+  const matched = state.trips.filter((trip) => {
     const haystack = [trip.title, trip.type, trip.guest, trip.destination, trip.dates, trip.status, trip.manager].join(" ").toLowerCase();
-    return !search || haystack.includes(search);
+    const matchesSearch = !search || haystack.includes(search);
+    const matchesStatus = status === "all" || trip.status === status;
+    const matchesType = type === "all" || (trip.type || "") === type;
+    return matchesSearch && matchesStatus && matchesType;
+  });
+  return sortTrips(matched, sort);
+}
+
+function sortTrips(trips, sort) {
+  return [...trips].sort((a, b) => {
+    if (sort === "title-asc") return (a.title || "").localeCompare(b.title || "");
+    if (sort === "stays-desc") return Number(b.stays || 0) - Number(a.stays || 0);
+    if (sort === "status") return (a.status || "").localeCompare(b.status || "");
+    return 0;
   });
 }
 

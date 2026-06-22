@@ -8,7 +8,7 @@ const adminContent = document.querySelector("[data-admin-content]");
 const currentUser = getCurrentUser();
 
 const filters = {
-  hotels: { search: "" }
+  hotels: { search: "", city: "all", rating: "all", sort: "default" }
 };
 
 let currentConfirmAction = null;
@@ -24,6 +24,7 @@ if (!isAdminUser(currentUser)) {
 } else {
   await hydrateHotelCatalog();
   initAdminForms();
+  populateCityFilter();
   initFilters();
   initConfirmModal();
   renderAdminProfile();
@@ -99,9 +100,34 @@ function initAdminForms() {
   });
 }
 
+function populateCityFilter() {
+  const state = getState();
+  const cities = [...new Set(state.hotels.map((h) => h.city).filter(Boolean))].sort();
+  const select = document.querySelector("[data-filter-hotel-city]");
+  if (!select) return;
+  select.innerHTML = `<option value="all">All locations</option>` +
+    cities.map((city) => {
+      const label = city.split(",")[0].trim(); // show only city, not country
+      return `<option value="${escapeAttr(city)}">${escapeHtml(label)}</option>`;
+    }).join("");
+  select.dispatchEvent(new Event("change", { bubbles: true }));
+}
+
 function initFilters() {
   bindFilter("[data-filter-hotel-search]", "input", (event) => {
     filters.hotels.search = event.target.value.toLowerCase().trim();
+    renderHotelsPage();
+  });
+  bindFilter("[data-filter-hotel-city]", "change", (event) => {
+    filters.hotels.city = event.target.value;
+    renderHotelsPage();
+  });
+  bindFilter("[data-filter-hotel-rating]", "change", (event) => {
+    filters.hotels.rating = event.target.value;
+    renderHotelsPage();
+  });
+  bindFilter("[data-filter-hotel-sort]", "change", (event) => {
+    filters.hotels.sort = event.target.value;
     renderHotelsPage();
   });
 }
@@ -173,7 +199,22 @@ function renderHotels(state) {
           </article>
         `)
       .join("")
-    : `<div class="empty-state">No hotels found.</div>`;
+    : `
+      <div class="grid-empty-state">
+        <div class="empty-state-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+            <path d="M9 22v-4h6v4"></path>
+            <path d="M8 6h.01"></path>
+            <path d="M16 6h.01"></path>
+            <path d="M8 10h.01"></path>
+            <path d="M16 10h.01"></path>
+          </svg>
+        </div>
+        <strong>No hotels found</strong>
+        <p>We couldn't find any hotels matching your filter. Try adjusting your search query or add a new hotel.</p>
+      </div>
+    `;
 }
 
 function renderHotelsSummary(state) {
@@ -199,9 +240,23 @@ function renderHotelsSummary(state) {
 }
 
 function getFilteredHotels(state) {
-  return state.hotels.filter((hotel) => {
-    const search = filters.hotels.search;
-    return !search || hotel.name.toLowerCase().includes(search) || hotel.city.toLowerCase().includes(search) || (hotel.amenities || []).join(" ").toLowerCase().includes(search);
+  const { search, city, rating, sort } = filters.hotels;
+  const matched = state.hotels.filter((hotel) => {
+    const haystack = [hotel.name, hotel.city, hotel.description, ...(hotel.amenities || [])].join(" ").toLowerCase();
+    const matchesSearch = !search || haystack.includes(search);
+    const matchesCity = city === "all" || hotel.city === city;
+    const matchesRating = rating === "all" || Number(hotel.rating) >= Number(rating);
+    return matchesSearch && matchesCity && matchesRating;
+  });
+  return sortHotels(matched, sort);
+}
+
+function sortHotels(hotels, sort) {
+  return [...hotels].sort((a, b) => {
+    if (sort === "price-asc") return Number(a.price) - Number(b.price);
+    if (sort === "price-desc") return Number(b.price) - Number(a.price);
+    if (sort === "rating-desc") return Number(b.rating) - Number(a.rating);
+    return 0; // default: preserve original order
   });
 }
 

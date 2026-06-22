@@ -115,8 +115,27 @@
                 <h2>Hotel inventory</h2>
                 <span data-hotel-count>0 hotels</span>
               </div>
-              <div class="filter-bar compact-filter">
-                <input type="text" data-filter-hotel-search placeholder="Filter by name or city..." />
+              <div class="filter-bar">
+                <div class="search-input-wrap">
+                  <input type="text" data-filter-hotel-search placeholder="Filter by name, city or amenities..." />
+                </div>
+                <div class="select-filters">
+                  <select data-filter-hotel-city>
+                    <option value="all">All locations</option>
+                  </select>
+                  <select data-filter-hotel-rating>
+                    <option value="all">All ratings</option>
+                    <option value="4.8">4.8 & up</option>
+                    <option value="4.5">4.5 & up</option>
+                    <option value="4.0">4.0 & up</option>
+                  </select>
+                  <select data-filter-hotel-sort>
+                    <option value="default">Default Sort</option>
+                    <option value="price-asc">Price: Low to High</option>
+                    <option value="price-desc">Price: High to Low</option>
+                    <option value="rating-desc">Best Rating</option>
+                  </select>
+                </div>
               </div>
               <div class="admin-hotel-grid" data-admin-hotels></div>
             </article>

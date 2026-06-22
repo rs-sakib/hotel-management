@@ -128,8 +128,33 @@
                 <h2>Trips</h2>
                 <span data-trip-count>0 trips</span>
               </div>
-              <div class="filter-bar compact-filter">
-                <input type="text" data-filter-trip-search placeholder="Filter by title, guest, or city..." />
+              <div class="filter-bar">
+                <div class="search-input-wrap">
+                  <input type="text" data-filter-trip-search placeholder="Filter by title, guest, or destination..." />
+                </div>
+                <div class="select-filters">
+                  <select data-filter-trip-status>
+                    <option value="all">All Statuses</option>
+                    <option value="Confirmed">Confirmed</option>
+                    <option value="Planning">Planning</option>
+                    <option value="In progress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                  </select>
+                  <select data-filter-trip-type>
+                    <option value="all">All Types</option>
+                    <option value="Cultural">Cultural</option>
+                    <option value="Adventure">Adventure</option>
+                    <option value="Luxury">Luxury</option>
+                    <option value="Beach">Beach</option>
+                    <option value="Mountain">Mountain</option>
+                  </select>
+                  <select data-filter-trip-sort>
+                    <option value="default">Default Sort</option>
+                    <option value="title-asc">Title A–Z</option>
+                    <option value="stays-desc">Most Stays</option>
+                    <option value="status">By Status</option>
+                  </select>
+                </div>
               </div>
               <div class="admin-trip-grid" data-admin-trips></div>
             </article>
