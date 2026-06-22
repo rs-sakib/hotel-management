@@ -46,13 +46,14 @@ function renderTripDetails() {
   document.querySelector("[data-booking-price]").innerHTML = `${formatCurrency(trip.budget)} <small>est.</small>`;
   bookingForm.tripId.value = trip.id;
 
+  const finalAvailabilityDate = getTripEndDateLabel(trip.dates);
   document.querySelector("[data-trip-facts]").innerHTML = [
-    ["Guest", trip.guest],
+    ["Trip category", trip.type],
     ["Destination", trip.destination],
-    ["Dates", trip.dates],
-    ["Duration", trip.duration],
-    ["Hotel stays", String(trip.stays)],
-    ["Manager", trip.manager]
+    ["Final availability", finalAvailabilityDate],
+    ["Trip duration", trip.duration],
+    ["Included stays", String(trip.stays)],
+    ["Managed by", trip.manager]
   ]
     .map(([label, value]) => `<article><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></article>`)
     .join("");
@@ -109,6 +110,7 @@ function initTripBookingForm() {
         note: formData.get("note") || "No special request.",
         status: "pending",
         payment: formData.get("payment"),
+        paymentMethod: formData.get("paymentMethod"),
         createdAt: new Date().toISOString()
       });
     });
@@ -151,6 +153,21 @@ function parseTripStartDate(dates) {
   const match = String(dates).match(/\b([A-Z][a-z]{2})\s+(\d{1,2})/);
   if (!match || !monthMap[match[1]]) return "";
   return `${year}-${monthMap[match[1]]}-${String(match[2]).padStart(2, "0")}`;
+}
+
+function getTripEndDateLabel(dates) {
+  const year = String(dates).match(/\d{4}/)?.[0] || "2026";
+  const compactRange = String(dates).match(/\b([A-Z][a-z]{2})\s+(\d{1,2})-(\d{1,2}),\s*\d{4}/);
+  if (compactRange) {
+    return `${compactRange[1]} ${compactRange[3]}, ${year}`;
+  }
+
+  const splitRange = String(dates).match(/\b([A-Z][a-z]{2})\s+\d{1,2}\s*-\s*([A-Z][a-z]{2})?\s*(\d{1,2}),\s*\d{4}/);
+  if (splitRange) {
+    return `${splitRange[2] || splitRange[1]} ${splitRange[3]}, ${year}`;
+  }
+
+  return dates;
 }
 
 function formatTripStatus(status) {

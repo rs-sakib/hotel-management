@@ -5,6 +5,7 @@ const SESSION_KEY = "azurestay-current-user";
 export const ADMIN_EMAIL = "admin@sakib.com";
 export const ADMIN_PASSWORD = "admin1234";
 export const ADMIN_USER_ID = "u-admin";
+const LEGACY_DEMO_BOOKING_IDS = new Set(["b-1", "b-2"]);
 
 const clone = (value) => JSON.parse(JSON.stringify(value));
 
@@ -16,8 +17,9 @@ export function getState() {
     return initialState;
   }
   const state = JSON.parse(stored);
+  const beforeNormalize = JSON.stringify(state);
   const normalized = normalizeState(state);
-  if (JSON.stringify(state.users) !== JSON.stringify(normalized.users)) {
+  if (beforeNormalize !== JSON.stringify(normalized)) {
     saveState(normalized);
   }
   return normalized;
@@ -76,6 +78,7 @@ function normalizeState(state) {
   state.trips = state.trips || [];
   state.bookings = state.bookings || [];
   state.tripBookings = state.tripBookings || [];
+  state.bookings = state.bookings.filter((booking) => !LEGACY_DEMO_BOOKING_IDS.has(booking.id));
   const adminUser = state.users.find((user) => user.id === ADMIN_USER_ID) || state.users.find((user) => user.email?.toLowerCase() === ADMIN_EMAIL);
 
   state.users.forEach((user) => {

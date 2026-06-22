@@ -1061,7 +1061,7 @@ function renderTripBookings(state) {
             <article class="compact-item">
               <h3>${escapeHtml(request.tripTitle || "Trip request")}</h3>
               <p>${escapeHtml(user?.name || "Unknown user")} / ${escapeHtml(request.destination || "Destination pending")} / ${Number(request.travelers || 1)} traveler(s)</p>
-              <p>${escapeHtml(request.packageType || "Standard plan")} / ${escapeHtml(request.preferredDate || "Date pending")}</p>
+              <p>${escapeHtml(request.packageType || "Standard plan")} / ${escapeHtml(request.preferredDate || "Date pending")} / ${escapeHtml(request.paymentMethod || "Payment method pending")}</p>
               <div class="action-row">
                 ${statusPill(request.status || "pending")}
                 ${statusPill(request.payment === "paid" ? "paid" : "unpaid")}

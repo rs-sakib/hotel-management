@@ -1745,22 +1745,23 @@ td,
 }
 
 .trip-details-button {
-  min-height: 44px;
-  height: 44px;
-  padding: 0 1rem;
+  min-width: 78px;
+  min-height: 42px;
+  height: 42px;
+  padding: 0 0.82rem;
   border-color: transparent;
-  border-radius: 999px;
-  background: var(--primary-dark);
+  border-radius: 16px;
+  background: #50c9bd;
   color: #fff;
   box-shadow: none;
-  font-size: 0.86rem;
+  font-size: 0.9rem;
   font-weight: 900;
   white-space: nowrap;
 }
 
 .trip-details-button:hover,
 .trip-details-button:focus-visible {
-  background: var(--primary-dark);
+  background: #50c9bd;
   box-shadow: none;
   transform: none;
 }
@@ -1768,7 +1769,7 @@ td,
 [data-theme="dark"] .trip-details-button,
 [data-theme="dark"] .trip-details-button:hover,
 [data-theme="dark"] .trip-details-button:focus-visible {
-  background: #16804f;
+  background: #50c9bd;
   color: #fff;
 }
 
@@ -2924,6 +2925,79 @@ textarea:focus {
 
 .payment-choice input {
   width: auto;
+}
+
+.payment-methods {
+  display: grid;
+  gap: 0.65rem;
+  margin: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 0.8rem;
+}
+
+.payment-methods legend {
+  padding: 0 0.4rem;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.payment-method-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.58rem;
+}
+
+.payment-method-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  gap: 0.62rem;
+  align-items: center;
+  min-height: 68px;
+  padding: 0.62rem;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface-strong);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.payment-method-card input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.payment-method-card:has(input:checked) {
+  border-color: #50c9bd;
+  background: rgba(80, 201, 189, 0.12);
+}
+
+.payment-logo {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 42px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+}
+
+.payment-logo img {
+  width: 84%;
+  max-height: 30px;
+  object-fit: contain;
+}
+
+.payment-method-card > span:last-child {
+  overflow: hidden;
+  font-size: 0.82rem;
+  font-weight: 900;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .toast-stack {
@@ -5375,6 +5449,7 @@ td small {
   .footer-links,
   .form-grid,
   .payment-choice,
+  .payment-method-grid,
   .dashboard-metrics,
   .admin-metrics {
     grid-template-columns: 1fr;

@@ -114,32 +114,5 @@ export const seedData = {
     }
   ],
   tripBookings: [],
-  bookings: [
-    {
-      id: "b-1",
-      userId: "u-guest",
-      hotelId: "h-ocean-grand",
-      checkIn: "2026-07-02",
-      checkOut: "2026-07-06",
-      guests: 3,
-      roomType: "Executive Suite",
-      note: "Ocean-facing room preferred.",
-      status: "pending",
-      payment: "paid",
-      createdAt: "2026-06-16T08:20:00.000Z"
-    },
-    {
-      id: "b-2",
-      userId: "u-guest",
-      hotelId: "h-urban-crown",
-      checkIn: "2026-06-20",
-      checkOut: "2026-06-22",
-      guests: 1,
-      roomType: "Deluxe King",
-      note: "Late check-in after 10 PM.",
-      status: "approved",
-      payment: "pending",
-      createdAt: "2026-06-15T12:10:00.000Z"
-    }
-  ]
+  bookings: []
 };
