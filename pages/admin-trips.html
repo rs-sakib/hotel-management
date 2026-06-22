@@ -99,17 +99,28 @@
                 <span>Guest journey</span>
               </div>
               <form class="stack-form" data-trip-form>
+                <input type="hidden" name="tripId" />
                 <input name="title" placeholder="Trip title" required />
+                <input name="type" placeholder="Trip type e.g. Business" required />
                 <input name="guest" placeholder="Guest or group" required />
                 <input name="destination" placeholder="Destination" required />
                 <input name="dates" placeholder="Date range" required />
+                <input name="duration" placeholder="Duration e.g. 4 days" required />
+                <input name="stays" type="number" min="0" placeholder="Hotel stays" required />
+                <input name="budget" type="number" min="0" placeholder="Budget" required />
+                <input name="manager" placeholder="Manager" required />
+                <input name="image" type="url" placeholder="Image URL" required />
+                <textarea name="concierge" rows="3" placeholder="Concierge plan" required></textarea>
                 <select name="status" required>
                   <option>Planning</option>
                   <option>Confirmed</option>
                   <option>In progress</option>
                   <option>Completed</option>
                 </select>
-                <button class="primary-button" type="submit">Add trip</button>
+                <div class="action-row">
+                  <button class="primary-button" type="submit" data-trip-submit-label>Add trip</button>
+                  <button class="secondary-button" type="button" data-cancel-trip-edit hidden>Cancel edit</button>
+                </div>
               </form>
             </article>
             <article class="admin-card">
@@ -120,14 +131,7 @@
               <div class="filter-bar compact-filter">
                 <input type="text" data-filter-trip-search placeholder="Filter by title, guest, or city..." />
               </div>
-              <div class="compact-list" data-admin-trips></div>
-            </article>
-            <article class="admin-card">
-              <div class="card-heading">
-                <h2>Trip requests</h2>
-                <span data-trip-request-count>0 requests</span>
-              </div>
-              <div class="compact-list" data-admin-trip-bookings></div>
+              <div class="admin-trip-grid" data-admin-trips></div>
             </article>
           </div>
         </section>

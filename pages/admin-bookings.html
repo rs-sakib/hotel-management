@@ -98,6 +98,10 @@
             </div>
           </div>
           <div class="admin-section-summary" data-booking-summary></div>
+          <div class="booking-tabs">
+            <button class="booking-tab-btn active" type="button" data-booking-type="hotel">Hotel Bookings</button>
+            <button class="booking-tab-btn" type="button" data-booking-type="trip">Trip Bookings</button>
+          </div>
 
           <div class="filter-bar">
             <div class="search-input-wrap">
@@ -122,7 +126,7 @@
               <thead>
                 <tr>
                   <th>Guest</th>
-                  <th>Hotel</th>
+                  <th data-booking-type-header>Hotel</th>
                   <th>Dates</th>
                   <th>Payment</th>
                   <th>Status</th>
@@ -147,6 +151,13 @@
           <button class="primary-button compact danger" type="button" data-confirm-ok>Delete</button>
         </div>
       </div>
+    </div>
+
+    <!-- Global Bookings Actions Dropdown -->
+    <div id="globalBookingDropdown" class="actions-dropdown-menu" style="position: fixed; z-index: 9999; display: none; flex-direction: column;">
+      <button type="button" class="dropdown-item" data-booking-action="approve">Approve</button>
+      <button type="button" class="dropdown-item" data-booking-action="reject">Reject</button>
+      <button type="button" class="dropdown-item danger" data-booking-action="delete">Delete</button>
     </div>
 
     <script type="module" src="../assets/js/admin-bookings.js"></script>

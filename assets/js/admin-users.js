@@ -69,7 +69,12 @@ function renderUsers(state) {
     ? filteredUsers
       .map((user) => `
           <tr>
-            <td><strong>${escapeHtml(user.name)}</strong></td>
+            <td>
+              <div style="display: flex; align-items: center; gap: 0.75rem;">
+                ${userAvatarMarkup(user, "avatar-circle")}
+                <strong>${escapeHtml(user.name)}</strong>
+              </div>
+            </td>
             <td>${escapeHtml(user.email)}</td>
             <td>${escapeHtml(user.phone || "")}</td>
             <td>${escapeHtml(user.role)}</td>

@@ -145,6 +145,25 @@ img {
   letter-spacing: 0;
 }
 
+.avatar-circle {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.95rem;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(11, 109, 100, 0.18);
+}
+
+img.avatar-circle {
+  object-fit: cover;
+  background: var(--surface-strong);
+}
+
 .brand-mark {
   display: grid;
   width: 38px;
@@ -4379,6 +4398,90 @@ textarea:focus {
   gap: 0.55rem;
 }
 
+.admin-trip-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.admin-trip-card {
+  display: grid;
+  grid-template-columns: 132px minmax(0, 1fr);
+  min-height: 168px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-strong);
+}
+
+.admin-trip-card > img {
+  width: 100%;
+  height: 100%;
+  min-height: 168px;
+  object-fit: cover;
+}
+
+.admin-trip-card-body {
+  display: grid;
+  align-content: space-between;
+  gap: 0.5rem;
+  min-width: 0;
+  padding: 0.7rem;
+}
+
+.admin-trip-card-body h3,
+.admin-trip-card-body p {
+  margin: 0;
+}
+
+.admin-trip-card-body h3 {
+  overflow: hidden;
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-trip-card-body p {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 0.75rem;
+  line-height: 1.38;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.admin-trip-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  padding-top: 0.48rem;
+  border-top: 1px solid var(--line);
+}
+
+.admin-trip-footer strong,
+.admin-trip-footer small {
+  display: block;
+}
+
+.admin-trip-footer strong {
+  overflow: hidden;
+  max-width: 18ch;
+  font-size: 0.76rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-trip-footer small {
+  margin-top: 0.08rem;
+  color: var(--muted);
+  font-size: 0.66rem;
+  font-weight: 800;
+}
+
 .compact-item {
   grid-template-columns: 1fr;
 }
@@ -5130,7 +5233,8 @@ tr:last-child td {
   gap: 0.45rem;
 }
 
-.filter-bar .custom-select {
+.filter-bar .custom-select,
+.filter-bar select {
   width: 170px;
 }
 
@@ -5330,6 +5434,10 @@ td small {
   .admin-analytics-grid.compact,
   .admin-profile-layout {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .admin-trip-grid {
+    grid-template-columns: 1fr;
   }
 
   .split-section,
@@ -5624,6 +5732,15 @@ td small {
     grid-template-columns: 1fr;
   }
 
+  .admin-trip-card {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-trip-card > img {
+    height: 180px;
+    min-height: 180px;
+  }
+
   .trip-details-layout,
   .trip-details-grid {
     grid-template-columns: 1fr;
@@ -5725,7 +5842,8 @@ td small {
     align-items: stretch;
   }
 
-  .filter-bar .custom-select {
+  .filter-bar .custom-select,
+  .filter-bar select {
     width: 100%;
   }
 
@@ -5824,32 +5942,7 @@ td small {
   border-color: rgba(255, 255, 255, 0.25);
 }
 
-.bar-row {
-  grid-template-columns: 1fr;
-}
 
-.filter-bar,
-.select-filters {
-  display: grid;
-  align-items: stretch;
-}
-
-.filter-bar .custom-select {
-  width: 100%;
-}
-
-.donut-chart-panel {
-  justify-items: center;
-}
-
-.bar-row strong,
-.ranked-item small {
-  text-align: left;
-}
-
-.footer-bottom {
-  flex-direction: column;
-}
 
 .section-heading-split {
   display: flex;
@@ -6394,4 +6487,34 @@ td small {
   justify-content: flex-end;
   gap: 0.5rem;
   margin-top: 1rem;
+}
+
+/* Premium Booking Page Tabs */
+.booking-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 0.25rem;
+}
+
+.booking-tab-btn {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.booking-tab-btn:hover {
+  color: var(--text);
+}
+
+.booking-tab-btn.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
 }
