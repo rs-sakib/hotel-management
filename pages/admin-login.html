@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Login | AzureStay</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+  </head>
+  <body class="auth-body">
+    <main class="auth-layout admin-auth-layout">
+      <section class="auth-art admin-login-art">
+        <a class="brand" href="../index.html">
+          <span class="brand-mark">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M3 21h18" />
+              <path d="M5 21V10a7 7 0 0 1 14 0v11" />
+              <path d="M12 7l1.5 2.5H16l-2 2 1 3-3-2-3 2 1-3-2-2h2.5L12 7z" fill="currentColor" stroke="none" />
+            </svg>
+          </span>
+          <span>AzureStay</span>
+        </a>
+        <h1>Admin operations access.</h1>
+        <p>Sign in with the administrator account to manage bookings, hotel inventory, users, trips, charts, and payment reviews.</p>
+      </section>
+      <section class="auth-card">
+        <div class="auth-card-header">
+          <div>
+            <p class="eyebrow">Admin access</p>
+            <h2>Admin login</h2>
+          </div>
+          <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle color theme">
+            <span class="svg-icon" data-theme-icon aria-hidden="true"></span>
+          </button>
+        </div>
+        <form class="stack-form" data-login-form data-login-scope="admin">
+          <label>
+            Admin email
+            <input type="email" name="email" placeholder="admin@sakib.com" required />
+          </label>
+          <label>
+            Password
+            <input type="password" name="password" placeholder="admin1234" required />
+          </label>
+          <button class="primary-button" type="submit">Login as admin</button>
+        </form>
+        <div class="auth-route-panel">
+          <span>User account?</span>
+          <a href="login.html">Open user login</a>
+        </div>
+        <p class="form-footer"><a href="../index.html">Back to home</a></p>
+      </section>
+    </main>
+    <div class="toast-stack" data-toast-stack></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script type="module" src="../assets/js/auth.js"></script>
+  </body>
+</html>

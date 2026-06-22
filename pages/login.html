@@ -3,15 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login | AzureStay</title>
+    <title>User Login | AzureStay</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="../assets/css/styles.css" />
   </head>
   <body class="auth-body">
-    <main class="auth-layout">
-      <section class="auth-art">
+    <main class="auth-layout" data-auth-layout="user">
+      <section class="auth-art" data-auth-art>
         <a class="brand" href="../index.html">
           <span class="brand-mark">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -22,30 +22,83 @@
           </span>
           <span>AzureStay</span>
         </a>
-        <h1>Welcome back to your hotel command center.</h1>
-        <p>Use guest@azurestay.com / guest123 for a guest dashboard or admin@sakib.com / admin1234 for admin access.</p>
+        <h1 data-auth-art-title>Welcome back to your user dashboard.</h1>
+        <p data-auth-art-copy>Use your user account to manage bookings, payments, notifications, and trip updates.</p>
       </section>
-      <section class="auth-card">
+      <section class="auth-card role-login-card">
         <div class="auth-card-header">
           <div>
-            <p class="eyebrow">Secure access</p>
+            <p class="eyebrow">Choose access</p>
             <h2>Login</h2>
           </div>
           <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle color theme">
             <span class="svg-icon" data-theme-icon aria-hidden="true"></span>
           </button>
         </div>
-        <form class="stack-form" data-login-form>
-          <label>
-            Email
-            <input type="email" name="email" placeholder="guest@azurestay.com" required />
-          </label>
-          <label>
-            Password
-            <input type="password" name="password" placeholder="guest123" required />
-          </label>
-          <button class="primary-button" type="submit">Login</button>
-        </form>
+
+        <div class="role-login-switcher" data-role-login data-active-role="guest">
+          <div class="role-toggle-row" role="tablist" aria-label="Choose login type">
+            <button class="role-panel-toggle active" type="button" data-role-toggle="guest" aria-selected="true" role="tab">
+              <span class="role-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm-7 9a7 7 0 0 1 14 0" />
+                </svg>
+              </span>
+              <span>
+                <strong>User</strong>
+              </span>
+            </button>
+
+            <button class="role-panel-toggle" type="button" data-role-toggle="admin" aria-selected="false" role="tab">
+              <span class="role-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M4 21V5.8C4 4.8 4.8 4 5.8 4h8.4c1 0 1.8.8 1.8 1.8V21" />
+                  <path d="M16 9h2.2c1 0 1.8.8 1.8 1.8V21M8 8h4M8 12h4M3 21h18" />
+                </svg>
+              </span>
+              <span>
+                <strong>Admin</strong>
+              </span>
+            </button>
+          </div>
+
+          <div class="role-form-viewport">
+            <div class="role-form-track">
+              <article class="role-login-panel active" data-role-panel="guest">
+                <form class="stack-form" data-login-form data-login-scope="guest">
+                  <p class="eyebrow">User access</p>
+                  <h3>User login</h3>
+                  <label>
+                    Email
+                    <input type="email" name="email" placeholder="guest@azurestay.com" required />
+                  </label>
+                  <label>
+                    Password
+                    <input type="password" name="password" placeholder="guest123" required />
+                  </label>
+                  <button class="primary-button" type="submit">Login as user</button>
+                </form>
+              </article>
+
+              <article class="role-login-panel" data-role-panel="admin">
+                <form class="stack-form" data-login-form data-login-scope="admin">
+                  <p class="eyebrow">Admin access</p>
+                  <h3>Admin login</h3>
+                  <label>
+                    Admin email
+                    <input type="email" name="email" placeholder="admin@sakib.com" required />
+                  </label>
+                  <label>
+                    Password
+                    <input type="password" name="password" placeholder="admin1234" required />
+                  </label>
+                  <button class="primary-button" type="submit">Login as admin</button>
+                </form>
+              </article>
+            </div>
+          </div>
+        </div>
+
         <p class="form-footer">New here? <a href="signup.html">Create an account</a></p>
         <p class="form-footer"><a href="../index.html">Back to home</a></p>
       </section>

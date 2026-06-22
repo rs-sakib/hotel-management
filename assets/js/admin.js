@@ -37,7 +37,7 @@ if (!isAdminUser(currentUser)) {
 
 document.querySelector("[data-logout]").addEventListener("click", () => {
   clearCurrentUser();
-  window.location.href = "login.html";
+  window.location.href = "admin-login.html";
 });
 
 async function hydrateHotelCatalog() {
