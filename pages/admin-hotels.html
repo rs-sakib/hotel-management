@@ -92,13 +92,13 @@
       <div data-admin-content>
         <section class="admin-section active" data-admin-section="hotels">
           <div class="admin-section-summary" data-hotel-summary></div>
-          <div class="admin-grid-two">
+          <div class="admin-hotel-manager">
             <article class="admin-card">
               <div class="card-heading">
                 <h2>Add hotel</h2>
                 <span>Portfolio</span>
               </div>
-              <form class="stack-form" data-hotel-form>
+              <form class="admin-hotel-form" data-hotel-form>
                 <input name="name" placeholder="Hotel name" required />
                 <input name="city" placeholder="City, country" required />
                 <input name="rating" type="number" min="1" max="5" step="0.1" placeholder="Rating" required />
@@ -118,7 +118,7 @@
               <div class="filter-bar compact-filter">
                 <input type="text" data-filter-hotel-search placeholder="Filter by name or city..." />
               </div>
-              <div class="compact-list" data-admin-hotels></div>
+              <div class="admin-hotel-grid" data-admin-hotels></div>
             </article>
           </div>
         </section>

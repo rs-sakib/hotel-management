@@ -158,12 +158,17 @@ function renderHotels(state) {
   document.querySelector("[data-admin-hotels]").innerHTML = filteredHotels.length
     ? filteredHotels
       .map((hotel) => `
-          <article class="compact-item">
-            <h3>${escapeHtml(hotel.name)}</h3>
-            <p>${escapeHtml(hotel.city)} / ${escapeHtml(formatCurrency(hotel.price))} per night / ${Number(hotel.rooms)} rooms / ${Number(hotel.rating).toFixed(1)} rating</p>
-            <div class="action-row">
-              ${(hotel.amenities || []).slice(0, 3).map((amenity) => `<span class="status-pill">${escapeHtml(amenity)}</span>`).join("")}
-              <button class="pill-button delete" type="button" data-delete-hotel="${hotel.id}">Delete</button>
+          <article class="admin-hotel-card">
+            <img src="${escapeAttr(hotel.image || "")}" alt="${escapeAttr(hotel.name)}" loading="lazy" />
+            <div class="admin-hotel-card-body">
+              <div>
+                <h3>${escapeHtml(hotel.name)}</h3>
+                <p>${escapeHtml(hotel.city)} / ${formatCurrency(hotel.price)} per night / ${Number(hotel.rooms)} rooms / ${Number(hotel.rating).toFixed(1)} rating</p>
+              </div>
+              <div class="action-row">
+                ${(hotel.amenities || []).slice(0, 3).map((amenity) => `<span class="status-pill">${escapeHtml(amenity)}</span>`).join("")}
+                <button class="pill-button delete" type="button" data-delete-hotel="${hotel.id}">Delete</button>
+              </div>
             </div>
           </article>
         `)
@@ -216,4 +221,8 @@ function average(values) {
 
 function escapeHtml(value) {
   return String(value ?? "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[char]);
+}
+
+function escapeAttr(value) {
+  return escapeHtml(value);
 }

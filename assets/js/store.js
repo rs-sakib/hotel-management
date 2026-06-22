@@ -108,8 +108,11 @@ function normalizeState(state) {
   const adminUser = state.users.find((user) => user.id === ADMIN_USER_ID) || state.users.find((user) => user.email?.toLowerCase() === ADMIN_EMAIL);
 
   state.users.forEach((user) => {
+    if (user.role === "guest") {
+      user.role = "user";
+    }
     if (user.id !== ADMIN_USER_ID && user.email?.toLowerCase() !== ADMIN_EMAIL && user.role === "admin") {
-      user.role = "guest";
+      user.role = "user";
     }
   });
 

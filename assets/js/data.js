@@ -15,7 +15,7 @@ export const seedData = {
       email: "guest@azurestay.com",
       phone: "+880 1700 222222",
       password: "guest123",
-      role: "guest",
+      role: "user",
       status: "Active"
     }
   ],

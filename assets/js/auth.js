@@ -131,7 +131,7 @@ if (signupForm) {
         email,
         phone: String(formData.get("phone")).trim(),
         password: String(formData.get("password")),
-        role: "guest",
+        role: "user",
         status: "Active"
       });
     });

@@ -301,7 +301,20 @@ function renderBookings(state) {
             `;
         })
         .join("")
-      : `<tr><td colspan="6">No hotel booking requests found.</td></tr>`;
+      : `<tr>
+          <td colspan="6">
+            <div class="table-empty-state">
+              <div class="empty-state-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="8" y1="12" x2="16" y2="12"></line>
+                </svg>
+              </div>
+              <strong>No hotel bookings found</strong>
+              <p>There are no hotel booking requests matching the active filters or search terms.</p>
+            </div>
+          </td>
+        </tr>`;
   } else {
     const filteredTripBookings = getFilteredTripBookings(state);
     tableBody.innerHTML = filteredTripBookings.length
@@ -344,7 +357,20 @@ function renderBookings(state) {
             `;
         })
         .join("")
-      : `<tr><td colspan="6">No trip booking requests found.</td></tr>`;
+      : `<tr>
+          <td colspan="6">
+            <div class="table-empty-state">
+              <div class="empty-state-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="8" y1="12" x2="16" y2="12"></line>
+                </svg>
+              </div>
+              <strong>No trip bookings found</strong>
+              <p>There are no custom trip bookings matching the active filters or search terms.</p>
+            </div>
+          </td>
+        </tr>`;
   }
 }
 
