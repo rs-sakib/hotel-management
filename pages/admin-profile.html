@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin Panel | AzureStay</title>
+    <title>Admin Profile Settings | AzureStay</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet" />
@@ -22,7 +22,7 @@
         <span>AzureStay</span>
       </a>
       <nav class="admin-nav" aria-label="Admin sections">
-        <a class="active" href="admin.html">
+        <a href="admin.html">
           <span class="svg-icon nav-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1" /><rect width="7" height="5" x="14" y="3" rx="1" /><rect width="7" height="9" x="14" y="12" rx="1" /><rect width="7" height="5" x="3" y="16" rx="1" /></svg>
           </span>
@@ -58,7 +58,7 @@
           </span>
           <span>Trips</span>
         </a>
-        <a href="admin-profile.html">
+        <a class="active" href="admin-profile.html">
           <span class="svg-icon nav-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 0 0-16 0" /><circle cx="12" cy="7" r="4" /><path d="M19 8v4M21 10h-4" /></svg>
           </span>
@@ -73,7 +73,7 @@
       <header class="admin-topbar">
         <div>
           <p class="eyebrow">Admin panel</p>
-          <h1>Operations dashboard</h1>
+          <h1>Admin profile Settings</h1>
         </div>
         <div class="header-actions">
           <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle color theme">
@@ -90,80 +90,72 @@
       </section>
 
       <div data-admin-content>
-        <section class="admin-section active" data-admin-section="overview">
-          <div class="admin-metrics" data-admin-metrics></div>
-
-          <article class="admin-card chart-card-wrap" style="margin-bottom: 0.65rem;">
-            <div class="card-heading">
-              <div>
-                <p class="eyebrow">ANALYTICS</p>
-                <h2>Revenue & Booking Trends</h2>
-              </div>
-              <span class="live-indicator"><span class="pulse-dot"></span>Live updates</span>
+        <section class="admin-section active" data-admin-section="profile">
+          <div class="card-heading wide">
+            <div>
+              <p class="eyebrow">Admin account</p>
+              <h2>Profile settings</h2>
             </div>
-            <div class="chart-container" data-trends-chart></div>
-          </article>
-
-          <div class="admin-analytics-grid">
-            <article class="admin-card chart-card-wrap">
-              <div class="card-heading">
-                <div>
-                  <p class="eyebrow">Revenue</p>
-                  <h2>Property performance</h2>
-                </div>
-                <span data-admin-revenue-total>৳</span>
-              </div>
-              <div class="chart-container" data-admin-chart></div>
-            </article>
-            <article class="admin-card chart-card-wrap">
-              <div class="card-heading">
-                <div>
-                  <p class="eyebrow">Bookings</p>
-                  <h2>Status mix</h2>
-                </div>
-                <span data-admin-booking-total>0 total</span>
-              </div>
-              <div class="donut-chart-panel" data-status-chart></div>
-            </article>
+            <span>Editable</span>
           </div>
 
-          <div class="admin-analytics-grid compact">
+          <div class="admin-profile-layout">
+            <article class="admin-card admin-profile-hero" data-admin-profile-card></article>
             <article class="admin-card">
               <div class="card-heading">
                 <div>
-                  <p class="eyebrow">Locations</p>
-                  <h2>Top city inventory</h2>
+                  <p class="eyebrow">Account details</p>
+                  <h2>Update admin info</h2>
                 </div>
-                <span data-city-total>0 cities</span>
               </div>
-              <div class="ranked-list" data-city-chart></div>
-            </article>
-            <article class="admin-card">
-              <div class="card-heading">
-                <div>
-                  <p class="eyebrow">Capacity</p>
-                  <h2>Rooms by segment</h2>
+              <form class="admin-profile-form" data-admin-profile-form>
+                <div class="form-grid">
+                  <label>
+                    Full name
+                    <input name="name" required />
+                  </label>
+                  <label>
+                    Login email
+                    <input name="email" type="email" required />
+                  </label>
+                  <label>
+                    Phone
+                    <input name="phone" required />
+                  </label>
+                  <label>
+                    Job title
+                    <input name="title" required />
+                  </label>
+                  <label>
+                    Department
+                    <input name="department" required />
+                  </label>
+                  <label>
+                    Location
+                    <input name="location" required />
+                  </label>
+                  <label>
+                    Status
+                    <select name="status" required>
+                      <option value="Active">Active</option>
+                      <option value="Away">Away</option>
+                      <option value="Busy">Busy</option>
+                    </select>
+                  </label>
+                  <label>
+                    New password
+                    <input name="password" type="password" placeholder="Leave blank to keep current" />
+                  </label>
                 </div>
-                <span data-room-total>0 rooms</span>
-              </div>
-              <div class="ranked-list" data-room-chart></div>
-            </article>
-          </div>
-
-          <div class="admin-grid-two">
-            <article class="admin-card">
-              <div class="card-heading">
-                <h2>Recent booking requests</h2>
-                <span data-pending-count>0 pending</span>
-              </div>
-              <div class="compact-list" data-recent-bookings></div>
-            </article>
-            <article class="admin-card">
-              <div class="card-heading">
-                <h2>Payment monitor</h2>
-                <span data-payment-total>৳0</span>
-              </div>
-              <div class="compact-list" data-payment-monitor></div>
+                <label>
+                  Bio
+                  <textarea name="bio" rows="4" required></textarea>
+                </label>
+                <div class="admin-profile-actions">
+                  <button class="primary-button" type="submit">Save profile</button>
+                  <button class="secondary-button" type="reset" data-admin-profile-reset>Reset changes</button>
+                </div>
+              </form>
             </article>
           </div>
         </section>
@@ -171,9 +163,7 @@
     </main>
 
     <div class="toast-stack" data-toast-stack></div>
-    <div class="chart-tooltip" data-chart-tooltip></div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script type="module" src="../assets/js/admin-overview.js"></script>
+    <script type="module" src="../assets/js/admin-profile.js"></script>
   </body>
 </html>

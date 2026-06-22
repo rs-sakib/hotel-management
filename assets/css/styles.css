@@ -4235,7 +4235,8 @@ textarea:focus {
   gap: 0.4rem;
 }
 
-.admin-nav button {
+.admin-nav button,
+.admin-nav a {
   border: 1px solid transparent;
   border-radius: var(--radius);
   padding: 0.68rem 0.75rem;
@@ -4243,10 +4244,15 @@ textarea:focus {
   color: var(--muted);
   font-weight: 800;
   text-align: left;
+  display: inline-block;
+  width: 100%;
+  text-decoration: none;
 }
 
 .admin-nav button.active,
-.admin-nav button:hover {
+.admin-nav button:hover,
+.admin-nav a.active,
+.admin-nav a:hover {
   border-color: var(--line);
   background: var(--primary-soft);
   color: var(--primary-dark);
@@ -4488,7 +4494,8 @@ tr:last-child td {
   gap: 0.32rem;
 }
 
-.admin-nav button {
+.admin-nav button,
+.admin-nav a {
   display: flex;
   align-items: center;
   gap: 0.55rem;
@@ -5401,7 +5408,8 @@ td small {
     display: none;
   }
 
-  .admin-nav button {
+  .admin-nav button,
+  .admin-nav a {
     flex: 1 0 auto;
     justify-content: center;
     white-space: nowrap;

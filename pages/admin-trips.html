@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin Panel | AzureStay</title>
+    <title>Trip Operations | AzureStay</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet" />
@@ -22,7 +22,7 @@
         <span>AzureStay</span>
       </a>
       <nav class="admin-nav" aria-label="Admin sections">
-        <a class="active" href="admin.html">
+        <a href="admin.html">
           <span class="svg-icon nav-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1" /><rect width="7" height="5" x="14" y="3" rx="1" /><rect width="7" height="9" x="14" y="12" rx="1" /><rect width="7" height="5" x="3" y="16" rx="1" /></svg>
           </span>
@@ -52,7 +52,7 @@
           </span>
           <span>Hotels</span>
         </a>
-        <a href="admin-trips.html">
+        <a class="active" href="admin-trips.html">
           <span class="svg-icon nav-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" /><circle cx="12" cy="10" r="3" /></svg>
           </span>
@@ -73,7 +73,7 @@
       <header class="admin-topbar">
         <div>
           <p class="eyebrow">Admin panel</p>
-          <h1>Operations dashboard</h1>
+          <h1>Trip operations</h1>
         </div>
         <div class="header-actions">
           <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle color theme">
@@ -90,80 +90,44 @@
       </section>
 
       <div data-admin-content>
-        <section class="admin-section active" data-admin-section="overview">
-          <div class="admin-metrics" data-admin-metrics></div>
-
-          <article class="admin-card chart-card-wrap" style="margin-bottom: 0.65rem;">
-            <div class="card-heading">
-              <div>
-                <p class="eyebrow">ANALYTICS</p>
-                <h2>Revenue & Booking Trends</h2>
-              </div>
-              <span class="live-indicator"><span class="pulse-dot"></span>Live updates</span>
-            </div>
-            <div class="chart-container" data-trends-chart></div>
-          </article>
-
-          <div class="admin-analytics-grid">
-            <article class="admin-card chart-card-wrap">
-              <div class="card-heading">
-                <div>
-                  <p class="eyebrow">Revenue</p>
-                  <h2>Property performance</h2>
-                </div>
-                <span data-admin-revenue-total>৳</span>
-              </div>
-              <div class="chart-container" data-admin-chart></div>
-            </article>
-            <article class="admin-card chart-card-wrap">
-              <div class="card-heading">
-                <div>
-                  <p class="eyebrow">Bookings</p>
-                  <h2>Status mix</h2>
-                </div>
-                <span data-admin-booking-total>0 total</span>
-              </div>
-              <div class="donut-chart-panel" data-status-chart></div>
-            </article>
-          </div>
-
-          <div class="admin-analytics-grid compact">
-            <article class="admin-card">
-              <div class="card-heading">
-                <div>
-                  <p class="eyebrow">Locations</p>
-                  <h2>Top city inventory</h2>
-                </div>
-                <span data-city-total>0 cities</span>
-              </div>
-              <div class="ranked-list" data-city-chart></div>
-            </article>
-            <article class="admin-card">
-              <div class="card-heading">
-                <div>
-                  <p class="eyebrow">Capacity</p>
-                  <h2>Rooms by segment</h2>
-                </div>
-                <span data-room-total>0 rooms</span>
-              </div>
-              <div class="ranked-list" data-room-chart></div>
-            </article>
-          </div>
-
+        <section class="admin-section active" data-admin-section="trips">
+          <div class="admin-section-summary" data-trip-summary></div>
           <div class="admin-grid-two">
             <article class="admin-card">
               <div class="card-heading">
-                <h2>Recent booking requests</h2>
-                <span data-pending-count>0 pending</span>
+                <h2>Add trip</h2>
+                <span>Guest journey</span>
               </div>
-              <div class="compact-list" data-recent-bookings></div>
+              <form class="stack-form" data-trip-form>
+                <input name="title" placeholder="Trip title" required />
+                <input name="guest" placeholder="Guest or group" required />
+                <input name="destination" placeholder="Destination" required />
+                <input name="dates" placeholder="Date range" required />
+                <select name="status" required>
+                  <option>Planning</option>
+                  <option>Confirmed</option>
+                  <option>In progress</option>
+                  <option>Completed</option>
+                </select>
+                <button class="primary-button" type="submit">Add trip</button>
+              </form>
             </article>
             <article class="admin-card">
               <div class="card-heading">
-                <h2>Payment monitor</h2>
-                <span data-payment-total>৳0</span>
+                <h2>Trips</h2>
+                <span data-trip-count>0 trips</span>
               </div>
-              <div class="compact-list" data-payment-monitor></div>
+              <div class="filter-bar compact-filter">
+                <input type="text" data-filter-trip-search placeholder="Filter by title, guest, or city..." />
+              </div>
+              <div class="compact-list" data-admin-trips></div>
+            </article>
+            <article class="admin-card">
+              <div class="card-heading">
+                <h2>Trip requests</h2>
+                <span data-trip-request-count>0 requests</span>
+              </div>
+              <div class="compact-list" data-admin-trip-bookings></div>
             </article>
           </div>
         </section>
@@ -171,9 +135,18 @@
     </main>
 
     <div class="toast-stack" data-toast-stack></div>
-    <div class="chart-tooltip" data-chart-tooltip></div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script type="module" src="../assets/js/admin-overview.js"></script>
+    <div class="confirm-overlay" data-confirm-overlay>
+      <div class="confirm-modal-card">
+        <h3>Are you sure?</h3>
+        <p data-confirm-message>Do you really want to perform this action? This cannot be undone.</p>
+        <div class="confirm-actions">
+          <button class="secondary-button compact" type="button" data-confirm-cancel>Cancel</button>
+          <button class="primary-button compact danger" type="button" data-confirm-ok>Delete</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="../assets/js/admin-trips.js"></script>
   </body>
 </html>

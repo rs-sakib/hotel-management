@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin Panel | AzureStay</title>
+    <title>Booking Approval Desk | AzureStay</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet" />
@@ -22,13 +22,13 @@
         <span>AzureStay</span>
       </a>
       <nav class="admin-nav" aria-label="Admin sections">
-        <a class="active" href="admin.html">
+        <a href="admin.html">
           <span class="svg-icon nav-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1" /><rect width="7" height="5" x="14" y="3" rx="1" /><rect width="7" height="9" x="14" y="12" rx="1" /><rect width="7" height="5" x="3" y="16" rx="1" /></svg>
           </span>
           <span>Overview</span>
         </a>
-        <a href="admin-bookings.html">
+        <a class="active" href="admin-bookings.html">
           <span class="svg-icon nav-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4" /><path d="M16 2v4" /><rect width="18" height="18" x="3" y="4" rx="2" /><path d="M3 10h18" /></svg>
           </span>
@@ -73,7 +73,7 @@
       <header class="admin-topbar">
         <div>
           <p class="eyebrow">Admin panel</p>
-          <h1>Operations dashboard</h1>
+          <h1>Booking approval desk</h1>
         </div>
         <div class="header-actions">
           <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle color theme">
@@ -90,90 +90,65 @@
       </section>
 
       <div data-admin-content>
-        <section class="admin-section active" data-admin-section="overview">
-          <div class="admin-metrics" data-admin-metrics></div>
-
-          <article class="admin-card chart-card-wrap" style="margin-bottom: 0.65rem;">
-            <div class="card-heading">
-              <div>
-                <p class="eyebrow">ANALYTICS</p>
-                <h2>Revenue & Booking Trends</h2>
-              </div>
-              <span class="live-indicator"><span class="pulse-dot"></span>Live updates</span>
+        <section class="admin-section active" data-admin-section="bookings">
+          <div class="card-heading wide">
+            <div>
+              <p class="eyebrow">Approval desk</p>
+              <h2>Booking requests</h2>
             </div>
-            <div class="chart-container" data-trends-chart></div>
-          </article>
-
-          <div class="admin-analytics-grid">
-            <article class="admin-card chart-card-wrap">
-              <div class="card-heading">
-                <div>
-                  <p class="eyebrow">Revenue</p>
-                  <h2>Property performance</h2>
-                </div>
-                <span data-admin-revenue-total>৳</span>
-              </div>
-              <div class="chart-container" data-admin-chart></div>
-            </article>
-            <article class="admin-card chart-card-wrap">
-              <div class="card-heading">
-                <div>
-                  <p class="eyebrow">Bookings</p>
-                  <h2>Status mix</h2>
-                </div>
-                <span data-admin-booking-total>0 total</span>
-              </div>
-              <div class="donut-chart-panel" data-status-chart></div>
-            </article>
           </div>
+          <div class="admin-section-summary" data-booking-summary></div>
 
-          <div class="admin-analytics-grid compact">
-            <article class="admin-card">
-              <div class="card-heading">
-                <div>
-                  <p class="eyebrow">Locations</p>
-                  <h2>Top city inventory</h2>
-                </div>
-                <span data-city-total>0 cities</span>
-              </div>
-              <div class="ranked-list" data-city-chart></div>
-            </article>
-            <article class="admin-card">
-              <div class="card-heading">
-                <div>
-                  <p class="eyebrow">Capacity</p>
-                  <h2>Rooms by segment</h2>
-                </div>
-                <span data-room-total>0 rooms</span>
-              </div>
-              <div class="ranked-list" data-room-chart></div>
-            </article>
+          <div class="filter-bar">
+            <div class="search-input-wrap">
+              <input type="text" data-filter-booking-search placeholder="Search guest, hotel, room type..." />
+            </div>
+            <div class="select-filters">
+              <select data-filter-booking-status>
+                <option value="all">All Statuses</option>
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+              </select>
+              <select data-filter-booking-payment>
+                <option value="all">All Payments</option>
+                <option value="paid">Paid</option>
+                <option value="pending">Unpaid</option>
+              </select>
+            </div>
           </div>
-
-          <div class="admin-grid-two">
-            <article class="admin-card">
-              <div class="card-heading">
-                <h2>Recent booking requests</h2>
-                <span data-pending-count>0 pending</span>
-              </div>
-              <div class="compact-list" data-recent-bookings></div>
-            </article>
-            <article class="admin-card">
-              <div class="card-heading">
-                <h2>Payment monitor</h2>
-                <span data-payment-total>৳0</span>
-              </div>
-              <div class="compact-list" data-payment-monitor></div>
-            </article>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Guest</th>
+                  <th>Hotel</th>
+                  <th>Dates</th>
+                  <th>Payment</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody data-bookings-table></tbody>
+            </table>
           </div>
         </section>
       </div>
     </main>
 
     <div class="toast-stack" data-toast-stack></div>
-    <div class="chart-tooltip" data-chart-tooltip></div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script type="module" src="../assets/js/admin-overview.js"></script>
+    <div class="confirm-overlay" data-confirm-overlay>
+      <div class="confirm-modal-card">
+        <h3>Are you sure?</h3>
+        <p data-confirm-message>Do you really want to perform this action? This cannot be undone.</p>
+        <div class="confirm-actions">
+          <button class="secondary-button compact" type="button" data-confirm-cancel>Cancel</button>
+          <button class="primary-button compact danger" type="button" data-confirm-ok>Delete</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="../assets/js/admin-bookings.js"></script>
   </body>
 </html>
