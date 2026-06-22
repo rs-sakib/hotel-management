@@ -1,6 +1,6 @@
 import { clearCurrentUser, createId, findHotel, findUser, getCurrentUser, getState, isAdminUser, updateState } from "./store.js";
 import { loadHotelCatalog } from "./hotel-catalog.js";
-import { animatePage, formatCurrency, initAuthChrome, initTheme, showToast, statusPill } from "./ui.js";
+import { animatePage, formatCurrency, initAuthChrome, initTheme, showToast, statusPill, updateUserNavAvatar, userAvatarMarkup } from "./ui.js";
 import { initCustomControls } from "./controls.js";
 
 const accessWarning = document.querySelector("[data-access-warning]");
@@ -15,6 +15,14 @@ const filters = {
 };
 
 let currentConfirmAction = null;
+const adminPageTitles = {
+  overview: "Operations dashboard",
+  bookings: "Booking approval desk",
+  users: "User directory",
+  hotels: "Hotel portfolio",
+  trips: "Trip operations",
+  profile: "Admin profile"
+};
 
 initTheme();
 initAuthChrome();
@@ -59,7 +67,13 @@ function initAdminTabs() {
       document.querySelectorAll("[data-admin-section]").forEach((section) => section.classList.remove("active"));
       button.classList.add("active");
       document.querySelector(`[data-admin-section="${button.dataset.adminTab}"]`).classList.add("active");
+      const title = document.querySelector("[data-admin-page-title]");
+      if (title) title.textContent = adminPageTitles[button.dataset.adminTab] || "Admin dashboard";
     });
+  });
+
+  document.querySelector("[data-admin-profile-footer]")?.addEventListener("click", () => {
+    document.querySelector('[data-admin-tab="profile"]')?.click();
   });
 }
 
@@ -160,6 +174,111 @@ function initAdminForms() {
       showToast("Trip removed.");
     });
   });
+
+  document.querySelector("[data-admin-trip-bookings]")?.addEventListener("click", (event) => {
+    const actionButton = event.target.closest("[data-trip-booking-action]");
+    if (!actionButton) return;
+    const { tripBookingId, tripBookingAction } = actionButton.dataset;
+
+    if (tripBookingAction === "delete") {
+      showConfirm("Delete this trip request?", () => {
+        updateState((state) => {
+          state.tripBookings = (state.tripBookings || []).filter((item) => item.id !== tripBookingId);
+        });
+        renderAdmin();
+        showToast("Trip request deleted.");
+      });
+      return;
+    }
+
+    updateState((state) => {
+      const request = (state.tripBookings || []).find((item) => item.id === tripBookingId);
+      if (!request) return;
+      if (tripBookingAction === "approve") request.status = "approved";
+      if (tripBookingAction === "reject") request.status = "rejected";
+      if (tripBookingAction === "paid") request.payment = "paid";
+    });
+
+    renderAdmin();
+    showToast("Trip request updated.");
+  });
+
+  const profileForm = document.querySelector("[data-admin-profile-form]");
+  profileForm?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const formData = new FormData(profileForm);
+    const email = String(formData.get("email")).trim().toLowerCase();
+    const state = getState();
+
+    if (state.users.some((user) => user.id !== currentUser.id && user.email.toLowerCase() === email)) {
+      showToast("Another account already uses this email.", "warning");
+      return;
+    }
+
+    updateState((draft) => {
+      const admin = draft.users.find((user) => user.id === currentUser.id);
+      if (!admin) return;
+      admin.name = String(formData.get("name")).trim();
+      admin.email = email;
+      admin.phone = String(formData.get("phone")).trim();
+      admin.title = String(formData.get("title")).trim();
+      admin.department = String(formData.get("department")).trim();
+      admin.location = String(formData.get("location")).trim();
+      admin.status = String(formData.get("status"));
+      admin.bio = String(formData.get("bio")).trim();
+      const nextPassword = String(formData.get("password")).trim();
+      if (nextPassword) admin.password = nextPassword;
+
+      Object.assign(currentUser, admin);
+    });
+
+    profileForm.reset();
+    renderAdmin();
+    updateUserNavAvatar(currentUser);
+    showToast("Admin profile updated.");
+  });
+
+  profileForm?.addEventListener("reset", () => {
+    window.setTimeout(renderAdminProfile, 0);
+  });
+
+  document.querySelector("[data-admin-profile-card]")?.addEventListener("change", (event) => {
+    const input = event.target.closest("[data-admin-profile-image-input]");
+    if (!input) return;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      showToast("Please upload a valid image file.", "warning");
+      input.value = "";
+      return;
+    }
+
+    if (file.size > 750 * 1024) {
+      showToast("Profile image must be under 750 KB.", "warning");
+      input.value = "";
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.addEventListener("load", () => {
+      const avatar = String(reader.result || "");
+      updateState((state) => {
+        const admin = state.users.find((user) => user.id === currentUser.id);
+        if (admin) {
+          admin.avatar = avatar;
+          currentUser.avatar = avatar;
+        }
+      });
+      renderAdminProfile();
+      updateUserNavAvatar(currentUser);
+      showToast("Admin photo updated.");
+    });
+    reader.addEventListener("error", () => {
+      showToast("Could not read that image file.", "warning");
+    });
+    reader.readAsDataURL(file);
+  });
 }
 
 function initFilters() {
@@ -248,23 +367,62 @@ function renderAdmin() {
   renderUsers(state);
   renderHotels(state);
   renderTrips(state);
+  renderTripBookings(state);
+  renderAdminProfile();
 }
 
 function renderAdminProfile() {
   const footer = document.querySelector("[data-admin-profile-footer]");
   if (!footer || !currentUser) return;
-  const initials = currentUser.name
-    .split(" ")
-    .map((word) => word[0])
-    .join("")
-    .toUpperCase();
   footer.innerHTML = `
-    <div class="avatar-circle">${escapeHtml(initials)}</div>
+    ${userAvatarMarkup(currentUser, "avatar-circle")}
     <div class="profile-details">
       <span class="profile-name">${escapeHtml(currentUser.name)}</span>
-      <span class="profile-role">${escapeHtml(currentUser.role)}</span>
+      <span class="profile-role">${escapeHtml(currentUser.title || currentUser.role)}</span>
     </div>
   `;
+
+  const profileCard = document.querySelector("[data-admin-profile-card]");
+  if (profileCard) {
+    profileCard.innerHTML = `
+      <div class="admin-profile-cover"></div>
+      <div class="admin-profile-avatar-wrap">
+        <div class="admin-profile-avatar">${userAvatarMarkup(currentUser, "admin-profile-avatar-image")}</div>
+        <label class="admin-profile-upload" title="Change photo" aria-label="Change profile photo">
+          <input type="file" accept="image/png,image/jpeg,image/webp" data-admin-profile-image-input />
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 8h3l1.6-2h6.8L17 8h3a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2Z" />
+            <circle cx="12" cy="14" r="3.2" />
+          </svg>
+        </label>
+      </div>
+      <div class="admin-profile-summary">
+        <p class="eyebrow">Signed in as</p>
+        <h2>${escapeHtml(currentUser.name)}</h2>
+        <p>${escapeHtml(currentUser.title || "Admin")} / ${escapeHtml(currentUser.department || "Operations")}</p>
+      </div>
+      <div class="admin-profile-facts">
+        <article><span>Email</span><strong>${escapeHtml(currentUser.email)}</strong></article>
+        <article><span>Phone</span><strong>${escapeHtml(currentUser.phone || "Not set")}</strong></article>
+        <article><span>Location</span><strong>${escapeHtml(currentUser.location || "Not set")}</strong></article>
+        <article><span>Status</span><strong>${escapeHtml(currentUser.status || "Active")}</strong></article>
+      </div>
+      <p class="admin-profile-bio">${escapeHtml(currentUser.bio || "No bio added yet.")}</p>
+    `;
+  }
+
+  const form = document.querySelector("[data-admin-profile-form]");
+  if (form) {
+    form.elements.namedItem("name").value = currentUser.name || "";
+    form.elements.namedItem("email").value = currentUser.email || "";
+    form.elements.namedItem("phone").value = currentUser.phone || "";
+    form.elements.namedItem("title").value = currentUser.title || "";
+    form.elements.namedItem("department").value = currentUser.department || "";
+    form.elements.namedItem("location").value = currentUser.location || "";
+    form.elements.namedItem("status").value = currentUser.status || "Active";
+    form.elements.namedItem("password").value = "";
+    form.elements.namedItem("bio").value = currentUser.bio || "";
+  }
 }
 
 function renderMetrics(state) {
@@ -761,7 +919,7 @@ function renderSectionSummaries(state) {
     ["Visible trips", tripRows.length],
     ["Confirmed", tripRows.filter((trip) => trip.status === "Confirmed").length],
     ["Planning", tripRows.filter((trip) => trip.status === "Planning").length],
-    ["Destinations", groupCount(tripRows, (trip) => trip.destination).length]
+    ["Requests", (state.tripBookings || []).length]
   ]);
 }
 
@@ -886,6 +1044,37 @@ function renderTrips(state) {
         `)
         .join("")
     : `<div class="empty-state">No trips found.</div>`;
+}
+
+function renderTripBookings(state) {
+  const requests = state.tripBookings || [];
+  const countLabel = document.querySelector("[data-trip-request-count]");
+  const list = document.querySelector("[data-admin-trip-bookings]");
+  if (!countLabel || !list) return;
+
+  countLabel.textContent = `${requests.length} request${requests.length === 1 ? "" : "s"}`;
+  list.innerHTML = requests.length
+    ? requests
+        .map((request) => {
+          const user = findUser(state, request.userId);
+          return `
+            <article class="compact-item">
+              <h3>${escapeHtml(request.tripTitle || "Trip request")}</h3>
+              <p>${escapeHtml(user?.name || "Unknown user")} / ${escapeHtml(request.destination || "Destination pending")} / ${Number(request.travelers || 1)} traveler(s)</p>
+              <p>${escapeHtml(request.packageType || "Standard plan")} / ${escapeHtml(request.preferredDate || "Date pending")}</p>
+              <div class="action-row">
+                ${statusPill(request.status || "pending")}
+                ${statusPill(request.payment === "paid" ? "paid" : "unpaid")}
+                <button class="pill-button approve" type="button" data-trip-booking-id="${request.id}" data-trip-booking-action="approve" ${request.status === "approved" ? "disabled" : ""}>Approve</button>
+                <button class="pill-button reject" type="button" data-trip-booking-id="${request.id}" data-trip-booking-action="reject" ${request.status === "rejected" ? "disabled" : ""}>Reject</button>
+                <button class="pill-button" type="button" data-trip-booking-id="${request.id}" data-trip-booking-action="paid" ${request.payment === "paid" ? "disabled" : ""}>Paid</button>
+                <button class="pill-button delete" type="button" data-trip-booking-id="${request.id}" data-trip-booking-action="delete">Delete</button>
+              </div>
+            </article>
+          `;
+        })
+        .join("")
+    : `<div class="empty-state">No trip requests yet.</div>`;
 }
 
 function getFilteredBookings(state) {

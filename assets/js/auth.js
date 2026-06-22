@@ -1,4 +1,4 @@
-import { ADMIN_EMAIL, ADMIN_PASSWORD, ADMIN_USER_ID, createId, getState, setCurrentUser, updateState } from "./store.js";
+import { ADMIN_EMAIL, ADMIN_USER_ID, createId, getState, setCurrentUser, updateState } from "./store.js";
 import { animatePage, initTheme, showToast } from "./ui.js";
 
 const authHeroCopy = {
@@ -74,9 +74,11 @@ function handleLoginSubmit(event) {
   const password = String(formData.get("password"));
   const loginScope = loginForm.dataset.loginScope || "guest";
   const state = getState();
-  const isAdminLogin = email === ADMIN_EMAIL && password === ADMIN_PASSWORD;
+  const adminUser = state.users.find((item) => item.id === ADMIN_USER_ID);
+  const adminEmail = String(adminUser?.email || ADMIN_EMAIL).toLowerCase();
+  const isAdminLogin = Boolean(adminUser && email === adminEmail && password === adminUser.password);
 
-  if (loginScope === "guest" && email === ADMIN_EMAIL) {
+  if (loginScope === "guest" && email === adminEmail) {
     showToast("Admin accounts must use the Admin section.");
     return;
   }
@@ -87,7 +89,7 @@ function handleLoginSubmit(event) {
   }
 
   const user = loginScope === "admin"
-    ? state.users.find((item) => item.id === ADMIN_USER_ID)
+    ? adminUser
     : state.users.find((item) => item.role !== "admin" && item.email.toLowerCase() === email && item.password === password);
 
   if (!user) {
@@ -109,7 +111,8 @@ if (signupForm) {
     const email = String(formData.get("email")).trim().toLowerCase();
     const state = getState();
 
-    if (email === ADMIN_EMAIL) {
+    const adminUser = state.users.find((user) => user.id === ADMIN_USER_ID);
+    if (email === ADMIN_EMAIL || email === adminUser?.email?.toLowerCase()) {
       showToast("This email is reserved for the admin account.");
       return;
     }

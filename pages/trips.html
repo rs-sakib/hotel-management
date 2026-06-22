@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hotels | AzureStay</title>
+    <title>Trips | AzureStay</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet" />
@@ -21,11 +21,11 @@
         </span>
         <span>AzureStay</span>
       </a>
-      <nav class="main-nav" aria-label="Hotels navigation">
-        <a href="hotels.html" aria-current="page">Hotels</a>
+      <nav class="main-nav" aria-label="Trips navigation">
+        <a href="hotels.html">Hotels</a>
         <a href="../index.html#operations">Operations</a>
         <a href="../index.html#reviews">Reviews</a>
-        <a href="trips.html">Trips</a>
+        <a href="trips.html" aria-current="page">Trips</a>
       </nav>
       <div class="header-actions">
         <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle color theme">
@@ -36,20 +36,20 @@
       </div>
     </header>
 
-    <main class="hotels-page">
-      <section class="hotels-hero section-shell">
-        <div class="hotels-hero-copy">
-          <p class="eyebrow">Hotel directory</p>
-          <h1>Find the right stay from every available AzureStay property.</h1>
-          <p>Search by hotel name, city, amenity, or travel style, then narrow the list by price, rating, location, rooms, and service needs.</p>
+    <main class="trips-page">
+      <section class="section-shell trips-page-hero">
+        <div class="trips-page-copy">
+          <p class="eyebrow">Trip directory</p>
+          <h1>Manage guest journeys beyond the room booking.</h1>
+          <p>Browse curated trip plans with status, guest, destination, duration, budget, and concierge requirements for hotel operations teams.</p>
         </div>
-        <div class="hotels-hero-stats" data-hotels-stats></div>
+        <div class="trips-page-stats" data-trip-stats></div>
       </section>
 
-      <section class="section-shell hotels-browser" aria-label="Hotel search and filters">
-        <form class="hotel-filter-panel" data-hotel-filter-form>
+      <section class="section-shell trips-directory" aria-label="Trip search and filters">
+        <form class="trip-filter-panel" data-trip-filter-form>
           <label class="search-field hotel-search-field">
-            <span>Search hotels</span>
+            <span>Search trips</span>
             <div class="hotel-search-control">
               <span class="hotel-search-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" role="img">
@@ -57,78 +57,58 @@
                   <path d="m16.2 16.2 4.3 4.3" />
                 </svg>
               </span>
-              <input type="search" name="query" data-hotel-search placeholder="Search name, city, amenity..." autocomplete="off" />
+              <input type="search" name="query" placeholder="Search title, guest, destination..." autocomplete="off" />
             </div>
           </label>
 
-          <div class="hotel-filter-grid">
+          <div class="trip-filter-grid">
             <label>
-              Location
-              <select name="city" data-filter-city>
-                <option value="all">All locations</option>
+              Type
+              <select name="type" data-filter-trip-type>
+                <option value="all">All types</option>
               </select>
             </label>
             <label>
-              Amenity
-              <select name="amenity" data-filter-amenity>
-                <option value="all">Any amenity</option>
+              Status
+              <select name="status" data-filter-trip-status>
+                <option value="all">All statuses</option>
               </select>
             </label>
             <label>
-              Rating
-              <select name="rating" data-filter-rating>
-                <option value="all">Any rating</option>
-                <option value="4.9">4.9 and up</option>
-                <option value="4.8">4.8 and up</option>
-                <option value="4.7">4.7 and up</option>
-                <option value="4.6">4.6 and up</option>
-              </select>
-            </label>
-            <label>
-              Rooms
-              <select name="rooms" data-filter-rooms>
-                <option value="all">Any availability</option>
-                <option value="50">50+ rooms</option>
-                <option value="40">40+ rooms</option>
-                <option value="30">30+ rooms</option>
-                <option value="20">20+ rooms</option>
+              Destination
+              <select name="destination" data-filter-trip-destination>
+                <option value="all">All destinations</option>
               </select>
             </label>
             <label>
               Sort
-              <select name="sort" data-filter-sort>
-                <option value="recommended">Recommended</option>
-                <option value="price-asc">Lowest price</option>
-                <option value="price-desc">Highest price</option>
-                <option value="rating-desc">Best rating</option>
-                <option value="rooms-desc">Most rooms</option>
-                <option value="name-asc">Name A-Z</option>
+              <select name="sort">
+                <option value="date-asc">Upcoming first</option>
+                <option value="budget-desc">Highest budget</option>
+                <option value="duration-desc">Longest duration</option>
+                <option value="title-asc">Title A-Z</option>
               </select>
-            </label>
-            <label class="price-filter">
-              <span>Max price <strong data-price-label>৳0</strong></span>
-              <input type="range" name="maxPrice" data-filter-price min="0" max="500" step="5" />
             </label>
           </div>
 
           <div class="hotel-filter-actions">
-            <div class="active-filters" data-active-filters></div>
-            <button class="secondary-button compact" type="reset" data-reset-filters>Reset filters</button>
+            <div class="active-filters" data-trip-active-filters></div>
+            <button class="secondary-button compact" type="reset">Reset filters</button>
           </div>
         </form>
 
         <div class="hotel-results-head">
           <div>
-            <p class="eyebrow">Available stays</p>
-            <h2 data-results-title>All hotels</h2>
+            <p class="eyebrow">Managed trips</p>
+            <h2 data-trip-results-title>All trips</h2>
           </div>
-          <span data-results-count>0 hotels</span>
+          <span data-trip-results-count>0 trips</span>
         </div>
 
-        <div class="hotel-grid hotel-directory-grid" data-hotels-list></div>
-        <div class="empty-state hotel-empty-state" data-hotel-empty hidden>
-          <strong>No hotels match these filters.</strong>
-          <span>Try a broader city, amenity, price, or search term.</span>
+        <div class="trip-directory-grid" data-trip-list></div>
+        <div class="empty-state hotel-empty-state" data-trip-empty hidden>
+          <strong>No trips match these filters.</strong>
+          <span>Try a broader destination, status, type, or search term.</span>
         </div>
       </section>
     </main>
@@ -152,7 +132,7 @@
           <div>
             <h3>Platform</h3>
             <a href="hotels.html">Hotels</a>
-            <a href="../index.html#operations">Operations</a>
+            <a href="trips.html">Trips</a>
             <a href="../index.html#reviews">Reviews</a>
           </div>
           <div>
@@ -177,6 +157,6 @@
 
     <div class="toast-stack" data-toast-stack></div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script type="module" src="../assets/js/hotels.js"></script>
+    <script type="module" src="../assets/js/trips.js"></script>
   </body>
 </html>

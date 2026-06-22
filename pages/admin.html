@@ -52,6 +52,12 @@
           </span>
           <span>Trips</span>
         </button>
+        <button type="button" data-admin-tab="profile">
+          <span class="svg-icon nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 0 0-16 0" /><circle cx="12" cy="7" r="4" /><path d="M19 8v4M21 10h-4" /></svg>
+          </span>
+          <span>Profile</span>
+        </button>
       </nav>
       <div class="admin-profile-card" data-admin-profile-footer></div>
       <a class="ghost-button" href="../index.html">Back to site</a>
@@ -61,7 +67,7 @@
       <header class="admin-topbar">
         <div>
           <p class="eyebrow">Admin panel</p>
-          <h1>Operations dashboard</h1>
+          <h1 data-admin-page-title>Operations dashboard</h1>
         </div>
         <div class="header-actions">
           <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle color theme">
@@ -301,6 +307,83 @@
                 <input type="text" data-filter-trip-search placeholder="Filter by title, guest, or city..." />
               </div>
               <div class="compact-list" data-admin-trips></div>
+            </article>
+            <article class="admin-card">
+              <div class="card-heading">
+                <h2>Trip requests</h2>
+                <span data-trip-request-count>0 requests</span>
+              </div>
+              <div class="compact-list" data-admin-trip-bookings></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="admin-section" data-admin-section="profile">
+          <div class="card-heading wide">
+            <div>
+              <p class="eyebrow">Admin account</p>
+              <h2>Profile settings</h2>
+            </div>
+            <span>Editable</span>
+          </div>
+
+          <div class="admin-profile-layout">
+            <article class="admin-card admin-profile-hero" data-admin-profile-card></article>
+            <article class="admin-card">
+              <div class="card-heading">
+                <div>
+                  <p class="eyebrow">Account details</p>
+                  <h2>Update admin info</h2>
+                </div>
+              </div>
+              <form class="admin-profile-form" data-admin-profile-form>
+                <div class="form-grid">
+                  <label>
+                    Full name
+                    <input name="name" required />
+                  </label>
+                  <label>
+                    Login email
+                    <input name="email" type="email" required />
+                  </label>
+                  <label>
+                    Phone
+                    <input name="phone" required />
+                  </label>
+                  <label>
+                    Job title
+                    <input name="title" required />
+                  </label>
+                  <label>
+                    Department
+                    <input name="department" required />
+                  </label>
+                  <label>
+                    Location
+                    <input name="location" required />
+                  </label>
+                  <label>
+                    Status
+                    <select name="status" required>
+                      <option value="Active">Active</option>
+                      <option value="Away">Away</option>
+                      <option value="Busy">Busy</option>
+                    </select>
+                  </label>
+                  <label>
+                    New password
+                    <input name="password" type="password" placeholder="Leave blank to keep current" />
+                  </label>
+                </div>
+                <label>
+                  Bio
+                  <textarea name="bio" rows="4" required></textarea>
+                </label>
+                <div class="admin-profile-actions">
+                  <button class="primary-button" type="submit">Save profile</button>
+                  <button class="secondary-button" type="reset" data-admin-profile-reset>Reset changes</button>
+                </div>
+              </form>
             </article>
           </div>
         </section>

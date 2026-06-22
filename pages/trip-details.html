@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trip Details | AzureStay</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+  </head>
+  <body>
+    <header class="site-header" data-header>
+      <a class="brand" href="../index.html" aria-label="AzureStay home">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 21h18" />
+            <path d="M5 21V10a7 7 0 0 1 14 0v11" />
+            <path d="M12 7l1.5 2.5H16l-2 2 1 3-3-2-3 2 1-3-2-2h2.5L12 7z" fill="currentColor" stroke="none" />
+          </svg>
+        </span>
+        <span>AzureStay</span>
+      </a>
+      <nav class="main-nav" aria-label="Trip details navigation">
+        <a href="hotels.html">Hotels</a>
+        <a href="../index.html#operations">Operations</a>
+        <a href="../index.html#reviews">Reviews</a>
+        <a href="trips.html" aria-current="page">Trips</a>
+      </nav>
+      <div class="header-actions">
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle color theme">
+          <span class="svg-icon" data-theme-icon aria-hidden="true"></span>
+        </button>
+        <a class="ghost-button" href="login.html" data-auth-link>Login</a>
+        <a class="primary-button compact" href="signup.html" data-signup-link>Sign up</a>
+      </div>
+    </header>
+
+    <main class="trip-detail-main" data-trip-detail>
+      <section class="trip-detail-showcase">
+        <article class="trip-detail-card">
+          <div class="trip-details-layout">
+            <div class="trip-details-media">
+              <img data-trip-image alt="" />
+              <span data-trip-type></span>
+            </div>
+            <div class="trip-details-copy">
+              <a class="back-link" href="trips.html">Back to trips</a>
+              <div class="trip-card-head">
+                <span class="trip-status" data-trip-status></span>
+                <span class="trip-budget" data-trip-budget></span>
+              </div>
+              <div>
+                <p class="eyebrow">Trip details</p>
+                <h1 data-trip-title>Trip details</h1>
+                <p data-trip-concierge></p>
+              </div>
+              <div class="trip-details-grid" data-trip-facts></div>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="hotel-detail-layout trip-booking-layout">
+        <article class="detail-info-panel">
+          <p class="eyebrow">Journey overview</p>
+          <h2>Request this trip plan and let the team prepare the stay details.</h2>
+          <div class="detail-feature-grid" data-trip-features></div>
+        </article>
+
+        <aside class="booking-panel" id="booking">
+          <div class="booking-panel-heading">
+            <div>
+              <p class="eyebrow">Trip request</p>
+              <h2>Book this trip</h2>
+            </div>
+            <span class="price detail-price" data-booking-price></span>
+          </div>
+          <form class="form-grid" data-trip-booking-form>
+            <input type="hidden" name="tripId" />
+            <label>
+              Preferred start
+              <input type="date" name="preferredDate" required />
+            </label>
+            <label>
+              Travelers
+              <input type="number" name="travelers" min="1" max="20" value="2" required />
+            </label>
+            <label>
+              Package
+              <select name="packageType" required>
+                <option>Standard plan</option>
+                <option>Private concierge</option>
+                <option>Family package</option>
+                <option>Executive package</option>
+              </select>
+            </label>
+            <label>
+              Contact number
+              <input type="tel" name="contact" placeholder="+880 1700 000000" required />
+            </label>
+            <label class="full-span">
+              Trip notes
+              <textarea name="note" rows="3" placeholder="Transport, food preference, room needs, timing..."></textarea>
+            </label>
+            <fieldset class="payment-choice full-span">
+              <legend>Payment</legend>
+              <label><input type="radio" name="payment" value="paid" checked /> Pay deposit now</label>
+              <label><input type="radio" name="payment" value="pending" /> Pay after approval</label>
+            </fieldset>
+            <fieldset class="payment-methods full-span">
+              <legend>Payment method</legend>
+              <div class="payment-method-grid">
+                <label class="payment-method-card">
+                  <input type="radio" name="paymentMethod" value="bKash" checked />
+                  <span class="payment-logo">
+                    <img src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Bkash.webp" alt="bKash" loading="lazy" />
+                  </span>
+                  <span>bKash</span>
+                </label>
+                <label class="payment-method-card">
+                  <input type="radio" name="paymentMethod" value="Rocket" />
+                  <span class="payment-logo">
+                    <img src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Rocket_mobile_banking_logo.svg" alt="Rocket" loading="lazy" />
+                  </span>
+                  <span>Rocket</span>
+                </label>
+                <label class="payment-method-card">
+                  <input type="radio" name="paymentMethod" value="upay" />
+                  <span class="payment-logo">
+                    <img src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Upay_logo.svg" alt="upay" loading="lazy" />
+                  </span>
+                  <span>upay</span>
+                </label>
+                <label class="payment-method-card">
+                  <input type="radio" name="paymentMethod" value="Nagad" />
+                  <span class="payment-logo">
+                    <img src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Nagad-png.png" alt="Nagad" loading="lazy" />
+                  </span>
+                  <span>Nagad</span>
+                </label>
+              </div>
+            </fieldset>
+            <button class="primary-button full-span" type="submit">Send trip request</button>
+          </form>
+        </aside>
+      </section>
+    </main>
+
+    <div class="toast-stack" data-toast-stack></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script type="module" src="../assets/js/trip-details.js"></script>
+  </body>
+</html>

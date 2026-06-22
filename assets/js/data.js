@@ -113,6 +113,7 @@ export const seedData = {
       status: "Confirmed"
     }
   ],
+  tripBookings: [],
   bookings: [
     {
       id: "b-1",

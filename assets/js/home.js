@@ -1,5 +1,5 @@
 import { createId, findHotel, findUser, getCurrentUser, getState, setCurrentUser, updateState } from "./store.js";
-import { animatePage, formatCurrency, formatStatus, initAuthChrome, initHeader, initTheme, showToast, statusPill } from "./ui.js";
+import { animatePage, formatCurrency, formatStatus, initAuthChrome, initHeader, initTheme, showToast } from "./ui.js";
 import { initCustomControls } from "./controls.js";
 
 const hotelGrid = document.querySelector("[data-hotel-grid]");
@@ -14,7 +14,7 @@ const notificationDot = document.querySelector("[data-notification-dot]");
 initTheme();
 initHeader();
 initAuthChrome();
-renderHome();
+await renderHome();
 initBookingModal();
 initCustomControls();
 initNotifications();
@@ -22,11 +22,22 @@ initReviewSlider();
 initMarquee();
 runHomeAnimations();
 
-function renderHome() {
+async function renderHome() {
   const state = getState();
   renderHotels(state.hotels.slice(0, 6));
-  renderTrips(state.trips);
+  renderTrips((await loadHomeTrips(state.trips)).slice(0, 4));
   updateNotificationDot();
+}
+
+async function loadHomeTrips(fallbackTrips = []) {
+  try {
+    const response = await fetch("assets/data/trips.json");
+    if (!response.ok) throw new Error("Trips data unavailable");
+    const trips = await response.json();
+    return Array.isArray(trips) && trips.length ? trips : fallbackTrips;
+  } catch {
+    return fallbackTrips;
+  }
 }
 
 function renderHotels(hotels) {
@@ -72,18 +83,50 @@ function renderHotels(hotels) {
 
 function renderTrips(trips) {
   tripList.innerHTML = trips
-    .map(
-      (trip) => `
-        <article class="trip-item reveal">
-          <div>
-            <h3>${trip.title}</h3>
-            <p class="trip-meta">${trip.guest} / ${trip.destination} / ${trip.dates}</p>
+    .map((trip, index) => {
+      const status = trip.status.toLowerCase().replaceAll(" ", "-");
+      const statusLabel = formatTripStatus(trip.status);
+      return `
+        <article class="trip-journey-card reveal">
+          <div class="trip-visual">
+            <img src="${trip.image}" alt="${trip.title}" loading="lazy">
+            <span>${trip.type}</span>
           </div>
-          ${statusPill(trip.status.toLowerCase().replaceAll(" ", "-"))}
+          <div class="trip-copy">
+            <div class="trip-card-head">
+              <span class="trip-number">${String(index + 1).padStart(2, "0")}</span>
+              <span class="trip-status ${status}">${statusLabel}</span>
+            </div>
+            <h3>${trip.title}</h3>
+            <p>${trip.concierge}</p>
+            <div class="trip-facts">
+              <span>${trip.destination}</span>
+              <span>${trip.dates}</span>
+              <span>${trip.duration}</span>
+              <span>${trip.stays} stay${Number(trip.stays) === 1 ? "" : "s"}</span>
+            </div>
+            <div class="trip-guest-line">
+              <div>
+                <strong>${trip.guest}</strong>
+                <small>Managed journey</small>
+              </div>
+              <a class="secondary-button compact trip-details-button" href="pages/trip-details.html?id=${encodeURIComponent(trip.id)}">Details</a>
+            </div>
+          </div>
         </article>
-      `
-    )
+      `;
+    })
     .join("");
+}
+
+function formatTripStatus(status) {
+  const labels = {
+    Confirmed: "Ready",
+    Planning: "Being planned",
+    "In progress": "Happening now",
+    Completed: "Completed"
+  };
+  return labels[status] || status;
 }
 
 function initBookingModal() {

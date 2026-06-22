@@ -67,27 +67,35 @@ export function findUser(state, userId) {
 }
 
 export function isAdminUser(user) {
-  return Boolean(user && user.role === "admin" && user.email.toLowerCase() === ADMIN_EMAIL);
+  return Boolean(user && user.role === "admin" && user.id === ADMIN_USER_ID);
 }
 
 function normalizeState(state) {
   state.users = state.users || [];
+  state.hotels = state.hotels || [];
+  state.trips = state.trips || [];
+  state.bookings = state.bookings || [];
+  state.tripBookings = state.tripBookings || [];
   const adminUser = state.users.find((user) => user.id === ADMIN_USER_ID) || state.users.find((user) => user.email?.toLowerCase() === ADMIN_EMAIL);
 
   state.users.forEach((user) => {
-    if (user.email?.toLowerCase() !== ADMIN_EMAIL && user.role === "admin") {
+    if (user.id !== ADMIN_USER_ID && user.email?.toLowerCase() !== ADMIN_EMAIL && user.role === "admin") {
       user.role = "guest";
     }
   });
 
   if (adminUser) {
     adminUser.id = ADMIN_USER_ID;
-    adminUser.name = "Sakib Admin";
-    adminUser.email = ADMIN_EMAIL;
+    adminUser.name = adminUser.name || "Sakib Admin";
+    adminUser.email = adminUser.email || ADMIN_EMAIL;
     adminUser.phone = adminUser.phone || "+880 1700 111111";
-    adminUser.password = ADMIN_PASSWORD;
+    adminUser.password = adminUser.password || ADMIN_PASSWORD;
     adminUser.role = "admin";
-    adminUser.status = "Active";
+    adminUser.status = adminUser.status || "Active";
+    adminUser.title = adminUser.title || "Operations Director";
+    adminUser.department = adminUser.department || "Hotel Operations";
+    adminUser.location = adminUser.location || "Dhaka HQ";
+    adminUser.bio = adminUser.bio || "Responsible for booking approvals, hotel portfolio performance, guest operations, and payment monitoring.";
   } else {
     state.users.unshift({
       id: ADMIN_USER_ID,
@@ -96,7 +104,11 @@ function normalizeState(state) {
       phone: "+880 1700 111111",
       password: ADMIN_PASSWORD,
       role: "admin",
-      status: "Active"
+      status: "Active",
+      title: "Operations Director",
+      department: "Hotel Operations",
+      location: "Dhaka HQ",
+      bio: "Responsible for booking approvals, hotel portfolio performance, guest operations, and payment monitoring."
     });
   }
 
