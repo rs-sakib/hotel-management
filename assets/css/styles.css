@@ -194,6 +194,33 @@ img {
   gap: 0.5rem;
 }
 
+.header-user-avatar {
+  display: inline-grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
+}
+
+.nav-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.nav-avatar.initials {
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
 .primary-button,
 .secondary-button,
 .ghost-button,
@@ -2781,20 +2808,67 @@ textarea:focus {
   margin: 0.4rem 0 0;
 }
 
+.dashboard-tier-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0.75rem 0 0;
+}
+
+.dashboard-tier-line span:not(.membership-badge) {
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
 .membership-badge {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
   padding: 0.35rem 0.8rem;
   border-radius: 999px;
-  background: linear-gradient(135deg, var(--gold), #d4af37);
-  color: #fff;
+  border: 1px solid transparent;
   font-size: 0.68rem;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.06em;
+}
+
+.membership-badge.starter {
+  border-color: rgba(11, 109, 100, 0.2);
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+}
+
+.membership-badge.bronze {
+  background: linear-gradient(135deg, #8d5136, #c6825a);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(141, 81, 54, 0.2);
+}
+
+.membership-badge.silver {
+  background: linear-gradient(135deg, #7d8b92, #d8e0e2);
+  color: #16201f;
+  box-shadow: 0 4px 12px rgba(125, 139, 146, 0.2);
+}
+
+.membership-badge.gold {
+  background: linear-gradient(135deg, var(--gold), #d4af37);
+  color: #fff;
   box-shadow: 0 4px 12px rgba(183, 138, 47, 0.24);
-  margin-top: 0.75rem;
+}
+
+.membership-badge.platinum {
+  background: linear-gradient(135deg, #52636f, #d6eef0);
+  color: #101817;
+  box-shadow: 0 4px 12px rgba(82, 99, 111, 0.22);
+}
+
+.membership-badge.diamond {
+  background: linear-gradient(135deg, #0b6d64, #97f1e8);
+  color: #09201e;
+  box-shadow: 0 4px 14px rgba(11, 109, 100, 0.24);
 }
 
 .dashboard-metrics {
@@ -2887,10 +2961,12 @@ textarea:focus {
 .dashboard-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.55fr);
+  align-items: start;
   gap: 0.8rem;
 }
 
 .dashboard-card {
+  align-self: start;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--surface);
@@ -2934,6 +3010,47 @@ textarea:focus {
 .dashboard-list {
   display: grid;
   gap: 0.75rem;
+}
+
+.dashboard-empty-state {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.9rem;
+  min-height: 118px;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface-strong);
+}
+
+.dashboard-empty-state strong {
+  display: block;
+  margin-bottom: 0.18rem;
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.dashboard-empty-state p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.empty-state-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+}
+
+.empty-state-icon svg {
+  width: 22px;
+  height: 22px;
 }
 
 .user-booking-card {
@@ -3120,6 +3237,7 @@ textarea:focus {
   flex-direction: column;
   align-items: center;
   gap: 0.8rem;
+  min-height: 100%;
 }
 
 .profile-card {
@@ -3128,6 +3246,10 @@ textarea:focus {
   align-items: center;
   text-align: center;
   width: 100%;
+  padding: 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface-strong);
 }
 
 .profile-avatar-container {
@@ -3139,6 +3261,7 @@ textarea:focus {
   width: 68px;
   height: 68px;
   border-radius: 50%;
+  overflow: hidden;
   background: linear-gradient(135deg, var(--primary), var(--accent));
   color: #fff;
   font-size: 1.7rem;
@@ -3148,6 +3271,18 @@ textarea:focus {
   place-items: center;
   box-shadow: 0 4px 14px rgba(11, 109, 100, 0.2);
   letter-spacing: 0.02em;
+}
+
+.profile-avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-avatar-image.initials {
+  display: grid;
+  place-items: center;
+  color: #fff;
 }
 
 .profile-avatar-status {
@@ -3161,11 +3296,44 @@ textarea:focus {
   border: 2px solid var(--surface);
 }
 
+.profile-avatar-upload {
+  position: absolute;
+  right: -0.2rem;
+  bottom: -0.1rem;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 2px solid var(--surface);
+  border-radius: 50%;
+  background: var(--primary);
+  color: var(--primary-dark);
+  box-shadow: var(--shadow-soft);
+  cursor: pointer;
+}
+
+.profile-avatar-upload svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: #fff;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
+.profile-avatar-upload input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
 .profile-info-block {
   width: 100%;
   display: grid;
   gap: 0.5rem;
-  margin-bottom: 0.75rem;
+  margin: 0.75rem 0;
   text-align: left;
 }
 
@@ -4479,6 +4647,7 @@ td small {
   .hotel-bottom,
   .hotel-filter-actions,
   .hotel-results-head,
+  .dashboard-empty-state,
   .trip-item,
   .preview-row,
   .dashboard-hero,

@@ -1,7 +1,9 @@
 import { findHotel, getCurrentUser, getState, isAdminUser, updateState } from "./store.js";
-import { animatePage, formatCurrency, formatStatus, initAuthChrome, initHeader, initTheme, showToast, statusPill } from "./ui.js";
+import { animatePage, formatCurrency, formatStatus, initAuthChrome, initHeader, initTheme, showToast, statusPill, updateUserNavAvatar, userAvatarMarkup } from "./ui.js";
 
 const currentUser = getCurrentUser();
+let activeFilter = "all";
+let isEditingProfile = false;
 
 initTheme();
 initHeader();
@@ -16,9 +18,6 @@ if (!currentUser) {
   renderDashboard();
   initDashboardActions();
 }
-
-let activeFilter = "all";
-let isEditingProfile = false;
 
 function getGreeting() {
   const hr = new Date().getHours();
@@ -36,17 +35,38 @@ function formatDateShort(dateStr) {
   }
 }
 
+function getMembershipBadge(approvedCount) {
+  if (approvedCount >= 12) {
+    return { label: "AzureStay Diamond Elite", className: "diamond", detail: `${approvedCount} approved stays` };
+  }
+  if (approvedCount >= 8) {
+    return { label: "AzureStay Platinum Elite", className: "platinum", detail: `${approvedCount} approved stays` };
+  }
+  if (approvedCount >= 5) {
+    return { label: "AzureStay Gold", className: "gold", detail: `${approvedCount} approved stays` };
+  }
+  if (approvedCount >= 2) {
+    return { label: "AzureStay Silver", className: "silver", detail: `${approvedCount} approved stays` };
+  }
+  if (approvedCount === 1) {
+    return { label: "AzureStay Bronze", className: "bronze", detail: "1 approved stay" };
+  }
+  return { label: "AzureStay Starter", className: "starter", detail: "Approve bookings to unlock elite tiers" };
+}
+
 function renderDashboard() {
   const state = getState();
-  const bookings = state.bookings.filter((booking) => booking.userId === currentUser.id);
+  const bookings = (state.bookings || []).filter((booking) => booking.userId === currentUser.id);
   const paid = bookings.filter((booking) => booking.payment === "paid").length;
   const approved = bookings.filter((booking) => booking.status === "approved").length;
   const pending = bookings.filter((booking) => booking.status === "pending").length;
+  const membership = getMembershipBadge(approved);
 
   // Render hero greetings & membership badge
-  document.querySelector("[data-dashboard-name]").innerHTML = `
-    ${getGreeting()}, ${currentUser.name}.
-    <div><span class="membership-badge">AzureStay Elite Gold</span></div>
+  document.querySelector("[data-dashboard-name]").textContent = `${getGreeting()}, ${currentUser.name}.`;
+  document.querySelector("[data-dashboard-tier]").innerHTML = `
+    <span class="membership-badge ${membership.className}">${membership.label}</span>
+    <span>${membership.detail}</span>
   `;
   document.querySelector("[data-dashboard-subtitle]").textContent = `You have ${bookings.length} stay request${bookings.length === 1 ? "" : "s"} linked to your account.`;
 
@@ -113,25 +133,39 @@ function renderDashboard() {
   // Render bookings
   document.querySelector("[data-user-bookings]").innerHTML = filteredBookings.length
     ? filteredBookings.map((booking) => renderBookingCard(state, booking)).join("")
-    : `<div class="empty-state">No bookings found matching this filter.</div>`;
+    : renderEmptyBookings(bookings.length);
+}
+
+function renderEmptyBookings(totalBookings) {
+  const isFiltered = totalBookings > 0;
+  return `
+    <div class="dashboard-empty-state">
+      <div class="empty-state-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 2v4M16 2v4M3 10h18" />
+          <path d="M5 4h14a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z" />
+          <path d="m9 15 2 2 4-5" />
+        </svg>
+      </div>
+      <div>
+        <strong>${isFiltered ? "No bookings match this filter" : "No bookings yet"}</strong>
+        <p>${isFiltered ? "Try another booking status to see your stay requests." : "Your booking requests will appear here after you request a hotel stay."}</p>
+      </div>
+      ${isFiltered ? "" : `<a class="primary-button compact" href="hotels.html">Browse hotels</a>`}
+    </div>
+  `;
 }
 
 function renderProfile() {
   const profileContainer = document.querySelector("[data-user-profile]");
   if (!profileContainer) return;
-
-  const initials = currentUser.name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .substring(0, 2)
-    .toUpperCase();
+  const avatarStatusText = currentUser.avatar ? "Change photo" : "Upload photo";
 
   if (!isEditingProfile) {
     profileContainer.innerHTML = `
       <div class="profile-card">
         <div class="profile-avatar-container">
-          <div class="profile-avatar">${initials}</div>
+          <div class="profile-avatar">${userAvatarMarkup(currentUser, "profile-avatar-image")}</div>
           <div class="profile-avatar-status"></div>
         </div>
         <div class="profile-info-block">
@@ -149,7 +183,11 @@ function renderProfile() {
           </div>
           <div class="profile-field">
             <label>Account Role</label>
-            <span>Guest Patron</span>
+            <span>User Member</span>
+          </div>
+          <div class="profile-field">
+            <label>Account Status</label>
+            <span>${currentUser.status || "Active"}</span>
           </div>
         </div>
         <div class="profile-actions">
@@ -161,8 +199,15 @@ function renderProfile() {
     profileContainer.innerHTML = `
       <div class="profile-card">
         <div class="profile-avatar-container">
-          <div class="profile-avatar">${initials}</div>
+          <div class="profile-avatar">${userAvatarMarkup(currentUser, "profile-avatar-image")}</div>
           <div class="profile-avatar-status"></div>
+          <label class="profile-avatar-upload" title="${avatarStatusText}" aria-label="${avatarStatusText}">
+            <input type="file" accept="image/png,image/jpeg,image/webp" data-profile-image-input />
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 8h3l1.6-2h6.8L17 8h3a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2Z" />
+              <circle cx="12" cy="14" r="3.2" />
+            </svg>
+          </label>
         </div>
         <form class="profile-info-block" id="profile-edit-form">
           <div class="profile-field editing">
@@ -442,6 +487,44 @@ function initDashboardActions() {
   // Profile Edit / Toggle Interactions
   const profileContainer = document.querySelector("[data-user-profile]");
   if (profileContainer) {
+    profileContainer.addEventListener("change", (event) => {
+      const input = event.target.closest("[data-profile-image-input]");
+      if (!input) return;
+      const file = input.files?.[0];
+      if (!file) return;
+
+      if (!file.type.startsWith("image/")) {
+        showToast("Please upload a valid image file.", "warning");
+        input.value = "";
+        return;
+      }
+
+      if (file.size > 750 * 1024) {
+        showToast("Profile image must be under 750 KB.", "warning");
+        input.value = "";
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.addEventListener("load", () => {
+        const avatar = String(reader.result || "");
+        updateState((state) => {
+          const user = state.users.find((u) => u.id === currentUser.id);
+          if (user) {
+            user.avatar = avatar;
+            currentUser.avatar = avatar;
+          }
+        });
+        renderProfile();
+        updateUserNavAvatar(currentUser);
+        showToast("Profile image updated.");
+      });
+      reader.addEventListener("error", () => {
+        showToast("Could not read that image file.", "warning");
+      });
+      reader.readAsDataURL(file);
+    });
+
     profileContainer.addEventListener("click", (event) => {
       // Toggle edit mode
       if (event.target.closest("[data-edit-profile]")) {
@@ -488,6 +571,7 @@ function initDashboardActions() {
       // Update UI greeting and side panels
       isEditingProfile = false;
       renderDashboard();
+      updateUserNavAvatar(currentUser);
       showToast("Profile updated successfully.");
     });
   }

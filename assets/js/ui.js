@@ -53,6 +53,51 @@ export function initHeader() {
   window.addEventListener("scroll", updateHeader, { passive: true });
 }
 
+function getUserInitials(user) {
+  return String(user?.name || "User")
+    .split(" ")
+    .filter(Boolean)
+    .map((part) => part[0])
+    .join("")
+    .substring(0, 2)
+    .toUpperCase();
+}
+
+export function userAvatarMarkup(user, className = "user-avatar") {
+  if (user?.avatar) {
+    return `<img class="${className}" src="${user.avatar}" alt="${user.name || "User"} profile image" />`;
+  }
+  return `<span class="${className} initials">${getUserInitials(user)}</span>`;
+}
+
+export function updateUserNavAvatar(user = getCurrentUser()) {
+  const headerActions = document.querySelector(".header-actions");
+  if (!headerActions) return;
+
+  let avatarLink = headerActions.querySelector("[data-user-nav-avatar]");
+  if (!user) {
+    avatarLink?.remove();
+    return;
+  }
+
+  const inPagesDirectory = window.location.pathname.includes("/pages/");
+  const pagePrefix = inPagesDirectory ? "" : "pages/";
+  const href = isAdminUser(user) ? `${pagePrefix}admin.html` : `${pagePrefix}dashboard.html`;
+
+  if (!avatarLink) {
+    avatarLink = document.createElement("a");
+    avatarLink.className = "header-user-avatar";
+    avatarLink.dataset.userNavAvatar = "";
+    const logoutButton = headerActions.querySelector("[data-logout]");
+    headerActions.insertBefore(avatarLink, logoutButton || null);
+  }
+
+  avatarLink.href = href;
+  avatarLink.setAttribute("aria-label", `${user.name || "User"} profile`);
+  avatarLink.title = user.name || "User profile";
+  avatarLink.innerHTML = userAvatarMarkup(user, "nav-avatar");
+}
+
 export function initAuthChrome() {
   const currentUser = getCurrentUser();
   const authLink = document.querySelector("[data-auth-link]");
@@ -70,6 +115,8 @@ export function initAuthChrome() {
   if (signupLink && currentUser) {
     signupLink.hidden = true;
   }
+
+  updateUserNavAvatar(currentUser);
 
   if (adminPromos.length && currentUser && !isAdminUser(currentUser)) {
     adminPromos.forEach((promo) => {
