@@ -112,7 +112,7 @@ export function showToast(message, tone = "default") {
 export function formatCurrency(value) {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
-    currency: "USD",
+    currency: "BDT",
     maximumFractionDigits: 0
   }).format(Number(value));
 }
