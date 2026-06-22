@@ -221,18 +221,18 @@
           </div>
           <div class="admin-section-summary" data-transaction-summary></div>
 
-          <div class="admin-grid-two" style="grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.75fr); gap: 1rem; align-items: start; display: grid;">
+          <div class="admin-grid-two transaction-admin-grid">
             <!-- Left side: Transactions Table -->
-            <article class="admin-card" style="padding: 1rem; margin: 0;">
+            <article class="admin-card" style="padding: 1rem; margin: 0; min-width: 0;">
               <div class="card-heading" style="margin-bottom: 1rem;">
                 <h2>Transactions list</h2>
                 <span>Payment requests</span>
               </div>
-              <div class="filter-bar" style="margin-bottom: 1rem; display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: space-between;">
-                <div class="search-input-wrap" style="flex: 1; min-width: 180px; max-width: 260px; margin: 0;">
+              <div class="filter-bar transaction-filter-bar" style="margin-bottom: 1rem;">
+                <div class="search-input-wrap">
                   <input type="text" data-filter-transaction-search placeholder="Search guest, reference, Txn ID..." style="width: 100%; height: 38px; border-radius: 8px; border: 1px solid var(--line); padding: 0.5rem 0.75rem; background: var(--surface-strong); color: var(--text);" />
                 </div>
-                <div class="select-filters" style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+                <div class="select-filters">
                   <select data-filter-transaction-type style="height: 38px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface-strong); color: var(--text); font-weight: 800; font-size: 0.8rem; padding: 0 0.5rem;">
                     <option value="all">All Types</option>
                     <option value="hotel">Hotels Only</option>
@@ -254,7 +254,7 @@
                 </div>
               </div>
               <div class="table-wrap">
-                <table>
+                <table class="transactions-table">
                   <thead>
                     <tr>
                       <th>Type</th>
@@ -273,7 +273,7 @@
             </article>
 
             <!-- Right side: Payment Methods Manager -->
-            <article class="admin-card" style="padding: 1rem; margin: 0;">
+            <article class="admin-card" style="padding: 1rem; margin: 0; min-width: 0;">
               <div class="card-heading" style="margin-bottom: 1rem;">
                 <h2>Configure methods</h2>
                 <span>MFS phone numbers</span>
@@ -503,6 +503,13 @@
           <button class="primary-button compact danger" type="button" data-confirm-ok>Delete</button>
         </div>
       </div>
+    </div>
+
+    <!-- Global Transactions Actions Dropdown -->
+    <div id="globalTxDropdown" class="actions-dropdown-menu" style="position: fixed; z-index: 9999; display: none; flex-direction: column;">
+      <button type="button" class="dropdown-item" data-tx-action="view">View Details</button>
+      <button type="button" class="dropdown-item" data-tx-action="approve">Approve</button>
+      <button type="button" class="dropdown-item danger" data-tx-action="delete">Delete</button>
     </div>
 
     <!-- Transaction Details Modal -->

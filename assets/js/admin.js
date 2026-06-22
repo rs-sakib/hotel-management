@@ -282,31 +282,7 @@ function initAdminForms() {
     reader.readAsDataURL(file);
   });
 
-  document.querySelector("[data-transactions-table]")?.addEventListener("click", (event) => {
-    // Toggle actions dropdown menu on three-dots click
-    const dotsBtn = event.target.closest(".three-dots-btn");
-    if (dotsBtn) {
-      event.stopPropagation();
-      const menu = dotsBtn.nextElementSibling;
-      if (menu) {
-        const wasHidden = menu.hasAttribute("hidden");
-        document.querySelectorAll(".actions-dropdown-menu").forEach((m) => m.setAttribute("hidden", ""));
-        if (wasHidden) {
-          menu.removeAttribute("hidden");
-        } else {
-          menu.setAttribute("hidden", "");
-        }
-      }
-      return;
-    }
-
-    const actionButton = event.target.closest("[data-tx-action]");
-    if (!actionButton) return;
-    const { txId, txItemType, txAction } = actionButton.dataset;
-
-    const menu = actionButton.closest(".actions-dropdown-menu");
-    if (menu) menu.setAttribute("hidden", "");
-
+  const executeTransactionAction = (txId, txItemType, txAction) => {
     if (txAction === "delete") {
       showConfirm("Delete this request record?", () => {
         updateState((state) => {
@@ -402,36 +378,100 @@ function initAdminForms() {
           <strong>Reference ID:</strong>
           <span style="color: var(--muted); font-weight: 700;">#${escapeHtml(tx.id)}</span>
         </div>
-        <div><strong>Type:</strong> <span class="status-pill">${escapeHtml(tx.type)}</span></div>
         <div><strong>Guest Name:</strong> ${escapeHtml(tx.guestName)}</div>
         <div><strong>Guest Email:</strong> ${escapeHtml(tx.guestEmail)}</div>
         <div><strong>Guest Phone:</strong> ${escapeHtml(tx.guestPhone)}</div>
-        <div><strong>Reference Name:</strong> ${escapeHtml(tx.reference)}</div>
-        <div><strong>Details:</strong> ${escapeHtml(tx.detail)}</div>
         <div><strong>Payment Method:</strong> <span class="status-pill">${escapeHtml(tx.method)}</span></div>
         <div><strong>Transaction ID:</strong> <code style="font-family: monospace; font-size: 0.95rem; font-weight: bold; color: var(--gold);">${escapeHtml(tx.transactionId || "N/A")}</code></div>
         <div><strong>Amount:</strong> <strong>${formatCurrency(tx.amount)}</strong></div>
         <div><strong>Payment Status:</strong> ${escapeHtml(tx.status.toUpperCase())}</div>
-        <div><strong>Booking Status:</strong> ${escapeHtml(tx.bookingStatus.toUpperCase())}</div>
       `;
-
-      if (tx.note) {
-        detailsHtml += `<div style="grid-column: 1 / -1; margin-top: 0.5rem; border-top: 1px dashed var(--line); padding-top: 0.5rem; width: 100%;">
-          <strong>Special Request Notes:</strong>
-          <p style="margin: 0.2rem 0; color: var(--muted); line-height: 1.4;">${escapeHtml(tx.note)}</p>
-        </div>`;
-      }
 
       content.innerHTML = detailsHtml;
       overlay.classList.add("open");
-      return;
+    }
+  };
+
+  document.querySelector("[data-transactions-table]")?.addEventListener("click", (event) => {
+    const dotsBtn = event.target.closest(".three-dots-btn");
+    if (dotsBtn) {
+      event.stopPropagation();
+      const dropdown = document.getElementById("globalTxDropdown");
+      if (!dropdown) return;
+
+      const txId = dotsBtn.dataset.txId;
+      const txItemType = dotsBtn.dataset.txItemType;
+      const bookingStatus = dotsBtn.dataset.bookingStatus;
+
+      const isSame = dropdown.style.display === "flex" && dropdown.dataset.activeTxId === txId;
+      if (isSame) {
+        dropdown.style.display = "none";
+        dropdown.removeAttribute("data-active-tx-id");
+        return;
+      }
+
+      dropdown.dataset.activeTxId = txId;
+      dropdown.querySelectorAll("[data-tx-action]").forEach((btn) => {
+        btn.dataset.txId = txId;
+        btn.dataset.txItemType = txItemType;
+        if (btn.dataset.txAction === "approve") {
+          if (bookingStatus === "approved") {
+            btn.setAttribute("disabled", "true");
+          } else {
+            btn.removeAttribute("disabled");
+          }
+        }
+      });
+
+      dropdown.style.display = "flex";
+
+      const rect = dotsBtn.getBoundingClientRect();
+      const dropdownWidth = 150;
+      let left = rect.right - dropdownWidth;
+      if (left < 10) left = 10;
+
+      let top = rect.bottom + 4;
+      const dropdownHeight = dropdown.offsetHeight || 116;
+      if (top + dropdownHeight > window.innerHeight) {
+        top = rect.top - dropdownHeight - 4;
+      }
+
+      dropdown.style.top = `${top}px`;
+      dropdown.style.left = `${left}px`;
     }
   });
 
-  // Close actions dropdown when clicking outside
-  document.addEventListener("click", () => {
-    document.querySelectorAll(".actions-dropdown-menu").forEach((m) => m.setAttribute("hidden", ""));
+  const globalTxDropdown = document.getElementById("globalTxDropdown");
+  globalTxDropdown?.addEventListener("click", (event) => {
+    const actionButton = event.target.closest("[data-tx-action]");
+    if (!actionButton) return;
+    if (actionButton.hasAttribute("disabled") || actionButton.disabled) return;
+    event.stopPropagation();
+
+    globalTxDropdown.style.display = "none";
+    globalTxDropdown.removeAttribute("data-active-tx-id");
+
+    const { txId, txItemType, txAction } = actionButton.dataset;
+    executeTransactionAction(txId, txItemType, txAction);
   });
+
+  document.addEventListener("click", (event) => {
+    document.querySelectorAll(".actions-dropdown-menu:not(#globalTxDropdown)").forEach((m) => m.setAttribute("hidden", ""));
+
+    const globalTxDropdown = document.getElementById("globalTxDropdown");
+    if (globalTxDropdown && !event.target.closest(".three-dots-btn") && !event.target.closest("#globalTxDropdown")) {
+      globalTxDropdown.style.display = "none";
+      globalTxDropdown.removeAttribute("data-active-tx-id");
+    }
+  });
+
+  window.addEventListener("scroll", () => {
+    const globalTxDropdown = document.getElementById("globalTxDropdown");
+    if (globalTxDropdown && globalTxDropdown.style.display === "flex") {
+      globalTxDropdown.style.display = "none";
+      globalTxDropdown.removeAttribute("data-active-tx-id");
+    }
+  }, true);
 
   const methodForm = document.querySelector("[data-payment-method-form]");
   const cancelMethodEditBtn = document.getElementById("cancelMethodEdit");
@@ -1598,19 +1638,17 @@ function renderTransactions(state) {
             <tr>
               <td data-label="Type"><span class="${typeClass}">${tx.type}</span></td>
               <td data-label="Guest"><strong>${escapeHtml(tx.guestName)}</strong><br><small>${escapeHtml(tx.guestEmail)}</small></td>
-              <td data-label="Reference"><strong>${escapeHtml(tx.reference)}</strong><br><small>${escapeHtml(tx.detail)}</small></td>
+              <td data-label="Reference" class="transaction-reference"><strong>${escapeHtml(tx.reference)}</strong></td>
               <td data-label="Method"><span class="status-pill">${escapeHtml(tx.method)}</span></td>
-              <td data-label="Transaction ID"><code style="font-family: monospace; font-size: 0.88rem; font-weight: bold; color: var(--gold);">${escapeHtml(tx.transactionId || "N/A")}</code></td>
+              <td data-label="Transaction ID" class="transaction-id-cell"><code style="font-family: monospace; font-size: 0.88rem; font-weight: bold; color: var(--gold);">${escapeHtml(tx.transactionId || "N/A")}</code></td>
               <td data-label="Amount"><strong>${formatCurrency(tx.amount)}</strong></td>
               <td data-label="Status">${statusPill(tx.status === "paid" ? "paid" : "unpaid")}</td>
               <td data-label="Actions">
                 <div class="actions-dropdown-container">
-                  <button class="three-dots-btn" type="button" aria-label="Actions">⋮</button>
-                  <div class="actions-dropdown-menu" hidden>
-                    <button type="button" class="dropdown-item" data-tx-id="${tx.id}" data-tx-item-type="${tx.itemType}" data-tx-action="view">View Details</button>
-                    <button type="button" class="dropdown-item" data-tx-id="${tx.id}" data-tx-item-type="${tx.itemType}" data-tx-action="approve" ${tx.bookingStatus === "approved" ? "disabled" : ""}>Approve</button>
-                    <button type="button" class="dropdown-item danger" data-tx-id="${tx.id}" data-tx-item-type="${tx.itemType}" data-tx-action="delete">Delete</button>
-                  </div>
+                  <button class="three-dots-btn" type="button" aria-label="Actions" 
+                          data-tx-id="${tx.id}" 
+                          data-tx-item-type="${tx.itemType}" 
+                          data-booking-status="${tx.bookingStatus}">⋮</button>
                 </div>
               </td>
             </tr>
@@ -1671,4 +1709,3 @@ function renderTransactionMethodFilter(state) {
     filters.transactions.method = "all";
   }
 }
-
