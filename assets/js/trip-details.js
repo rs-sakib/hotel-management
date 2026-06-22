@@ -74,6 +74,124 @@ function renderTripDetails() {
 }
 
 function initTripBookingForm() {
+  // Get DOM elements for dynamic payment display
+  const paymentChoiceRadios = bookingForm.querySelectorAll('input[name="payment"]');
+  const paymentMethodsFieldset = bookingForm.querySelector('.payment-methods');
+  const depositAmountVal = bookingForm.querySelector('#depositAmountVal');
+  const merchantNumberVal = bookingForm.querySelector('#merchantNumberVal');
+  const transactionIdInput = bookingForm.querySelector('#transactionId');
+  const methodGrid = bookingForm.querySelector("#paymentMethodGrid");
+
+  // Load dynamic payment methods from state
+  const state = getState();
+  const methods = state.paymentMethods || [];
+  const currentUser = getCurrentUser();
+  const hasPendingRequest = currentUser && (state.tripBookings || []).some(
+    (tb) => tb.tripId === trip.id && tb.userId === currentUser.id && tb.status === "pending"
+  );
+
+  // Render methods dynamically
+  if (methodGrid) {
+    if (methods.length > 0) {
+      methodGrid.innerHTML = methods.map((method, index) => `
+        <label class="payment-method-card ${index === 0 ? 'selected' : ''}">
+          <input type="radio" name="paymentMethod" value="${escapeHtml(method.name)}" ${index === 0 ? 'checked' : ''} />
+          <div class="method-logo-wrap">
+            <img src="${escapeHtml(method.logo)}" alt="${escapeHtml(method.name)}" />
+          </div>
+          <span class="method-name">${escapeHtml(method.name)}</span>
+        </label>
+      `).join("");
+    } else {
+      methodGrid.innerHTML = `<div class="payment-info-note full-span">No payment methods configured by admin. Please contact support.</div>`;
+    }
+  }
+
+  if (hasPendingRequest) {
+    const submitBtn = bookingForm.querySelector('button[type="submit"]');
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Request Pending Approval";
+      submitBtn.style.background = "var(--muted)";
+      submitBtn.style.cursor = "not-allowed";
+    }
+
+    const warningMsg = document.createElement("div");
+    warningMsg.className = "payment-info-box full-span";
+    warningMsg.style.borderColor = "var(--gold)";
+    warningMsg.style.background = "var(--primary-soft)";
+    warningMsg.style.marginTop = "0";
+    warningMsg.style.marginBottom = "1rem";
+    warningMsg.innerHTML = `
+      <div class="payment-info-row">
+        <strong style="color: var(--gold); font-weight: 800;">Pending Request</strong>
+      </div>
+      <p class="payment-info-note" style="color: var(--text);">
+        You already have a pending trip request for this destination. You cannot submit another request until the administrator reviews your pending application.
+      </p>
+    `;
+    const formGrid = bookingForm.querySelector(".form-grid");
+    if (formGrid) {
+      formGrid.insertBefore(warningMsg, formGrid.firstChild);
+    }
+
+    bookingForm.querySelectorAll("input, select, textarea").forEach((input) => {
+      input.disabled = true;
+    });
+  }
+
+  function updatePaymentUI() {
+    const selectedRadio = bookingForm.querySelector('input[name="payment"]:checked');
+    const isPaid = selectedRadio && selectedRadio.value === "paid";
+    if (isPaid) {
+      if (paymentMethodsFieldset) paymentMethodsFieldset.style.display = "block";
+      if (transactionIdInput) transactionIdInput.setAttribute("required", "");
+    } else {
+      if (paymentMethodsFieldset) paymentMethodsFieldset.style.display = "none";
+      if (transactionIdInput) transactionIdInput.removeAttribute("required");
+    }
+  }
+
+  function updateMerchantNumber() {
+    const selectedRadio = bookingForm.querySelector('input[name="paymentMethod"]:checked');
+    if (!selectedRadio) {
+      if (merchantNumberVal) merchantNumberVal.textContent = "N/A";
+      return;
+    }
+    const methodName = selectedRadio.value;
+    const method = methods.find((m) => m.name === methodName);
+    if (merchantNumberVal) {
+      merchantNumberVal.textContent = method ? method.number : "N/A";
+    }
+  }
+
+  // Set deposit amount (10% of estimated budget)
+  if (depositAmountVal && trip && trip.budget) {
+    const depositAmount = Math.round(Number(trip.budget) * 0.1);
+    depositAmountVal.textContent = formatCurrency(depositAmount);
+  }
+
+  paymentChoiceRadios.forEach((radio) => radio.addEventListener("change", updatePaymentUI));
+
+  if (methodGrid) {
+    methodGrid.addEventListener("change", (e) => {
+      if (e.target.name === "paymentMethod") {
+        methodGrid.querySelectorAll(".payment-method-card").forEach((card) => {
+          card.classList.remove("selected");
+        });
+        const activeCard = e.target.closest(".payment-method-card");
+        if (activeCard) {
+          activeCard.classList.add("selected");
+        }
+        updateMerchantNumber();
+      }
+    });
+  }
+
+  // Initialize UI state
+  updatePaymentUI();
+  updateMerchantNumber();
+
   bookingForm.addEventListener("submit", (event) => {
     event.preventDefault();
 
@@ -85,6 +203,8 @@ function initTripBookingForm() {
     }
 
     const formData = new FormData(bookingForm);
+    const paymentChoice = formData.get("payment");
+
     updateState((draft) => {
       draft.tripBookings = draft.tripBookings || [];
       if (!draft.trips.some((item) => item.id === trip.id)) {
@@ -109,8 +229,9 @@ function initTripBookingForm() {
         contact: formData.get("contact"),
         note: formData.get("note") || "No special request.",
         status: "pending",
-        payment: formData.get("payment"),
-        paymentMethod: formData.get("paymentMethod"),
+        payment: paymentChoice,
+        paymentMethod: paymentChoice === "paid" ? formData.get("paymentMethod") : "N/A",
+        transactionId: paymentChoice === "paid" ? (formData.get("transactionId") || "").trim() : "",
         createdAt: new Date().toISOString()
       });
     });
@@ -119,7 +240,12 @@ function initTripBookingForm() {
     bookingForm.reset();
     bookingForm.tripId.value = trip.id;
     bookingForm.preferredDate.value = preferredDate;
+    updatePaymentUI();
+    updateMerchantNumber();
     showToast("Trip request sent to admin for review.");
+    setTimeout(() => {
+      window.location.href = "../index.html";
+    }, 1500);
   });
 }
 

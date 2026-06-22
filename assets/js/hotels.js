@@ -1,4 +1,4 @@
-import { getState } from "./store.js";
+import { getCurrentUser, getState } from "./store.js";
 import { loadHotelCatalog } from "./hotel-catalog.js";
 import { animatePage, formatCurrency, initAuthChrome, initHeader, initTheme } from "./ui.js";
 import { initCustomControls } from "./controls.js";
@@ -147,11 +147,18 @@ function renderHotelCard(hotel) {
   const badge = hotel.rating >= 4.9
     ? { text: "Recommended", class: "recommended" }
     : { text: "Top", class: "top-choice" };
+
+  const currentUser = getCurrentUser();
+  const bookings = state.bookings || [];
+  const isPending = currentUser && bookings.some((b) => b.hotelId === hotel.id && b.userId === currentUser.id && b.status === "pending");
+  const pendingBadge = isPending ? `<span class="glass-tag" style="background: rgba(183, 138, 47, 0.85); border-color: rgba(255, 255, 255, 0.25);">Pending</span>` : "";
+
   return `
     <article class="hotel-card hotel-directory-card">
       <a class="hotel-image" href="${detailsUrl}" aria-label="View ${escapeAttr(hotel.name)} details">
         <img src="${escapeAttr(hotel.image)}" alt="${escapeAttr(hotel.name)}" loading="lazy">
         <div class="hotel-badges-container">
+          ${pendingBadge}
           <span class="glass-tag ${badge.class}">${badge.text}</span>
           <span class="glass-tag glass-rating-badge">
             <svg class="star-icon" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>

@@ -50,11 +50,39 @@
         </div>
       </section>
 
-      <section class="hotel-detail-layout">
+      <form class="hotel-detail-layout" data-detail-booking-form>
         <article class="detail-info-panel">
           <p class="eyebrow">Stay overview</p>
           <h2>Designed for smooth arrivals and confident reservations.</h2>
           <div class="detail-feature-grid" data-detail-features></div>
+
+          <fieldset class="payment-methods full-span" style="border: none; padding: 0; margin-top: 2.5rem;">
+            <legend style="font-family: var(--font-display); font-size: 1.25rem; font-weight: 800; color: var(--text); margin-bottom: 0.75rem;">Payment method</legend>
+            <div class="payment-method-grid" id="paymentMethodGrid">
+              <!-- Dynamically rendered via JS -->
+            </div>
+
+            <!-- Merchant Number and Deposit Amount display -->
+            <div class="payment-info-box full-span" id="paymentInstructionsCard">
+              <div class="payment-info-row">
+                <span>Payable Deposit (1 night):</span>
+                <strong id="depositAmountVal">৳0</strong>
+              </div>
+              <div class="payment-info-row">
+                <span>Merchant Wallet Number:</span>
+                <strong id="merchantNumberVal" class="merchant-num">+880 1700 000000</strong>
+              </div>
+              <p class="payment-info-note">
+                *Send money or cash out the deposit amount to the merchant wallet number above, then enter the Transaction ID below.
+              </p>
+            </div>
+
+            <!-- Transaction Number / ID input -->
+            <label class="full-span" style="display: flex; flex-direction: column; gap: 0.35rem; margin-top: 1rem;">
+              Transaction Number / ID
+              <input type="text" name="transactionId" id="transactionId" placeholder="e.g. TR10293847" style="width: 100%; height: 42px; border-radius: 8px; border: 1px solid var(--line); padding: 0.5rem 0.75rem; background: var(--surface-strong); color: var(--text);" />
+            </label>
+          </fieldset>
         </article>
 
         <aside class="booking-panel" id="booking">
@@ -65,7 +93,7 @@
             </div>
             <span class="price detail-price" data-detail-price></span>
           </div>
-          <form class="form-grid" data-detail-booking-form>
+          <div class="form-grid">
             <input type="hidden" name="hotelId" />
             <label>
               Check in
@@ -98,9 +126,9 @@
               <label><input type="radio" name="payment" value="pending" /> Pay after approval</label>
             </fieldset>
             <button class="primary-button full-span" type="submit">Send booking request</button>
-          </form>
+          </div>
         </aside>
-      </section>
+      </form>
     </main>
 
     <div class="toast-stack" data-toast-stack></div>

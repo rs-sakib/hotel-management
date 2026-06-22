@@ -78,6 +78,32 @@ function normalizeState(state) {
   state.trips = state.trips || [];
   state.bookings = state.bookings || [];
   state.tripBookings = state.tripBookings || [];
+  state.paymentMethods = state.paymentMethods || [
+    {
+      id: "pm-bKash",
+      name: "bKash",
+      number: "+880 1700 000000",
+      logo: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Bkash.webp"
+    },
+    {
+      id: "pm-Rocket",
+      name: "Rocket",
+      number: "+880 1700 000001",
+      logo: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Rocket_mobile_banking_logo.svg"
+    },
+    {
+      id: "pm-upay",
+      name: "upay",
+      number: "+880 1700 000002",
+      logo: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Upay_logo.svg"
+    },
+    {
+      id: "pm-Nagad",
+      name: "Nagad",
+      number: "+880 1700 000003",
+      logo: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Nagad-png.png"
+    }
+  ];
   state.bookings = state.bookings.filter((booking) => !LEGACY_DEMO_BOOKING_IDS.has(booking.id));
   const adminUser = state.users.find((user) => user.id === ADMIN_USER_ID) || state.users.find((user) => user.email?.toLowerCase() === ADMIN_EMAIL);
 

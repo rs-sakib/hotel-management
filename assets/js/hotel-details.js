@@ -63,6 +63,122 @@ function renderHotelDetails() {
 }
 
 function initBookingForm() {
+  const paymentChoiceRadios = bookingForm.querySelectorAll('input[name="payment"]');
+  const paymentMethodsFieldset = bookingForm.querySelector('.payment-methods');
+  const depositAmountVal = bookingForm.querySelector('#depositAmountVal');
+  const merchantNumberVal = bookingForm.querySelector('#merchantNumberVal');
+  const transactionIdInput = bookingForm.querySelector('#transactionId');
+  const methodGrid = bookingForm.querySelector("#paymentMethodGrid");
+
+  // Load dynamic payment methods from state
+  const state = getState();
+  const methods = state.paymentMethods || [];
+  const currentUser = getCurrentUser();
+  const hasPendingRequest = currentUser && state.bookings.some(
+    (b) => b.hotelId === hotel.id && b.userId === currentUser.id && b.status === "pending"
+  );
+
+  // Render methods dynamically
+  if (methodGrid) {
+    if (methods.length > 0) {
+      methodGrid.innerHTML = methods.map((method, index) => `
+        <label class="payment-method-card ${index === 0 ? 'selected' : ''}">
+          <input type="radio" name="paymentMethod" value="${escapeHtml(method.name)}" ${index === 0 ? 'checked' : ''} />
+          <div class="method-logo-wrap">
+            <img src="${escapeHtml(method.logo)}" alt="${escapeHtml(method.name)}" />
+          </div>
+          <span class="method-name">${escapeHtml(method.name)}</span>
+        </label>
+      `).join("");
+    } else {
+      methodGrid.innerHTML = `<div class="payment-info-note full-span">No payment methods configured by admin. Please contact support.</div>`;
+    }
+  }
+
+  if (hasPendingRequest) {
+    const submitBtn = bookingForm.querySelector('button[type="submit"]');
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Request Pending Approval";
+      submitBtn.style.background = "var(--muted)";
+      submitBtn.style.cursor = "not-allowed";
+    }
+
+    const warningMsg = document.createElement("div");
+    warningMsg.className = "payment-info-box full-span";
+    warningMsg.style.borderColor = "var(--gold)";
+    warningMsg.style.background = "var(--primary-soft)";
+    warningMsg.style.marginTop = "0";
+    warningMsg.style.marginBottom = "1rem";
+    warningMsg.innerHTML = `
+      <div class="payment-info-row">
+        <strong style="color: var(--gold); font-weight: 800;">Pending Request</strong>
+      </div>
+      <p class="payment-info-note" style="color: var(--text);">
+        You already have a pending reservation request for this hotel. You cannot submit another request until the administrator reviews your pending application.
+      </p>
+    `;
+    const formGrid = bookingForm.querySelector(".form-grid");
+    if (formGrid) {
+      formGrid.insertBefore(warningMsg, formGrid.firstChild);
+    }
+
+    bookingForm.querySelectorAll("input, select, textarea").forEach((input) => {
+      input.disabled = true;
+    });
+  }
+
+  function updatePaymentUI() {
+    const selectedRadio = bookingForm.querySelector('input[name="payment"]:checked');
+    const isPaid = selectedRadio && selectedRadio.value === "paid";
+    if (isPaid) {
+      if (paymentMethodsFieldset) paymentMethodsFieldset.style.display = "block";
+      if (transactionIdInput) transactionIdInput.setAttribute("required", "");
+    } else {
+      if (paymentMethodsFieldset) paymentMethodsFieldset.style.display = "none";
+      if (transactionIdInput) transactionIdInput.removeAttribute("required");
+    }
+  }
+
+  function updateMerchantNumber() {
+    const selectedRadio = bookingForm.querySelector('input[name="paymentMethod"]:checked');
+    if (!selectedRadio) {
+      if (merchantNumberVal) merchantNumberVal.textContent = "N/A";
+      return;
+    }
+    const methodName = selectedRadio.value;
+    const method = methods.find((m) => m.name === methodName);
+    if (merchantNumberVal) {
+      merchantNumberVal.textContent = method ? method.number : "N/A";
+    }
+  }
+
+  // Set deposit amount (1 night rate)
+  if (depositAmountVal && hotel && hotel.price) {
+    depositAmountVal.textContent = formatCurrency(hotel.price);
+  }
+
+  paymentChoiceRadios.forEach((radio) => radio.addEventListener("change", updatePaymentUI));
+
+  if (methodGrid) {
+    methodGrid.addEventListener("change", (e) => {
+      if (e.target.name === "paymentMethod") {
+        methodGrid.querySelectorAll(".payment-method-card").forEach((card) => {
+          card.classList.remove("selected");
+        });
+        const activeCard = e.target.closest(".payment-method-card");
+        if (activeCard) {
+          activeCard.classList.add("selected");
+        }
+        updateMerchantNumber();
+      }
+    });
+  }
+
+  // Initialize UI state
+  updatePaymentUI();
+  updateMerchantNumber();
+
   bookingForm.addEventListener("submit", (event) => {
     event.preventDefault();
 
@@ -74,6 +190,8 @@ function initBookingForm() {
     }
 
     const formData = new FormData(bookingForm);
+    const paymentChoice = formData.get("payment");
+
     updateState((draft) => {
       if (!draft.hotels.some((item) => item.id === hotel.id)) {
         draft.hotels.push(hotel);
@@ -88,14 +206,21 @@ function initBookingForm() {
         roomType: formData.get("roomType"),
         note: formData.get("note") || "No special request.",
         status: "pending",
-        payment: formData.get("payment"),
+        payment: paymentChoice,
+        paymentMethod: paymentChoice === "paid" ? formData.get("paymentMethod") : "N/A",
+        transactionId: paymentChoice === "paid" ? (formData.get("transactionId") || "").trim() : "",
         createdAt: new Date().toISOString()
       });
     });
 
     bookingForm.reset();
     bookingForm.hotelId.value = hotel.id;
+    updatePaymentUI();
+    updateMerchantNumber();
     showToast("Booking request sent to admin for approval.");
+    setTimeout(() => {
+      window.location.href = "../index.html";
+    }, 1500);
   });
 }
 
@@ -108,4 +233,8 @@ function renderMissingHotel() {
       <a class="primary-button" href="hotels.html">Browse hotels</a>
     </section>
   `;
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[char]);
 }

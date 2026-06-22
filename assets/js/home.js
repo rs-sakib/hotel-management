@@ -1,5 +1,5 @@
 import { createId, findHotel, findUser, getCurrentUser, getState, setCurrentUser, updateState } from "./store.js";
-import { animatePage, formatCurrency, formatStatus, initAuthChrome, initHeader, initTheme, showToast } from "./ui.js";
+import { animatePage, formatCurrency, formatStatus, initAuthChrome, initHeader, initTheme, showToast, statusPill } from "./ui.js";
 import { initCustomControls } from "./controls.js";
 
 const hotelGrid = document.querySelector("[data-hotel-grid]");
@@ -41,16 +41,23 @@ async function loadHomeTrips(fallbackTrips = []) {
 }
 
 function renderHotels(hotels) {
+  const state = getState();
+  const currentUser = getCurrentUser();
+  const bookings = state.bookings || [];
+
   hotelGrid.innerHTML = hotels
     .map((hotel) => {
       const badge = hotel.rating >= 4.9
         ? { text: "Recommended", class: "recommended" }
         : { text: "Top", class: "top-choice" };
+      const isPending = currentUser && bookings.some((b) => b.hotelId === hotel.id && b.userId === currentUser.id && b.status === "pending");
+      const pendingBadge = isPending ? `<span class="glass-tag" style="background: rgba(183, 138, 47, 0.85); border-color: rgba(255, 255, 255, 0.25);">Pending</span>` : "";
       return `
         <article class="hotel-card reveal">
           <div class="hotel-image">
             <img src="${hotel.image}" alt="${hotel.name}" loading="lazy">
             <div class="hotel-badges-container">
+              ${pendingBadge}
               <span class="glass-tag ${badge.class}">${badge.text}</span>
               <span class="glass-tag glass-rating-badge">
                 <svg class="star-icon" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
@@ -82,10 +89,16 @@ function renderHotels(hotels) {
 }
 
 function renderTrips(trips) {
+  const state = getState();
+  const currentUser = getCurrentUser();
+  const tripBookings = state.tripBookings || [];
+
   tripList.innerHTML = trips
     .map((trip, index) => {
       const status = trip.status.toLowerCase().replaceAll(" ", "-");
       const statusLabel = formatTripStatus(trip.status);
+      const isPending = currentUser && tripBookings.some((tb) => tb.tripId === trip.id && tb.userId === currentUser.id && tb.status === "pending");
+      const pendingBadge = isPending ? `<span class="trip-status pending" style="background: var(--gold); color: #fff; border-color: rgba(255, 255, 255, 0.25);">Pending</span>` : "";
       return `
         <article class="trip-journey-card reveal">
           <div class="trip-visual">
@@ -95,7 +108,7 @@ function renderTrips(trips) {
           <div class="trip-copy">
             <div class="trip-card-head">
               <span class="trip-number">${String(index + 1).padStart(2, "0")}</span>
-              <span class="trip-status ${status}">${statusLabel}</span>
+              ${pendingBadge ? pendingBadge : `<span class="trip-status ${status}">${statusLabel}</span>`}
             </div>
             <h3>${trip.title}</h3>
             <p>${trip.concierge}</p>

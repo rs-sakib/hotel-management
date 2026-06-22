@@ -11,13 +11,15 @@ const filters = {
   bookings: { search: "", status: "all", payment: "all" },
   users: { search: "", role: "all" },
   hotels: { search: "" },
-  trips: { search: "" }
+  trips: { search: "" },
+  transactions: { search: "", type: "all", method: "all", status: "all" }
 };
 
 let currentConfirmAction = null;
 const adminPageTitles = {
   overview: "Operations dashboard",
   bookings: "Booking approval desk",
+  transactions: "Transaction payment methods",
   users: "User directory",
   hotels: "Hotel portfolio",
   trips: "Trip operations",
@@ -279,6 +281,233 @@ function initAdminForms() {
     });
     reader.readAsDataURL(file);
   });
+
+  document.querySelector("[data-transactions-table]")?.addEventListener("click", (event) => {
+    // Toggle actions dropdown menu on three-dots click
+    const dotsBtn = event.target.closest(".three-dots-btn");
+    if (dotsBtn) {
+      event.stopPropagation();
+      const menu = dotsBtn.nextElementSibling;
+      if (menu) {
+        const wasHidden = menu.hasAttribute("hidden");
+        document.querySelectorAll(".actions-dropdown-menu").forEach((m) => m.setAttribute("hidden", ""));
+        if (wasHidden) {
+          menu.removeAttribute("hidden");
+        } else {
+          menu.setAttribute("hidden", "");
+        }
+      }
+      return;
+    }
+
+    const actionButton = event.target.closest("[data-tx-action]");
+    if (!actionButton) return;
+    const { txId, txItemType, txAction } = actionButton.dataset;
+
+    const menu = actionButton.closest(".actions-dropdown-menu");
+    if (menu) menu.setAttribute("hidden", "");
+
+    if (txAction === "delete") {
+      showConfirm("Delete this request record?", () => {
+        updateState((state) => {
+          if (txItemType === "booking") {
+            state.bookings = state.bookings.filter((item) => item.id !== txId);
+          } else if (txItemType === "tripBooking") {
+            state.tripBookings = (state.tripBookings || []).filter((item) => item.id !== txId);
+          }
+        });
+        renderAdmin();
+        showToast("Request record deleted.");
+      });
+      return;
+    }
+
+    if (txAction === "approve") {
+      updateState((state) => {
+        if (txItemType === "booking") {
+          const item = state.bookings.find((b) => b.id === txId);
+          if (item) item.status = "approved";
+        } else if (txItemType === "tripBooking") {
+          const item = (state.tripBookings || []).find((tb) => tb.id === txId);
+          if (item) item.status = "approved";
+        }
+      });
+      renderAdmin();
+      showToast("Booking request approved.");
+      return;
+    }
+
+    if (txAction === "view") {
+      const state = getState();
+      const transactions = [];
+
+      // Re-gather transactions with user details to populate details modal
+      (state.bookings || []).forEach((booking) => {
+        const hotel = findHotel(state, booking.hotelId);
+        const user = findUser(state, booking.userId);
+        const nights = getBookingNights(booking);
+        const totalCost = hotel ? Number(hotel.price || 0) * nights : 0;
+        transactions.push({
+          id: booking.id,
+          itemType: "booking",
+          type: "Hotel Stay",
+          guestName: user?.name || "Unknown guest",
+          guestEmail: user?.email || "",
+          guestPhone: user?.phone || "N/A",
+          reference: hotel?.name || "Hotel removed",
+          detail: `${booking.roomType || "Standard"} / ${booking.checkIn} to ${booking.checkOut}`,
+          method: booking.paymentMethod || "N/A",
+          transactionId: booking.transactionId || "",
+          amount: totalCost,
+          status: booking.payment || "pending",
+          bookingStatus: booking.status || "pending",
+          note: booking.note || "",
+          createdAt: booking.createdAt || ""
+        });
+      });
+
+      (state.tripBookings || []).forEach((request) => {
+        const user = findUser(state, request.userId);
+        const trip = state.trips.find((t) => t.id === request.tripId);
+        const totalBudget = trip ? Number(trip.budget || 0) : 0;
+        const depositAmount = Math.round(totalBudget * 0.1);
+        transactions.push({
+          id: request.id,
+          itemType: "tripBooking",
+          type: "Trip Plan",
+          guestName: user?.name || "Unknown guest",
+          guestEmail: user?.email || "",
+          guestPhone: user?.phone || "N/A",
+          reference: request.tripTitle || "Trip removed",
+          detail: `${request.destination || "Destination pending"} / ${request.packageType || "Standard plan"}`,
+          method: request.paymentMethod || "N/A",
+          transactionId: request.transactionId || "",
+          amount: depositAmount,
+          status: request.payment || "pending",
+          bookingStatus: request.status || "pending",
+          note: request.note || "",
+          createdAt: request.createdAt || ""
+        });
+      });
+
+      const tx = transactions.find((t) => t.id === txId);
+      if (!tx) return;
+
+      const overlay = document.querySelector("[data-tx-details-overlay]");
+      const content = document.querySelector("[data-tx-details-content]");
+      if (!overlay || !content) return;
+
+      let detailsHtml = `
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--line); padding-bottom: 0.5rem; margin-bottom: 0.5rem; width: 100%;">
+          <strong>Reference ID:</strong>
+          <span style="color: var(--muted); font-weight: 700;">#${escapeHtml(tx.id)}</span>
+        </div>
+        <div><strong>Type:</strong> <span class="status-pill">${escapeHtml(tx.type)}</span></div>
+        <div><strong>Guest Name:</strong> ${escapeHtml(tx.guestName)}</div>
+        <div><strong>Guest Email:</strong> ${escapeHtml(tx.guestEmail)}</div>
+        <div><strong>Guest Phone:</strong> ${escapeHtml(tx.guestPhone)}</div>
+        <div><strong>Reference Name:</strong> ${escapeHtml(tx.reference)}</div>
+        <div><strong>Details:</strong> ${escapeHtml(tx.detail)}</div>
+        <div><strong>Payment Method:</strong> <span class="status-pill">${escapeHtml(tx.method)}</span></div>
+        <div><strong>Transaction ID:</strong> <code style="font-family: monospace; font-size: 0.95rem; font-weight: bold; color: var(--gold);">${escapeHtml(tx.transactionId || "N/A")}</code></div>
+        <div><strong>Amount:</strong> <strong>${formatCurrency(tx.amount)}</strong></div>
+        <div><strong>Payment Status:</strong> ${escapeHtml(tx.status.toUpperCase())}</div>
+        <div><strong>Booking Status:</strong> ${escapeHtml(tx.bookingStatus.toUpperCase())}</div>
+      `;
+
+      if (tx.note) {
+        detailsHtml += `<div style="grid-column: 1 / -1; margin-top: 0.5rem; border-top: 1px dashed var(--line); padding-top: 0.5rem; width: 100%;">
+          <strong>Special Request Notes:</strong>
+          <p style="margin: 0.2rem 0; color: var(--muted); line-height: 1.4;">${escapeHtml(tx.note)}</p>
+        </div>`;
+      }
+
+      content.innerHTML = detailsHtml;
+      overlay.classList.add("open");
+      return;
+    }
+  });
+
+  // Close actions dropdown when clicking outside
+  document.addEventListener("click", () => {
+    document.querySelectorAll(".actions-dropdown-menu").forEach((m) => m.setAttribute("hidden", ""));
+  });
+
+  const methodForm = document.querySelector("[data-payment-method-form]");
+  const cancelMethodEditBtn = document.getElementById("cancelMethodEdit");
+
+  methodForm?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const formData = new FormData(methodForm);
+    const methodId = formData.get("methodId");
+    const name = String(formData.get("methodName")).trim();
+    const number = String(formData.get("methodNumber")).trim();
+    const logo = String(formData.get("methodLogo")).trim();
+
+    updateState((state) => {
+      state.paymentMethods = state.paymentMethods || [];
+      if (methodId) {
+        // Edit existing
+        const existing = state.paymentMethods.find((m) => m.id === methodId);
+        if (existing) {
+          existing.name = name;
+          existing.number = number;
+          existing.logo = logo || "https://images.unsplash.com/photo-1579621970795-87faff3f2160?auto=format&fit=crop&w=80&q=80";
+        }
+      } else {
+        // Create new
+        state.paymentMethods.push({
+          id: createId("pm"),
+          name,
+          number,
+          logo: logo || "https://images.unsplash.com/photo-1579621970795-87faff3f2160?auto=format&fit=crop&w=80&q=80"
+        });
+      }
+    });
+
+    methodForm.reset();
+    document.getElementById("methodId").value = "";
+    if (cancelMethodEditBtn) cancelMethodEditBtn.style.display = "none";
+    renderAdmin();
+    showToast("Payment method saved.");
+  });
+
+  cancelMethodEditBtn?.addEventListener("click", () => {
+    methodForm.reset();
+    document.getElementById("methodId").value = "";
+    cancelMethodEditBtn.style.display = "none";
+  });
+
+  document.querySelector("[data-admin-payment-methods]")?.addEventListener("click", (event) => {
+    const editBtn = event.target.closest("[data-edit-method-id]");
+    const deleteBtn = event.target.closest("[data-delete-method-id]");
+
+    if (editBtn) {
+      const methodId = editBtn.dataset.editMethodId;
+      const state = getState();
+      const method = (state.paymentMethods || []).find((m) => m.id === methodId);
+      if (method) {
+        document.getElementById("methodId").value = method.id;
+        document.getElementById("methodName").value = method.name;
+        document.getElementById("methodNumber").value = method.number;
+        document.getElementById("methodLogo").value = method.logo || "";
+        if (cancelMethodEditBtn) cancelMethodEditBtn.style.display = "inline-block";
+      }
+      return;
+    }
+
+    if (deleteBtn) {
+      const methodId = deleteBtn.dataset.deleteMethodId;
+      showConfirm("Delete this payment method?", () => {
+        updateState((state) => {
+          state.paymentMethods = (state.paymentMethods || []).filter((m) => m.id !== methodId);
+        });
+        renderAdmin();
+        showToast("Payment method deleted.");
+      });
+      return;
+    }
+  });
 }
 
 function initFilters() {
@@ -317,6 +546,22 @@ function initFilters() {
     renderTrips(getState());
     renderSectionSummaries(getState());
   });
+  bindFilter("[data-filter-transaction-search]", "input", (event) => {
+    filters.transactions.search = event.target.value.toLowerCase().trim();
+    renderTransactions(getState());
+  });
+  bindFilter("[data-filter-transaction-type]", "change", (event) => {
+    filters.transactions.type = event.target.value;
+    renderTransactions(getState());
+  });
+  bindFilter("[data-filter-transaction-method]", "change", (event) => {
+    filters.transactions.method = event.target.value;
+    renderTransactions(getState());
+  });
+  bindFilter("[data-filter-transaction-status]", "change", (event) => {
+    filters.transactions.status = event.target.value;
+    renderTransactions(getState());
+  });
 }
 
 function bindFilter(selector, eventName, handler) {
@@ -343,6 +588,19 @@ function initConfirmModal() {
     if (typeof currentConfirmAction === "function") currentConfirmAction();
     closeConfirm();
   });
+
+  const detailsOverlay = document.querySelector("[data-tx-details-overlay]");
+  const detailsCloseBtn = document.querySelector("[data-tx-details-close]");
+  if (detailsOverlay && detailsCloseBtn) {
+    detailsCloseBtn.addEventListener("click", () => {
+      detailsOverlay.classList.remove("open");
+    });
+    detailsOverlay.addEventListener("click", (event) => {
+      if (event.target === detailsOverlay) {
+        detailsOverlay.classList.remove("open");
+      }
+    });
+  }
 }
 
 function showConfirm(message, onConfirm) {
@@ -368,6 +626,8 @@ function renderAdmin() {
   renderHotels(state);
   renderTrips(state);
   renderTripBookings(state);
+  renderTransactions(state);
+  renderPaymentMethods(state);
   renderAdminProfile();
 }
 
@@ -490,7 +750,7 @@ function renderRevenueChart(state) {
   }
 
   const maxValue = Math.max(...data.map((item) => item.value), 100);
-  
+
   // Dimensions
   const width = 700;
   const height = 220;
@@ -500,7 +760,7 @@ function renderRevenueChart(state) {
   const paddingBottom = 40;
   const plotWidth = width - paddingLeft - paddingRight;
   const plotHeight = height - paddingTop - paddingBottom;
-  
+
   // Calculate points
   const points = data.map((item, index) => {
     const x = paddingLeft + (index * (plotWidth / Math.max(1, data.length - 1)));
@@ -524,7 +784,7 @@ function renderRevenueChart(state) {
   // Draw line path and area path
   let linePathD = "";
   let areaPathD = "";
-  
+
   if (points.length > 0) {
     linePathD = `M ${points[0].x} ${points[0].y} ` + points.slice(1).map(p => `L ${p.x} ${p.y}`).join(" ");
     areaPathD = `M ${points[0].x} ${paddingTop + plotHeight} L ${points[0].x} ${points[0].y} ` + points.slice(1).map(p => `L ${p.x} ${p.y}`).join(" ") + ` L ${points[points.length - 1].x} ${paddingTop + plotHeight} Z`;
@@ -685,7 +945,7 @@ function renderTrendsChart(state) {
     const barX = colCenter - (barWidth / 2);
     const y = paddingTop + plotHeight - (item.value / maxValue) * plotHeight;
     const barHeight = yBottom - y;
-    
+
     let barPath = "";
     if (item.value > 0) {
       const radius = Math.min(r, barHeight);
@@ -845,7 +1105,7 @@ function renderRankedList(selector, items, total, unit) {
   const max = Math.max(...items.map((item) => item.value), 1);
   root.innerHTML = items.length
     ? items
-        .map((item) => `
+      .map((item) => `
           <article class="ranked-item">
             <div>
               <span>${escapeHtml(item.label)}</span>
@@ -855,7 +1115,7 @@ function renderRankedList(selector, items, total, unit) {
             <small>${total ? Math.round((item.value / total) * 100) : 0}%</small>
           </article>
         `)
-        .join("")
+      .join("")
     : `<div class="empty-state">No data available.</div>`;
 }
 
@@ -871,12 +1131,12 @@ function renderOverviewLists(state) {
 
   document.querySelector("[data-payment-monitor]").innerHTML = state.bookings.length
     ? state.bookings
-        .slice(0, 5)
-        .map((booking) => {
-          const hotel = findHotel(state, booking.hotelId);
-          const user = findUser(state, booking.userId);
-          const totalCost = hotel ? Number(hotel.price || 0) * getBookingNights(booking) : 0;
-          return `
+      .slice(0, 5)
+      .map((booking) => {
+        const hotel = findHotel(state, booking.hotelId);
+        const user = findUser(state, booking.userId);
+        const totalCost = hotel ? Number(hotel.price || 0) * getBookingNights(booking) : 0;
+        return `
             <article class="compact-item">
               <h3>${escapeHtml(user?.name || "Unknown guest")}</h3>
               <p>${escapeHtml(hotel?.name || "Hotel removed")} / ${escapeHtml(formatCurrency(totalCost))}</p>
@@ -886,8 +1146,8 @@ function renderOverviewLists(state) {
               </div>
             </article>
           `;
-        })
-        .join("")
+      })
+      .join("")
     : `<div class="empty-state">No payments yet.</div>`;
 }
 
@@ -956,12 +1216,12 @@ function renderBookings(state) {
   const filteredBookings = getFilteredBookings(state);
   document.querySelector("[data-bookings-table]").innerHTML = filteredBookings.length
     ? filteredBookings
-        .map((booking) => {
-          const hotel = findHotel(state, booking.hotelId);
-          const user = findUser(state, booking.userId);
-          const nights = getBookingNights(booking);
-          const totalCost = hotel ? Number(hotel.price || 0) * nights : 0;
-          return `
+      .map((booking) => {
+        const hotel = findHotel(state, booking.hotelId);
+        const user = findUser(state, booking.userId);
+        const nights = getBookingNights(booking);
+        const totalCost = hotel ? Number(hotel.price || 0) * nights : 0;
+        return `
             <tr>
               <td><strong>${escapeHtml(user?.name || "Unknown guest")}</strong><br>${escapeHtml(user?.email || "")}</td>
               <td>
@@ -982,8 +1242,8 @@ function renderBookings(state) {
               </td>
             </tr>
           `;
-        })
-        .join("")
+      })
+      .join("")
     : `<tr><td colspan="6">No booking requests found.</td></tr>`;
 }
 
@@ -991,7 +1251,7 @@ function renderUsers(state) {
   const filteredUsers = getFilteredUsers(state);
   document.querySelector("[data-users-table]").innerHTML = filteredUsers.length
     ? filteredUsers
-        .map((user) => `
+      .map((user) => `
           <tr>
             <td><strong>${escapeHtml(user.name)}</strong></td>
             <td>${escapeHtml(user.email)}</td>
@@ -1000,7 +1260,7 @@ function renderUsers(state) {
             <td>${escapeHtml(user.status)}</td>
           </tr>
         `)
-        .join("")
+      .join("")
     : `<tr><td colspan="5">No users found.</td></tr>`;
 }
 
@@ -1011,7 +1271,7 @@ function renderHotels(state) {
 
   document.querySelector("[data-admin-hotels]").innerHTML = filteredHotels.length
     ? filteredHotels
-        .map((hotel) => `
+      .map((hotel) => `
           <article class="compact-item">
             <h3>${escapeHtml(hotel.name)}</h3>
             <p>${escapeHtml(hotel.city)} / ${escapeHtml(formatCurrency(hotel.price))} per night / ${Number(hotel.rooms)} rooms / ${Number(hotel.rating).toFixed(1)} rating</p>
@@ -1021,7 +1281,7 @@ function renderHotels(state) {
             </div>
           </article>
         `)
-        .join("")
+      .join("")
     : `<div class="empty-state">No hotels found.</div>`;
 }
 
@@ -1032,7 +1292,7 @@ function renderTrips(state) {
 
   document.querySelector("[data-admin-trips]").innerHTML = filteredTrips.length
     ? filteredTrips
-        .map((trip) => `
+      .map((trip) => `
           <article class="compact-item">
             <h3>${escapeHtml(trip.title)}</h3>
             <p>${escapeHtml(trip.guest)} / ${escapeHtml(trip.destination)} / ${escapeHtml(trip.dates)}</p>
@@ -1042,7 +1302,7 @@ function renderTrips(state) {
             </div>
           </article>
         `)
-        .join("")
+      .join("")
     : `<div class="empty-state">No trips found.</div>`;
 }
 
@@ -1055,13 +1315,16 @@ function renderTripBookings(state) {
   countLabel.textContent = `${requests.length} request${requests.length === 1 ? "" : "s"}`;
   list.innerHTML = requests.length
     ? requests
-        .map((request) => {
-          const user = findUser(state, request.userId);
-          return `
+      .map((request) => {
+        const user = findUser(state, request.userId);
+        return `
             <article class="compact-item">
               <h3>${escapeHtml(request.tripTitle || "Trip request")}</h3>
               <p>${escapeHtml(user?.name || "Unknown user")} / ${escapeHtml(request.destination || "Destination pending")} / ${Number(request.travelers || 1)} traveler(s)</p>
-              <p>${escapeHtml(request.packageType || "Standard plan")} / ${escapeHtml(request.preferredDate || "Date pending")} / ${escapeHtml(request.paymentMethod || "Payment method pending")}</p>
+              <p>
+                ${escapeHtml(request.packageType || "Standard plan")} / ${escapeHtml(request.preferredDate || "Date pending")} / ${escapeHtml(request.paymentMethod || "Payment method pending")}
+                ${request.transactionId ? `<br><span style="color: var(--primary-dark); font-weight: 800; font-size: 0.74rem;">Txn ID: ${escapeHtml(request.transactionId)}</span>` : ""}
+              </p>
               <div class="action-row">
                 ${statusPill(request.status || "pending")}
                 ${statusPill(request.payment === "paid" ? "paid" : "unpaid")}
@@ -1072,8 +1335,8 @@ function renderTripBookings(state) {
               </div>
             </article>
           `;
-        })
-        .join("")
+      })
+      .join("")
     : `<div class="empty-state">No trip requests yet.</div>`;
 }
 
@@ -1209,7 +1472,7 @@ function initChartTooltips() {
 
     const title = trigger.getAttribute("data-tooltip-title");
     const value = trigger.getAttribute("data-tooltip-value");
-    
+
     tooltip.innerHTML = `
       <strong>${value}</strong>
       <span>${title}</span>
@@ -1219,8 +1482,7 @@ function initChartTooltips() {
 
   document.body.addEventListener("mousemove", (e) => {
     if (!tooltip.classList.contains("active")) return;
-    
-    // Position tooltip slightly offset from the cursor
+
     tooltip.style.left = `${e.pageX}px`;
     tooltip.style.top = `${e.pageY}px`;
   });
@@ -1232,3 +1494,181 @@ function initChartTooltips() {
     }
   });
 }
+
+function renderTransactions(state) {
+  const table = document.querySelector("[data-transactions-table]");
+  const summaryContainer = document.querySelector("[data-transaction-summary]");
+  if (!table) return;
+
+  const transactions = [];
+
+  (state.bookings || []).forEach((booking) => {
+    const hotel = findHotel(state, booking.hotelId);
+    const user = findUser(state, booking.userId);
+    const nights = getBookingNights(booking);
+    const totalCost = hotel ? Number(hotel.price || 0) * nights : 0;
+
+    transactions.push({
+      id: booking.id,
+      itemType: "booking",
+      type: "Hotel Stay",
+      guestName: user?.name || "Unknown guest",
+      guestEmail: user?.email || "",
+      guestPhone: user?.phone || "N/A",
+      reference: hotel?.name || "Hotel removed",
+      detail: `${booking.roomType || "Standard"} / ${booking.checkIn} to ${booking.checkOut}`,
+      method: booking.paymentMethod || "N/A",
+      transactionId: booking.transactionId || "",
+      amount: totalCost,
+      status: booking.payment || "pending",
+      bookingStatus: booking.status || "pending"
+    });
+  });
+
+  // Trip bookings
+  (state.tripBookings || []).forEach((request) => {
+    const user = findUser(state, request.userId);
+    const trip = state.trips.find((t) => t.id === request.tripId);
+    const totalBudget = trip ? Number(trip.budget || 0) : 0;
+    const depositAmount = Math.round(totalBudget * 0.1); // 10% deposit
+
+    transactions.push({
+      id: request.id,
+      itemType: "tripBooking",
+      type: "Trip Plan",
+      guestName: user?.name || "Unknown guest",
+      guestEmail: user?.email || "",
+      guestPhone: user?.phone || "N/A",
+      reference: request.tripTitle || "Trip removed",
+      detail: `${request.destination || "Destination pending"} / ${request.packageType || "Standard plan"}`,
+      method: request.paymentMethod || "N/A",
+      transactionId: request.transactionId || "",
+      amount: depositAmount,
+      status: request.payment || "pending",
+      bookingStatus: request.status || "pending"
+    });
+  });
+
+  transactions.sort((a, b) => b.id.localeCompare(a.id));
+
+  const filtered = transactions.filter((tx) => {
+    const search = filters.transactions.search;
+    const matchesSearch =
+      !search ||
+      tx.guestName.toLowerCase().includes(search) ||
+      tx.guestEmail.toLowerCase().includes(search) ||
+      tx.reference.toLowerCase().includes(search) ||
+      tx.transactionId.toLowerCase().includes(search);
+
+    const matchesType =
+      filters.transactions.type === "all" ||
+      (filters.transactions.type === "hotel" && tx.type === "Hotel Stay") ||
+      (filters.transactions.type === "trip" && tx.type === "Trip Plan");
+
+    const matchesMethod =
+      filters.transactions.method === "all" ||
+      tx.method.toLowerCase() === filters.transactions.method.toLowerCase();
+
+    const matchesStatus =
+      filters.transactions.status === "all" ||
+      (filters.transactions.status === "paid" && tx.status === "paid") ||
+      (filters.transactions.status === "unpaid" && tx.status !== "paid");
+
+    return matchesSearch && matchesType && matchesMethod && matchesStatus;
+  });
+
+  // Render summary counts
+  if (summaryContainer) {
+    const totalAmount = filtered.reduce((sum, tx) => sum + (tx.status === "paid" ? tx.amount : 0), 0);
+    const pendingCount = filtered.filter((tx) => tx.status !== "paid").length;
+    setSummary("[data-transaction-summary]", [
+      ["Filtered transactions", filtered.length],
+      ["Pending verification", pendingCount],
+      ["Total Paid", formatCurrency(totalAmount)],
+      ["Unpaid bookings", filtered.filter((tx) => tx.status !== "paid").length]
+    ]);
+  }
+
+  // Render table body
+  table.innerHTML = filtered.length
+    ? filtered
+      .map((tx) => {
+        const typeClass = tx.type === "Hotel Stay" ? "status-pill planning" : "status-pill in-progress";
+        return `
+            <tr>
+              <td data-label="Type"><span class="${typeClass}">${tx.type}</span></td>
+              <td data-label="Guest"><strong>${escapeHtml(tx.guestName)}</strong><br><small>${escapeHtml(tx.guestEmail)}</small></td>
+              <td data-label="Reference"><strong>${escapeHtml(tx.reference)}</strong><br><small>${escapeHtml(tx.detail)}</small></td>
+              <td data-label="Method"><span class="status-pill">${escapeHtml(tx.method)}</span></td>
+              <td data-label="Transaction ID"><code style="font-family: monospace; font-size: 0.88rem; font-weight: bold; color: var(--gold);">${escapeHtml(tx.transactionId || "N/A")}</code></td>
+              <td data-label="Amount"><strong>${formatCurrency(tx.amount)}</strong></td>
+              <td data-label="Status">${statusPill(tx.status === "paid" ? "paid" : "unpaid")}</td>
+              <td data-label="Actions">
+                <div class="actions-dropdown-container">
+                  <button class="three-dots-btn" type="button" aria-label="Actions">⋮</button>
+                  <div class="actions-dropdown-menu" hidden>
+                    <button type="button" class="dropdown-item" data-tx-id="${tx.id}" data-tx-item-type="${tx.itemType}" data-tx-action="view">View Details</button>
+                    <button type="button" class="dropdown-item" data-tx-id="${tx.id}" data-tx-item-type="${tx.itemType}" data-tx-action="approve" ${tx.bookingStatus === "approved" ? "disabled" : ""}>Approve</button>
+                    <button type="button" class="dropdown-item danger" data-tx-id="${tx.id}" data-tx-item-type="${tx.itemType}" data-tx-action="delete">Delete</button>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          `;
+      })
+      .join("")
+    : `<tr><td colspan="8">No matching transaction records found.</td></tr>`;
+}
+
+function renderPaymentMethods(state) {
+  const container = document.querySelector("[data-admin-payment-methods]");
+  if (!container) return;
+
+  const methods = state.paymentMethods || [];
+  container.innerHTML = methods.length
+    ? methods
+        .map((method) => `
+          <div class="compact-item" style="display: flex; align-items: center; justify-content: space-between; gap: 0.65rem; border: 1px solid var(--line); padding: 0.65rem; border-radius: 8px; background: var(--surface);">
+            <div style="display: flex; align-items: center; gap: 0.65rem; min-width: 0; flex: 1;">
+              <div class="payment-logo" style="width: 38px; height: 32px; flex-shrink: 0; background: #fff; border: 1px solid var(--line); border-radius: 6px; display: grid; place-items: center; overflow: hidden;">
+                <img src="${escapeHtml(method.logo)}" alt="${escapeHtml(method.name)}" style="width: 80%; max-height: 24px; object-fit: contain;">
+              </div>
+              <div style="min-width: 0; flex: 1;">
+                <h4 style="margin: 0; font-size: 0.82rem; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text);">${escapeHtml(method.name)}</h4>
+                <p style="margin: 0.1rem 0 0; font-size: 0.74rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escapeHtml(method.number)}</p>
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.35rem; flex-shrink: 0;">
+              <button class="pill-button" type="button" data-edit-method-id="${method.id}">Edit</button>
+              <button class="pill-button delete" type="button" data-delete-method-id="${method.id}">Delete</button>
+            </div>
+          </div>
+        `)
+        .join("")
+    : `<div class="empty-state">No payment methods configured.</div>`;
+
+  renderTransactionMethodFilter(state);
+}
+
+function renderTransactionMethodFilter(state) {
+  const select = document.querySelector("[data-filter-transaction-method]");
+  if (!select) return;
+
+  const currentSelection = filters.transactions.method;
+  let html = `<option value="all">All MFS Methods</option>`;
+  const methods = state.paymentMethods || [];
+  methods.forEach((m) => {
+    html += `<option value="${escapeHtml(m.name)}">${escapeHtml(m.name)}</option>`;
+  });
+  html += `<option value="N/A">None / N/A</option>`;
+
+  select.innerHTML = html;
+  // Restore selection if it still exists, otherwise reset to 'all'
+  if ([...select.options].some((opt) => opt.value === currentSelection)) {
+    select.value = currentSelection;
+  } else {
+    select.value = "all";
+    filters.transactions.method = "all";
+  }
+}
+

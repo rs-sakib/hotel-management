@@ -1,5 +1,6 @@
 import { animatePage, formatCurrency, initAuthChrome, initHeader, initTheme } from "./ui.js";
 import { initCustomControls } from "./controls.js";
+import { getCurrentUser, getState } from "./store.js";
 
 const form = document.querySelector("[data-trip-filter-form]");
 const list = document.querySelector("[data-trip-list]");
@@ -133,6 +134,13 @@ function renderTrips() {
 function renderTripCard(trip) {
   const status = trip.status.toLowerCase().replaceAll(" ", "-");
   const statusLabel = formatTripStatus(trip.status);
+
+  const state = getState();
+  const currentUser = getCurrentUser();
+  const tripBookings = state.tripBookings || [];
+  const isPending = currentUser && tripBookings.some((tb) => tb.tripId === trip.id && tb.userId === currentUser.id && tb.status === "pending");
+  const pendingBadge = isPending ? `<span class="trip-status pending" style="background: var(--gold); color: #fff; border-color: rgba(255, 255, 255, 0.25);">Pending</span>` : "";
+
   return `
     <article class="trip-directory-card">
       <div class="trip-directory-image">
@@ -141,7 +149,7 @@ function renderTripCard(trip) {
       </div>
       <div class="trip-directory-copy">
         <div class="trip-card-head">
-          <span class="trip-status ${status}">${escapeHtml(statusLabel)}</span>
+          ${pendingBadge ? pendingBadge : `<span class="trip-status ${status}">${escapeHtml(statusLabel)}</span>`}
           <span class="trip-budget">${formatCurrency(trip.budget)}</span>
         </div>
         <h3>${escapeHtml(trip.title)}</h3>
