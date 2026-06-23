@@ -100,8 +100,18 @@
               </div>
               <form class="admin-hotel-form" data-hotel-form>
                 <input type="hidden" name="hotelId" />
-                <input name="name" placeholder="Hotel name" required />
-                <input name="city" placeholder="City, country" required />
+                <label class="form-field-group">
+                  <span>Hotel name</span>
+                  <input name="name" placeholder="e.g. The Grand Azure" required />
+                </label>
+                <label class="form-field-group">
+                  <span>City, country</span>
+                  <input name="city" placeholder="e.g. Cox's Bazar, Bangladesh" required />
+                </label>
+                <label class="form-field-group">
+                  <span>Rating (1-5)</span>
+                  <input name="rating" type="number" min="1" max="5" step="0.1" placeholder="e.g. 4.8" required />
+                </label>
                 <label class="form-field-group">
                   <span>Nightly price (৳)</span>
                   <input name="price" type="number" min="1" placeholder="e.g. 3500" required />
@@ -110,9 +120,18 @@
                   <span>Available rooms</span>
                   <input name="rooms" type="number" min="1" placeholder="e.g. 40" required />
                 </label>
-                <input name="image" type="url" placeholder="Image URL" required />
-                <input name="amenities" placeholder="Amenities separated by commas" required />
-                <textarea name="description" rows="3" placeholder="Hotel description" required></textarea>
+                <label class="form-field-group">
+                  <span>Image URL</span>
+                  <input name="image" type="url" placeholder="https://..." required />
+                </label>
+                <label class="form-field-group">
+                  <span>Amenities</span>
+                  <input name="amenities" placeholder="Pool, Spa, Gym, WiFi..." required />
+                </label>
+                <label class="form-field-group" style="grid-column: 1 / -1;">
+                  <span>Hotel description</span>
+                  <textarea name="description" rows="3" placeholder="Describe the hotel experience..." required></textarea>
+                </label>
                 <div class="admin-form-actions">
                   <button class="primary-button" type="submit" data-hotel-submit-label>Add hotel</button>
                   <button class="secondary-button" type="button" data-cancel-hotel-edit hidden>Cancel edit</button>

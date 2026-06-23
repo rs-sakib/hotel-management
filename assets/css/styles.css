@@ -4396,6 +4396,32 @@ textarea:focus {
   min-height: unset;
 }
 
+.compact-list{display:grid;gap:0.55rem;}
+
+.admin-hotel-manager{display:grid;gap:1rem;}
+
+.admin-hotel-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;gap:0.65rem;}
+
+.admin-hotel-form .form-field-group{display:grid;gap:0.3rem;align-items:start;}
+
+.admin-hotel-form .form-field-group > span {
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding-left: 0.1rem;
+}
+
+.admin-hotel-form .form-field-group .custom-number {
+  height: 48px;
+}
+
+.admin-hotel-form .custom-number-input,
+.admin-hotel-form .number-step {
+  height: 46px;
+}
+
 .admin-hotel-form .form-field-group > span {
   font-size: 0.7rem;
   font-weight: 800;
@@ -4419,15 +4445,16 @@ textarea:focus {
   padding: 0.72rem 0.9rem;
 }
 
-.admin-hotel-form input[name="name"],
-.admin-hotel-form input[name="city"],
-.admin-hotel-form input[name="image"],
+/* All inputs are inside .form-field-group labels — no direct grid-column needed */
+.admin-hotel-form .form-field-group:has(input[name="name"]),
+.admin-hotel-form .form-field-group:has(input[name="city"]) {
+  grid-column: 1 / -1;
+}
 .admin-hotel-form input[name="amenities"] {
   grid-column: 1 / -1;
 }
 
 .admin-hotel-form textarea {
-  grid-column: 1 / -1;
   height: 86px;
   min-height: 86px;
   resize: vertical;
@@ -4440,6 +4467,8 @@ textarea:focus {
 }
 
 .admin-hotel-card {
+  display: grid;
+  grid-template-rows: auto 1fr;
   overflow: hidden;
   padding: 0.5rem;
   border: 1px solid var(--line);
@@ -4456,8 +4485,26 @@ textarea:focus {
 
 .admin-hotel-card-body {
   display: grid;
+  grid-template-rows: auto 1fr;
   gap: 0.62rem;
   padding: 0.68rem 0.12rem 0.12rem;
+}
+
+.admin-hotel-card-footer {
+  display: grid;
+  align-self: end;
+  gap: 0.48rem;
+}
+
+.admin-hotel-badges,
+.admin-hotel-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.42rem;
+}
+
+.admin-hotel-actions {
+  padding-top: 0.1rem;
 }
 
 .admin-form-actions {

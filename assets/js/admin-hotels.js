@@ -246,10 +246,14 @@ function renderHotels(state) {
                 <h3>${escapeHtml(hotel.name)}</h3>
                 <p>${escapeHtml(hotel.city)} / ${formatCurrency(hotel.price)} per night / ${Number(hotel.rooms)} rooms / ${Number(hotel.rating).toFixed(1)} rating</p>
               </div>
-              <div class="action-row">
-                ${(hotel.amenities || []).slice(0, 3).map((amenity) => `<span class="status-pill">${escapeHtml(amenity)}</span>`).join("")}
-                <button class="pill-button" type="button" data-edit-hotel="${hotel.id}">Edit</button>
-                <button class="pill-button delete" type="button" data-delete-hotel="${hotel.id}">Delete</button>
+              <div class="admin-hotel-card-footer">
+                <div class="admin-hotel-badges">
+                  ${(hotel.amenities || []).slice(0, 3).map((amenity) => `<span class="status-pill">${escapeHtml(amenity)}</span>`).join("")}
+                </div>
+                <div class="admin-hotel-actions">
+                  <button class="pill-button" type="button" data-edit-hotel="${hotel.id}">Edit</button>
+                  <button class="pill-button delete" type="button" data-delete-hotel="${hotel.id}">Delete</button>
+                </div>
               </div>
             </div>
           </article>
