@@ -249,6 +249,42 @@ function renderBookingCard(state, booking) {
   // Stepper timeline calculation
   const step1Class = "completed"; // Booked
   const step2Class = booking.status === "approved" || booking.payment === "paid" ? "completed" : "active"; // Confirmed
+          <div class="profile-field editing">
+            <label>Full Name</label>
+            <input type="text" id="edit-name" value="${currentUser.name}" required />
+          </div>
+          <div class="profile-field editing">
+            <label>Email Address</label>
+            <input type="email" id="edit-email" value="${currentUser.email}" required />
+          </div>
+          <div class="profile-field editing">
+            <label>Phone Number</label>
+            <input type="text" id="edit-phone" value="${currentUser.phone || ""}" placeholder="+880 1700 000000" />
+          </div>
+        </form>
+        <div class="profile-actions">
+          <button class="primary-button compact" type="submit" form="profile-edit-form">Save Changes</button>
+          <button class="secondary-button compact" type="button" data-cancel-profile-edit>Cancel</button>
+        </div>
+      </div>
+    `;
+  }
+}
+
+function renderBookingCard(state, booking) {
+  const hotel = findHotel(state, booking.hotelId);
+  const hotelImg = hotel?.image || "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=300&q=80";
+
+  // Calculate nights and total price
+  const nights = Math.max(
+    1,
+    Math.round((new Date(booking.checkOut) - new Date(booking.checkIn)) / (1000 * 60 * 60 * 24))
+  );
+  const totalCost = nights * (hotel?.price || 0);
+
+  // Stepper timeline calculation
+  const step1Class = "completed"; // Booked
+  const step2Class = booking.status === "approved" || booking.payment === "paid" ? "completed" : "active"; // Confirmed
   const step3Class = booking.payment === "paid" ? "completed" : booking.status === "approved" ? "active" : "muted"; // Paid
 
   const conn1Class = booking.status === "approved" || booking.payment === "paid" ? "completed" : "";
@@ -256,11 +292,36 @@ function renderBookingCard(state, booking) {
 
   // Actions
   let actionButtons = "";
-  if (booking.payment === "pending") {
+  if (booking.payment === "pending" && !booking.transactionId) {
+    // No payment info submitted yet
     actionButtons += `
       <button class="primary-button compact" type="button" data-dashboard-pay="${booking.id}">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;margin-right:4px;"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
         Pay now
+      </button>
+    `;
+  } else if (booking.payment === "pending" && booking.transactionId) {
+    // Submitted, waiting admin verification
+    actionButtons += `<span class="status-pill pending" style="font-size:0.75rem;">⏳ Awaiting verification</span>`;
+  } else if (booking.payment === "paid") {
+    // Admin approved — show ticket
+    actionButtons += `
+      <button class="primary-button compact" type="button" data-view-ticket="${booking.id}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;margin-right:4px;"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v2z"/><path d="M13 5v2M13 17v2M13 11v2"/></svg>
+        View Ticket
+      </button>
+    `;
+    actionButtons += `
+      <button class="secondary-button compact" type="button" data-view-receipt="${booking.id}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;margin-right:4px;"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Receipt
+      </button>
+    `;
+  } else if (booking.payment === "rejected") {
+    actionButtons += `<span class="status-pill" style="background:var(--danger-soft,#fee);color:var(--danger,#c00);font-size:0.75rem;">✕ Payment rejected</span>`;
+    actionButtons += `
+      <button class="primary-button compact" type="button" data-dashboard-pay="${booking.id}">
+        Retry Payment
       </button>
     `;
   } else {
@@ -354,17 +415,10 @@ function initDashboardActions() {
 
   // Bookings list interactions (Pay / Cancel / Receipt)
   document.querySelector("[data-user-bookings]").addEventListener("click", (event) => {
-    // Pay stay
+    // Pay stay — open payment modal
     const payBtn = event.target.closest("[data-dashboard-pay]");
     if (payBtn) {
-      updateState((state) => {
-        const booking = state.bookings.find((item) => item.id === payBtn.dataset.dashboardPay);
-        if (booking && booking.userId === currentUser.id) {
-          booking.payment = "paid";
-        }
-      });
-      renderDashboard();
-      showToast("Payment recorded successfully.");
+      showPaymentModal(payBtn.dataset.dashboardPay);
       return;
     }
 
@@ -378,6 +432,12 @@ function initDashboardActions() {
         renderDashboard();
         showToast("Booking request cancelled.", "warning");
       }
+      return;
+    }
+    // View Ticket modal (when payment is approved)
+    const ticketBtn = event.target.closest("[data-view-ticket]");
+    if (ticketBtn) {
+      showTicketModal(ticketBtn.dataset.viewTicket);
       return;
     }
 
@@ -598,5 +658,177 @@ function initDashboardActions() {
         }
       }
     });
+  }
+}
+
+// ─── Payment Modal ───────────────────────────────────────────────────────────
+function showPaymentModal(bookingId) {
+  let overlay = document.getElementById("paymentModal");
+  if (!overlay) {
+    overlay = document.createElement("div");
+    overlay.id = "paymentModal";
+    overlay.className = "booking-modal";
+    overlay.setAttribute("aria-modal", "true");
+    overlay.innerHTML = `
+      <div class="modal-card" style="max-width:480px;width:90%;padding:2rem;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;">
+          <h3 style="font-family:var(--font-display);font-size:1.4rem;margin:0;">Complete Payment</h3>
+          <button type="button" id="payModalClose" style="background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--muted);">&times;</button>
+        </div>
+        <p style="color:var(--muted);font-size:0.88rem;margin-bottom:1.25rem;">Send the full amount to the hotel's MFS account below, then enter your transaction details.</p>
+        <div id="payMethodList" style="display:grid;gap:0.5rem;margin-bottom:1.25rem;"></div>
+        <form id="paymentForm" style="display:grid;gap:0.75rem;">
+          <input type="hidden" id="payBookingId" />
+          <label style="display:flex;flex-direction:column;gap:0.3rem;font-size:0.78rem;font-weight:700;color:var(--muted);">
+            Payment Method Used
+            <select id="payMethodSelect" required style="height:40px;border-radius:8px;border:1px solid var(--line);background:var(--surface-strong);color:var(--text);font-weight:700;font-size:0.88rem;padding:0 0.75rem;"></select>
+          </label>
+          <label style="display:flex;flex-direction:column;gap:0.3rem;font-size:0.78rem;font-weight:700;color:var(--muted);">
+            Transaction ID
+            <input type="text" id="payTxnId" placeholder="Enter the txn ID from your MFS app" required style="height:40px;border-radius:8px;border:1px solid var(--line);background:var(--surface-strong);color:var(--text);font-size:0.88rem;padding:0 0.75rem;" />
+          </label>
+          <button class="primary-button" type="submit" style="width:100%;height:44px;border-radius:10px;font-size:0.9rem;font-weight:800;margin-top:0.25rem;">Submit Payment for Verification</button>
+        </form>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    document.getElementById("payModalClose").addEventListener("click", () => overlay.classList.remove("open"));
+    overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.classList.remove("open"); });
+    document.getElementById("paymentForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const bId = document.getElementById("payBookingId").value;
+      const method = document.getElementById("payMethodSelect").value;
+      const txnId = document.getElementById("payTxnId").value.trim();
+      if (!txnId) return;
+      updateState((state) => {
+        const booking = state.bookings.find((b) => b.id === bId);
+        if (booking && booking.userId === currentUser.id) {
+          booking.paymentMethod = method;
+          booking.transactionId = txnId;
+          // payment stays "pending" — admin must verify
+        }
+      });
+      overlay.classList.remove("open");
+      renderDashboard();
+      showToast("Payment details submitted. Awaiting admin verification.");
+    });
+  }
+
+  // Populate data
+  document.getElementById("payBookingId").value = bookingId;
+  document.getElementById("payTxnId").value = "";
+  const state = getState();
+  const methods = state.paymentMethods || [];
+  const methodSelect = document.getElementById("payMethodSelect");
+  methodSelect.innerHTML = methods.map((m) => `<option value="${m.name}">${m.name}</option>`).join("") ||
+    `<option value="N/A">No methods configured</option>`;
+
+  // Show payment method numbers
+  document.getElementById("payMethodList").innerHTML = methods.length
+    ? methods.map((m) => `
+        <div style="display:flex;align-items:center;gap:0.65rem;padding:0.6rem 0.75rem;border:1px solid var(--line);border-radius:8px;background:var(--surface);">
+          <img src="${m.logo}" alt="${m.name}" style="width:36px;height:28px;object-fit:contain;border-radius:4px;background:#fff;border:1px solid var(--line);padding:2px;" />
+          <div>
+            <strong style="font-size:0.82rem;display:block;">${m.name}</strong>
+            <span style="font-size:0.78rem;color:var(--muted);font-family:monospace;">${m.number}</span>
+          </div>
+        </div>`).join("")
+    : `<p style="font-size:0.82rem;color:var(--muted);">No payment methods configured by admin yet.</p>`;
+
+  overlay.classList.add("open");
+  if (window.gsap) {
+    window.gsap.fromTo(overlay.querySelector(".modal-card"),
+      { scale: 0.95, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.25, ease: "back.out(1.2)" });
+  }
+}
+
+// ─── Ticket Modal ─────────────────────────────────────────────────────────────
+function showTicketModal(bookingId) {
+  const state = getState();
+  const booking = state.bookings.find((b) => b.id === bookingId);
+  if (!booking) return;
+  const hotel = findHotel(state, booking.hotelId);
+  if (!hotel) return;
+  const nights = Math.max(1, Math.round((new Date(booking.checkOut) - new Date(booking.checkIn)) / (1000 * 60 * 60 * 24)));
+  const totalCost = nights * hotel.price;
+
+  let overlay = document.getElementById("ticketModal");
+  if (!overlay) {
+    overlay = document.createElement("div");
+    overlay.id = "ticketModal";
+    overlay.className = "booking-modal";
+    overlay.innerHTML = `
+      <div class="modal-card" id="ticketCard" style="max-width:440px;width:90%;padding:0;overflow:hidden;border-radius:16px;">
+        <div id="ticketContent"></div>
+        <div style="padding:1rem 1.5rem;display:flex;gap:0.75rem;border-top:1px solid var(--line);">
+          <button class="primary-button compact" onclick="window.print()" style="flex:1;">🖨 Print Ticket</button>
+          <button class="secondary-button compact" id="ticketClose" style="flex:1;">Close</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    document.getElementById("ticketClose").addEventListener("click", () => overlay.classList.remove("open"));
+    overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.classList.remove("open"); });
+  }
+
+  document.getElementById("ticketContent").innerHTML = `
+    <div style="background:linear-gradient(135deg,var(--primary,#1a6b4a) 0%,#0d4a33 100%);padding:1.75rem 1.5rem 1.25rem;color:#fff;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div>
+          <p style="font-size:0.7rem;letter-spacing:0.12em;opacity:0.75;margin:0 0 0.25rem;">AZURESTAY — BOOKING TICKET</p>
+          <h2 style="margin:0;font-family:var(--font-display,serif);font-size:1.45rem;">${hotel.name}</h2>
+          <p style="margin:0.3rem 0 0;font-size:0.82rem;opacity:0.8;">${hotel.city}</p>
+        </div>
+        <div style="text-align:right;">
+          <div style="background:rgba(255,255,255,0.18);border-radius:8px;padding:0.4rem 0.75rem;font-size:0.7rem;font-weight:800;letter-spacing:0.08em;">✓ CONFIRMED</div>
+        </div>
+      </div>
+    </div>
+    <div style="padding:1.25rem 1.5rem;display:grid;gap:0.65rem;border-bottom:2px dashed var(--line);">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.65rem;">
+        <div style="background:var(--surface);border-radius:8px;padding:0.6rem 0.75rem;">
+          <p style="margin:0;font-size:0.68rem;color:var(--muted);font-weight:700;">GUEST</p>
+          <p style="margin:0.15rem 0 0;font-size:0.88rem;font-weight:800;">${currentUser.name}</p>
+        </div>
+        <div style="background:var(--surface);border-radius:8px;padding:0.6rem 0.75rem;">
+          <p style="margin:0;font-size:0.68rem;color:var(--muted);font-weight:700;">ROOM TYPE</p>
+          <p style="margin:0.15rem 0 0;font-size:0.88rem;font-weight:800;">${booking.roomType}</p>
+        </div>
+        <div style="background:var(--surface);border-radius:8px;padding:0.6rem 0.75rem;">
+          <p style="margin:0;font-size:0.68rem;color:var(--muted);font-weight:700;">CHECK-IN</p>
+          <p style="margin:0.15rem 0 0;font-size:0.88rem;font-weight:800;">${booking.checkIn}</p>
+        </div>
+        <div style="background:var(--surface);border-radius:8px;padding:0.6rem 0.75rem;">
+          <p style="margin:0;font-size:0.68rem;color:var(--muted);font-weight:700;">CHECK-OUT</p>
+          <p style="margin:0.15rem 0 0;font-size:0.88rem;font-weight:800;">${booking.checkOut}</p>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.65rem;">
+        <div style="background:var(--surface);border-radius:8px;padding:0.6rem 0.75rem;">
+          <p style="margin:0;font-size:0.68rem;color:var(--muted);font-weight:700;">GUESTS</p>
+          <p style="margin:0.15rem 0 0;font-size:0.88rem;font-weight:800;">${booking.guests} guest(s)</p>
+        </div>
+        <div style="background:var(--surface);border-radius:8px;padding:0.6rem 0.75rem;">
+          <p style="margin:0;font-size:0.68rem;color:var(--muted);font-weight:700;">DURATION</p>
+          <p style="margin:0.15rem 0 0;font-size:0.88rem;font-weight:800;">${nights} night(s)</p>
+        </div>
+      </div>
+    </div>
+    <div style="padding:1rem 1.5rem;display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        <p style="margin:0;font-size:0.68rem;color:var(--muted);font-weight:700;">TOTAL PAID</p>
+        <p style="margin:0.15rem 0 0;font-size:1.3rem;font-weight:900;color:var(--primary);">BDT ${totalCost.toLocaleString()}</p>
+      </div>
+      <div style="text-align:right;">
+        <p style="margin:0;font-size:0.68rem;color:var(--muted);font-weight:700;">REF. ID</p>
+        <p style="margin:0.15rem 0 0;font-size:0.75rem;font-weight:800;font-family:monospace;color:var(--gold);">${booking.id.toUpperCase()}</p>
+      </div>
+    </div>
+  `;
+
+  overlay.classList.add("open");
+  if (window.gsap) {
+    window.gsap.fromTo(document.getElementById("ticketCard"),
+      { scale: 0.9, opacity: 0, y: 20 }, { scale: 1, opacity: 1, y: 0, duration: 0.3, ease: "back.out(1.4)" });
   }
 }

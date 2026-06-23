@@ -221,15 +221,7 @@ function initNotifications() {
   notificationList.addEventListener("click", (event) => {
     const payButton = event.target.closest("[data-pay-booking]");
     if (!payButton) return;
-
-    updateState((state) => {
-      const booking = state.bookings.find((item) => item.id === payButton.dataset.payBooking);
-      if (booking) booking.payment = "paid";
-    });
-
-    renderNotifications();
-    updateNotificationDot();
-    showToast("Payment recorded. Admin can verify it in the dashboard.");
+    openPaymentModal(payButton.dataset.payBooking);
   });
 }
 
@@ -266,10 +258,24 @@ function renderNotifications() {
   notificationList.innerHTML = bookings
     .map((booking) => {
       const hotel = findHotel(state, booking.hotelId);
-      const payAction =
-        booking.payment === "pending"
-          ? `<button class="primary-button compact" type="button" data-pay-booking="${booking.id}">Pay now</button>`
-          : `<span class="status-pill paid">Paid</span>`;
+      let payAction;
+      if (booking.payment === "paid") {
+        payAction = `
+          <span class="status-pill paid">Paid</span>
+          <button class="secondary-button compact" type="button" data-view-notification-ticket="${booking.id}">
+            🎫 View Ticket
+          </button>
+        `;
+      } else if (booking.payment === "pending" && booking.transactionId) {
+        payAction = `<span class="status-pill pending" style="font-size:0.78rem;">⏳ Awaiting verification</span>`;
+      } else if (booking.payment === "rejected") {
+        payAction = `
+          <span class="status-pill" style="color:#c00;font-size:0.78rem;">✕ Payment rejected</span>
+          <button class="primary-button compact" type="button" data-pay-booking="${booking.id}">Retry</button>
+        `;
+      } else {
+        payAction = `<button class="primary-button compact" type="button" data-pay-booking="${booking.id}">Pay now</button>`;
+      }
       return `
         <article class="notification-card">
           <strong>${hotel?.name || "Hotel removed"}</strong>
@@ -284,6 +290,166 @@ function renderNotifications() {
     })
     .join("");
 }
+
+function openPaymentModal(bookingId) {
+  let overlay = document.getElementById("homePaymentModal");
+  if (!overlay) {
+    overlay = document.createElement("div");
+    overlay.id = "homePaymentModal";
+    overlay.className = "booking-modal";
+    overlay.setAttribute("aria-modal", "true");
+    overlay.innerHTML = `
+      <div class="modal-card" style="max-width:460px;width:90%;padding:2rem;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;">
+          <h3 style="font-family:var(--font-display);font-size:1.35rem;margin:0;">Complete Payment</h3>
+          <button type="button" id="homePayClose" style="background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--muted);">&times;</button>
+        </div>
+        <p style="color:var(--muted);font-size:0.87rem;margin-bottom:1.1rem;">Send the amount to the MFS account shown below, then enter your transaction ID.</p>
+        <div id="homePayMethodList" style="display:grid;gap:0.45rem;margin-bottom:1.1rem;"></div>
+        <form id="homePayForm" style="display:grid;gap:0.7rem;">
+          <input type="hidden" id="homePayBookingId" />
+          <label style="display:flex;flex-direction:column;gap:0.25rem;font-size:0.77rem;font-weight:700;color:var(--muted);">
+            Method Used
+            <select id="homePayMethod" required style="height:40px;border-radius:8px;border:1px solid var(--line);background:var(--surface-strong);color:var(--text);font-weight:700;font-size:0.87rem;padding:0 0.75rem;"></select>
+          </label>
+          <label style="display:flex;flex-direction:column;gap:0.25rem;font-size:0.77rem;font-weight:700;color:var(--muted);">
+            Transaction ID
+            <input type="text" id="homePayTxnId" placeholder="e.g. TXN1234567890" required
+              style="height:40px;border-radius:8px;border:1px solid var(--line);background:var(--surface-strong);color:var(--text);font-size:0.87rem;padding:0 0.75rem;" />
+          </label>
+          <button class="primary-button" type="submit" style="width:100%;height:44px;border-radius:10px;font-size:0.88rem;font-weight:800;">Submit for Admin Verification</button>
+        </form>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    document.getElementById("homePayClose").addEventListener("click", () => overlay.classList.remove("open"));
+    overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.classList.remove("open"); });
+    document.getElementById("homePayForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const bId = document.getElementById("homePayBookingId").value;
+      const method = document.getElementById("homePayMethod").value;
+      const txnId = document.getElementById("homePayTxnId").value.trim();
+      if (!txnId) return;
+      const currentUser = getCurrentUser();
+      updateState((state) => {
+        const booking = state.bookings.find((b) => b.id === bId);
+        if (booking && booking.userId === currentUser?.id) {
+          booking.paymentMethod = method;
+          booking.transactionId = txnId;
+        }
+      });
+      overlay.classList.remove("open");
+      renderNotifications();
+      updateNotificationDot();
+      showToast("Payment submitted. Admin will verify shortly.");
+    });
+    notificationList.addEventListener("click", (e) => {
+      const ticketBtn = e.target.closest("[data-view-notification-ticket]");
+      if (!ticketBtn) return;
+      showNotificationTicket(ticketBtn.dataset.viewNotificationTicket);
+    });
+  }
+
+  document.getElementById("homePayBookingId").value = bookingId;
+  document.getElementById("homePayTxnId").value = "";
+  const state = getState();
+  const methods = state.paymentMethods || [];
+  document.getElementById("homePayMethod").innerHTML =
+    methods.map((m) => `<option value="${m.name}">${m.name}</option>`).join("") ||
+    `<option value="N/A">No methods configured</option>`;
+  document.getElementById("homePayMethodList").innerHTML = methods.length
+    ? methods.map((m) => `
+        <div style="display:flex;align-items:center;gap:0.6rem;padding:0.55rem 0.7rem;border:1px solid var(--line);border-radius:8px;background:var(--surface);">
+          <img src="${m.logo}" alt="${m.name}" style="width:34px;height:26px;object-fit:contain;background:#fff;border:1px solid var(--line);border-radius:4px;padding:2px;" />
+          <div><strong style="font-size:0.8rem;display:block;">${m.name}</strong><span style="font-size:0.76rem;color:var(--muted);font-family:monospace;">${m.number}</span></div>
+        </div>`).join("")
+    : `<p style="font-size:0.8rem;color:var(--muted);">No payment methods configured yet.</p>`;
+
+  overlay.classList.add("open");
+  if (window.gsap) {
+    window.gsap.fromTo(overlay.querySelector(".modal-card"),
+      { scale: 0.95, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.25, ease: "back.out(1.2)" });
+  }
+}
+
+function showNotificationTicket(bookingId) {
+  const state = getState();
+  const booking = state.bookings.find((b) => b.id === bookingId);
+  if (!booking) return;
+  const hotel = findHotel(state, booking.hotelId);
+  if (!hotel) return;
+  const nights = Math.max(1, Math.round((new Date(booking.checkOut) - new Date(booking.checkIn)) / (1000 * 60 * 60 * 24)));
+  const totalCost = nights * hotel.price;
+  const currentUser = getCurrentUser();
+
+  let overlay = document.getElementById("notifTicketModal");
+  if (!overlay) {
+    overlay = document.createElement("div");
+    overlay.id = "notifTicketModal";
+    overlay.className = "booking-modal";
+    overlay.innerHTML = `
+      <div class="modal-card" id="notifTicketCard" style="max-width:430px;width:90%;padding:0;overflow:hidden;border-radius:16px;">
+        <div id="notifTicketContent"></div>
+        <div style="padding:1rem 1.5rem;display:flex;gap:0.75rem;border-top:1px solid var(--line);">
+          <button class="primary-button compact" onclick="window.print()" style="flex:1;">🖨 Print</button>
+          <button class="secondary-button compact" id="notifTicketClose" style="flex:1;">Close</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    document.getElementById("notifTicketClose").addEventListener("click", () => overlay.classList.remove("open"));
+    overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.classList.remove("open"); });
+  }
+
+  document.getElementById("notifTicketContent").innerHTML = `
+    <div style="background:linear-gradient(135deg,var(--primary,#1a6b4a) 0%,#0d4a33 100%);padding:1.6rem 1.4rem 1.1rem;color:#fff;">
+      <p style="font-size:0.68rem;letter-spacing:0.12em;opacity:0.75;margin:0 0 0.2rem;">AZURESTAY — BOOKING TICKET</p>
+      <h2 style="margin:0;font-family:var(--font-display,serif);font-size:1.35rem;">${hotel.name}</h2>
+      <p style="margin:0.25rem 0 0;font-size:0.8rem;opacity:0.8;">${hotel.city} &nbsp;·&nbsp; <span style="background:rgba(255,255,255,0.2);padding:0.15rem 0.5rem;border-radius:4px;font-size:0.68rem;font-weight:800;">✓ CONFIRMED</span></p>
+    </div>
+    <div style="padding:1.1rem 1.4rem;display:grid;grid-template-columns:1fr 1fr;gap:0.55rem;border-bottom:2px dashed var(--line);">
+      <div style="background:var(--surface);border-radius:8px;padding:0.55rem 0.7rem;">
+        <p style="margin:0;font-size:0.65rem;color:var(--muted);font-weight:700;">GUEST</p>
+        <p style="margin:0.1rem 0 0;font-size:0.85rem;font-weight:800;">${currentUser?.name || "Guest"}</p>
+      </div>
+      <div style="background:var(--surface);border-radius:8px;padding:0.55rem 0.7rem;">
+        <p style="margin:0;font-size:0.65rem;color:var(--muted);font-weight:700;">ROOM</p>
+        <p style="margin:0.1rem 0 0;font-size:0.85rem;font-weight:800;">${booking.roomType}</p>
+      </div>
+      <div style="background:var(--surface);border-radius:8px;padding:0.55rem 0.7rem;">
+        <p style="margin:0;font-size:0.65rem;color:var(--muted);font-weight:700;">CHECK-IN</p>
+        <p style="margin:0.1rem 0 0;font-size:0.85rem;font-weight:800;">${booking.checkIn}</p>
+      </div>
+      <div style="background:var(--surface);border-radius:8px;padding:0.55rem 0.7rem;">
+        <p style="margin:0;font-size:0.65rem;color:var(--muted);font-weight:700;">CHECK-OUT</p>
+        <p style="margin:0.1rem 0 0;font-size:0.85rem;font-weight:800;">${booking.checkOut}</p>
+      </div>
+      <div style="background:var(--surface);border-radius:8px;padding:0.55rem 0.7rem;">
+        <p style="margin:0;font-size:0.65rem;color:var(--muted);font-weight:700;">GUESTS</p>
+        <p style="margin:0.1rem 0 0;font-size:0.85rem;font-weight:800;">${booking.guests}</p>
+      </div>
+      <div style="background:var(--surface);border-radius:8px;padding:0.55rem 0.7rem;">
+        <p style="margin:0;font-size:0.65rem;color:var(--muted);font-weight:700;">NIGHTS</p>
+        <p style="margin:0.1rem 0 0;font-size:0.85rem;font-weight:800;">${nights}</p>
+      </div>
+    </div>
+    <div style="padding:0.9rem 1.4rem;display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        <p style="margin:0;font-size:0.65rem;color:var(--muted);font-weight:700;">TOTAL PAID</p>
+        <p style="margin:0.1rem 0 0;font-size:1.25rem;font-weight:900;color:var(--primary);">BDT ${totalCost.toLocaleString()}</p>
+      </div>
+      <div style="text-align:right;">
+        <p style="margin:0;font-size:0.65rem;color:var(--muted);font-weight:700;">REF. ID</p>
+        <p style="margin:0.1rem 0 0;font-size:0.72rem;font-family:monospace;font-weight:800;color:var(--gold);">${booking.id.toUpperCase()}</p>
+      </div>
+    </div>
+  `;
+
+  overlay.classList.add("open");
+  if (window.gsap) {
+    window.gsap.fromTo(document.getElementById("notifTicketCard"),
+      { scale: 0.9, opacity: 0, y: 20 }, { scale: 1, opacity: 1, y: 0, duration: 0.3, ease: "back.out(1.4)" });
+  }
 
 function updateNotificationDot() {
   const currentUser = getCurrentUser();
