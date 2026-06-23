@@ -199,23 +199,23 @@ export function animateCounters(root) {
     if (isNaN(target)) return;
     const original = el.textContent;
     const isCurrency = original.includes("৳") || original.includes("$") || original.includes(",");
-    window.gsap.fromTo(
-      { val: 0 },
-      { val: target, duration: 1.2, ease: "power2.out",
-        onUpdate: function () {
-          if (isCurrency) {
-            el.textContent = original.replace(/[\d,]+(\.\d+)?/, Math.round(this.targets()[0].val).toLocaleString());
-          } else {
-            el.textContent = Math.round(this.targets()[0].val);
-          }
-        },
-        onComplete: function () {
-          el.textContent = original;
-        }
+    const obj = { val: 0 };
+    window.gsap.to(obj, {
+      val: target,
+      duration: 1.2,
+      ease: "power2.out",
+      onUpdate() {
+        el.textContent = isCurrency
+          ? original.replace(/[\d,]+(\.\d+)?/, Math.round(obj.val).toLocaleString())
+          : Math.round(obj.val);
+      },
+      onComplete() {
+        el.textContent = original;
       }
-    );
+    });
   });
 }
+
 
 export function animatePage() {
   if (!window.gsap) return;
