@@ -266,7 +266,12 @@ function renderBookingCard(state, booking) {
     `;
   } else if (booking.payment === "pending" && booking.transactionId) {
     // Submitted, waiting admin verification
-    actionButtons += `<span class="status-pill pending" style="font-size:0.75rem;">⏳ Awaiting verification</span>`;
+    actionButtons += `
+      <span class="status-pill pending" style="font-size:0.78rem;display:inline-flex;align-items:center;gap:0.25rem;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Awaiting verification
+      </span>
+    `;
   } else if (booking.payment === "paid") {
     // Admin approved — show ticket
     actionButtons += `
@@ -282,7 +287,12 @@ function renderBookingCard(state, booking) {
       </button>
     `;
   } else if (booking.payment === "rejected") {
-    actionButtons += `<span class="status-pill" style="background:var(--danger-soft,#fee);color:var(--danger,#c00);font-size:0.75rem;">✕ Payment rejected</span>`;
+    actionButtons += `
+      <span class="status-pill" style="color:#be3d3d;background:rgba(190,61,61,0.08);border:1px solid rgba(190,61,61,0.15);font-size:0.78rem;display:inline-flex;align-items:center;gap:0.25rem;margin-right:0.5rem;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:12px;height:12px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        Payment rejected
+      </span>
+    `;
     actionButtons += `
       <button class="primary-button compact" type="button" data-dashboard-pay="${booking.id}">
         Retry Payment
@@ -631,7 +641,7 @@ function showPaymentModal(bookingId) {
   if (!overlay) {
     overlay = document.createElement("div");
     overlay.id = "paymentModal";
-    overlay.className = "booking-modal";
+    overlay.className = "modal";
     overlay.setAttribute("aria-modal", "true");
     overlay.innerHTML = `
       <div class="modal-card" style="max-width:480px;width:90%;padding:2rem;">
@@ -720,12 +730,15 @@ function showTicketModal(bookingId) {
   if (!overlay) {
     overlay = document.createElement("div");
     overlay.id = "ticketModal";
-    overlay.className = "booking-modal";
+    overlay.className = "modal";
     overlay.innerHTML = `
-      <div class="modal-card" id="ticketCard" style="max-width:440px;width:90%;padding:0;overflow:hidden;border-radius:16px;">
+      <div class="modal-card" id="ticketCard" style="max-width:430px;width:90%;padding:0;overflow:hidden;border-radius:16px;">
         <div id="ticketContent"></div>
-        <div style="padding:1rem 1.5rem;display:flex;gap:0.75rem;border-top:1px solid var(--line);">
-          <button class="primary-button compact" onclick="window.print()" style="flex:1;">🖨 Print Ticket</button>
+        <div class="no-print" style="padding:1rem 1.5rem;display:flex;gap:0.75rem;border-top:1px solid var(--line);">
+          <button class="primary-button compact" onclick="window.print()" style="flex:1;display:inline-flex;align-items:center;gap:0.35rem;justify-content:center;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            Print
+          </button>
           <button class="secondary-button compact" id="ticketClose" style="flex:1;">Close</button>
         </div>
       </div>
@@ -736,57 +749,93 @@ function showTicketModal(bookingId) {
   }
 
   document.getElementById("ticketContent").innerHTML = `
-    <div style="background:linear-gradient(135deg,var(--primary,#1a6b4a) 0%,#0d4a33 100%);padding:1.75rem 1.5rem 1.25rem;color:#fff;">
+    <div style="background:linear-gradient(135deg, #0b6d64 0%, #053b36 100%);padding:1.8rem 1.5rem 1.3rem;color:#fff;position:relative;">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;">
         <div>
-          <p style="font-size:0.7rem;letter-spacing:0.12em;opacity:0.75;margin:0 0 0.25rem;">AZURESTAY — BOOKING TICKET</p>
-          <h2 style="margin:0;font-family:var(--font-display,serif);font-size:1.45rem;">${hotel.name}</h2>
-          <p style="margin:0.3rem 0 0;font-size:0.82rem;opacity:0.8;">${hotel.city}</p>
+          <p style="font-size:0.68rem;letter-spacing:0.12em;opacity:0.85;margin:0 0 0.3rem;font-weight:700;">AZURESTAY — BOARDING PASS</p>
+          <h2 style="margin:0;font-family:var(--font-display,serif);font-size:1.45rem;letter-spacing:-0.01em;font-weight:800;">${hotel.name}</h2>
+          <p style="margin:0.2rem 0 0;font-size:0.8rem;opacity:0.85;display:flex;align-items:center;gap:0.3rem;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;color:rgba(255,255,255,0.7);"><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="3"/></svg>
+            ${hotel.city}
+          </p>
         </div>
         <div style="text-align:right;">
-          <div style="background:rgba(255,255,255,0.18);border-radius:8px;padding:0.4rem 0.75rem;font-size:0.7rem;font-weight:800;letter-spacing:0.08em;">✓ CONFIRMED</div>
+          <div style="background:#ffffff;color:#0b6d64;border-radius:30px;padding:0.4rem 0.75rem;font-size:0.68rem;font-weight:900;letter-spacing:0.06em;display:inline-flex;align-items:center;gap:0.3rem;box-shadow:0 4px 12px rgba(0,0,0,0.12);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="width:10px;height:10px;color:#0b6d64;"><polyline points="20 6 9 17 4 12"/></svg>
+            CONFIRMED
+          </div>
         </div>
       </div>
     </div>
-    <div style="padding:1.25rem 1.5rem;display:grid;gap:0.65rem;border-bottom:2px dashed var(--line);">
+    <div style="padding:1.3rem 1.5rem 1rem;display:grid;gap:0.65rem;border-bottom:2px dashed rgba(11, 109, 100, 0.16);position:relative;background:#fafcfb;">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.65rem;">
-        <div style="background:var(--surface);border-radius:8px;padding:0.6rem 0.75rem;">
-          <p style="margin:0;font-size:0.68rem;color:var(--muted);font-weight:700;">GUEST</p>
-          <p style="margin:0.15rem 0 0;font-size:0.88rem;font-weight:800;">${currentUser.name}</p>
+        <div style="background:rgba(11, 109, 100, 0.05);border:1px solid rgba(11, 109, 100, 0.08);border-radius:8px;padding:0.55rem 0.7rem;">
+          <p style="margin:0;font-size:0.65rem;color:var(--muted);font-weight:800;letter-spacing:0.04em;">GUEST</p>
+          <p style="margin:0.15rem 0 0;font-size:0.85rem;font-weight:800;color:var(--text);">${currentUser?.name || "Guest"}</p>
         </div>
-        <div style="background:var(--surface);border-radius:8px;padding:0.6rem 0.75rem;">
-          <p style="margin:0;font-size:0.68rem;color:var(--muted);font-weight:700;">ROOM TYPE</p>
-          <p style="margin:0.15rem 0 0;font-size:0.88rem;font-weight:800;">${booking.roomType}</p>
+        <div style="background:rgba(11, 109, 100, 0.05);border:1px solid rgba(11, 109, 100, 0.08);border-radius:8px;padding:0.55rem 0.7rem;">
+          <p style="margin:0;font-size:0.65rem;color:var(--muted);font-weight:800;letter-spacing:0.04em;">ROOM TYPE</p>
+          <p style="margin:0.15rem 0 0;font-size:0.85rem;font-weight:800;color:var(--text);">${booking.roomType}</p>
         </div>
-        <div style="background:var(--surface);border-radius:8px;padding:0.6rem 0.75rem;">
-          <p style="margin:0;font-size:0.68rem;color:var(--muted);font-weight:700;">CHECK-IN</p>
-          <p style="margin:0.15rem 0 0;font-size:0.88rem;font-weight:800;">${booking.checkIn}</p>
+        <div style="background:rgba(11, 109, 100, 0.05);border:1px solid rgba(11, 109, 100, 0.08);border-radius:8px;padding:0.55rem 0.7rem;">
+          <p style="margin:0;font-size:0.65rem;color:var(--muted);font-weight:800;letter-spacing:0.04em;">CHECK-IN</p>
+          <p style="margin:0.15rem 0 0;font-size:0.85rem;font-weight:800;color:var(--text);">${booking.checkIn}</p>
         </div>
-        <div style="background:var(--surface);border-radius:8px;padding:0.6rem 0.75rem;">
-          <p style="margin:0;font-size:0.68rem;color:var(--muted);font-weight:700;">CHECK-OUT</p>
-          <p style="margin:0.15rem 0 0;font-size:0.88rem;font-weight:800;">${booking.checkOut}</p>
+        <div style="background:rgba(11, 109, 100, 0.05);border:1px solid rgba(11, 109, 100, 0.08);border-radius:8px;padding:0.55rem 0.7rem;">
+          <p style="margin:0;font-size:0.65rem;color:var(--muted);font-weight:800;letter-spacing:0.04em;">CHECK-OUT</p>
+          <p style="margin:0.15rem 0 0;font-size:0.85rem;font-weight:800;color:var(--text);">${booking.checkOut}</p>
         </div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.65rem;">
-        <div style="background:var(--surface);border-radius:8px;padding:0.6rem 0.75rem;">
-          <p style="margin:0;font-size:0.68rem;color:var(--muted);font-weight:700;">GUESTS</p>
-          <p style="margin:0.15rem 0 0;font-size:0.88rem;font-weight:800;">${booking.guests} guest(s)</p>
+        <div style="background:rgba(11, 109, 100, 0.05);border:1px solid rgba(11, 109, 100, 0.08);border-radius:8px;padding:0.55rem 0.7rem;">
+          <p style="margin:0;font-size:0.65rem;color:var(--muted);font-weight:800;letter-spacing:0.04em;">GUESTS</p>
+          <p style="margin:0.15rem 0 0;font-size:0.85rem;font-weight:800;color:var(--text);">${booking.guests} traveler(s)</p>
         </div>
-        <div style="background:var(--surface);border-radius:8px;padding:0.6rem 0.75rem;">
-          <p style="margin:0;font-size:0.68rem;color:var(--muted);font-weight:700;">DURATION</p>
-          <p style="margin:0.15rem 0 0;font-size:0.88rem;font-weight:800;">${nights} night(s)</p>
+        <div style="background:rgba(11, 109, 100, 0.05);border:1px solid rgba(11, 109, 100, 0.08);border-radius:8px;padding:0.55rem 0.7rem;">
+          <p style="margin:0;font-size:0.65rem;color:var(--muted);font-weight:800;letter-spacing:0.04em;">DURATION</p>
+          <p style="margin:0.15rem 0 0;font-size:0.85rem;font-weight:800;color:var(--text);">${nights} night(s) stay</p>
         </div>
       </div>
     </div>
-    <div style="padding:1rem 1.5rem;display:flex;justify-content:space-between;align-items:center;">
+    <div style="padding:1.1rem 1.5rem;display:flex;justify-content:space-between;align-items:center;background:#f6faf8;">
       <div>
-        <p style="margin:0;font-size:0.68rem;color:var(--muted);font-weight:700;">TOTAL PAID</p>
-        <p style="margin:0.15rem 0 0;font-size:1.3rem;font-weight:900;color:var(--primary);">BDT ${totalCost.toLocaleString()}</p>
+        <p style="margin:0;font-size:0.65rem;color:var(--muted);font-weight:800;letter-spacing:0.04em;">TOTAL PAID</p>
+        <p style="margin:0.15rem 0 0;font-size:1.3rem;font-weight:900;color:#0b6d64;font-family:var(--font-price);">BDT ${totalCost.toLocaleString()}</p>
       </div>
       <div style="text-align:right;">
-        <p style="margin:0;font-size:0.68rem;color:var(--muted);font-weight:700;">REF. ID</p>
+        <p style="margin:0;font-size:0.65rem;color:var(--muted);font-weight:800;letter-spacing:0.04em;">REF. ID</p>
         <p style="margin:0.15rem 0 0;font-size:0.75rem;font-weight:800;font-family:monospace;color:var(--gold);">${booking.id.toUpperCase()}</p>
       </div>
+    </div>
+    <!-- Barcode simulation decoration -->
+    <div style="background:#f6faf8;padding:0 1.5rem 1rem;text-align:center;">
+      <div style="display:flex;gap:1.5px;height:30px;opacity:0.55;justify-content:center;margin:0 auto 0.2rem;width:80%;">
+        <div style="width:2px;background:#000;"></div>
+        <div style="width:1px;background:#000;"></div>
+        <div style="width:3px;background:#000;"></div>
+        <div style="width:1px;background:#000;"></div>
+        <div style="width:2px;background:#000;"></div>
+        <div style="width:4px;background:#000;"></div>
+        <div style="width:1px;background:#000;"></div>
+        <div style="width:2px;background:#000;"></div>
+        <div style="width:3px;background:#000;"></div>
+        <div style="width:1px;background:#000;"></div>
+        <div style="width:2px;background:#000;"></div>
+        <div style="width:1px;background:#000;"></div>
+        <div style="width:4px;background:#000;"></div>
+        <div style="width:2px;background:#000;"></div>
+        <div style="width:1px;background:#000;"></div>
+        <div style="width:3px;background:#000;"></div>
+        <div style="width:2px;background:#000;"></div>
+        <div style="width:1px;background:#000;"></div>
+        <div style="width:4px;background:#000;"></div>
+        <div style="width:1px;background:#000;"></div>
+        <div style="width:2px;background:#000;"></div>
+        <div style="width:3px;background:#000;"></div>
+        <div style="width:1px;background:#000;"></div>
+        <div style="width:2px;background:#000;"></div>
+      </div>
+      <span style="font-size:0.6rem;font-family:monospace;letter-spacing:0.25em;color:var(--muted);text-transform:uppercase;">*${booking.id.toUpperCase()}*</span>
     </div>
   `;
 

@@ -2496,17 +2496,6 @@ td,
   box-shadow: var(--shadow);
 }
 
-.modal-card::before {
-  position: absolute;
-  top: 0.85rem;
-  bottom: 0.85rem;
-  left: 0.85rem;
-  width: 4px;
-  border-radius: 999px;
-  content: "";
-  background: linear-gradient(180deg, var(--primary), var(--accent));
-}
-
 .modal-close {
   position: absolute;
   top: 0.8rem;
@@ -4837,6 +4826,7 @@ textarea:focus {
   line-height: 1.38;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
 }
 
 .admin-trip-footer {
@@ -7062,7 +7052,238 @@ td small {
 .grid-empty-state p {
   margin: 0.25rem 0 0;
   color: var(--muted);
+  gap: 0.65rem;
+  align-items: stretch;
+  padding: 0.65rem;
+}
+
+.transaction-filter-bar .search-input-wrap {
+  width: 100%;
+  max-width: 100%;
+}
+
+.transaction-filter-bar .select-filters {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.4rem;
+  width: 100%;
+}
+
+@media (max-width: 580px) {
+  .transaction-filter-bar .select-filters {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Confirm Overlay Modal Styling */
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: none;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(8, 12, 11, 0.66);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.confirm-overlay.open {
+  display: grid;
+}
+
+.confirm-modal-card {
+  position: relative;
+  width: min(480px, 100%);
+  max-height: 92vh;
+  overflow-y: auto;
+  padding: 1.5rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface-strong);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+}
+
+.confirm-modal-card h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+}
+
+.confirm-modal-card p {
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.5;
+  margin: 0.25rem 0 1rem 0;
+}
+
+.confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+/* Premium Booking Page Tabs */
+.booking-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 0.25rem;
+}
+
+.booking-tab-btn {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.booking-tab-btn:hover {
+  color: var(--text);
+}
+
+.booking-tab-btn.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+/* Premium Table Empty State */
+.table-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 3.5rem 1.5rem;
+  gap: 0.8rem;
+}
+
+.table-empty-state .empty-state-icon {
+  margin-bottom: 0.2rem;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  color: var(--muted);
+}
+
+.table-empty-state .empty-state-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.table-empty-state strong {
+  display: block;
+  font-size: 1rem;
+  color: var(--text);
+  font-weight: 800;
+  margin: 0;
+}
+
+.table-empty-state p {
+  margin: 0.25rem 0 0;
+  color: var(--muted);
   font-size: 0.82rem;
   max-width: 340px;
   line-height: 1.45;
+}
+
+/* Premium Grid Empty State */
+.grid-empty-state {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4rem 1.5rem;
+  gap: 0.8rem;
+  background: var(--surface-strong);
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  color: var(--muted);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.grid-empty-state .empty-state-icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  margin-bottom: 0.2rem;
+}
+
+.grid-empty-state .empty-state-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.grid-empty-state strong {
+  display: block;
+  font-size: 1.05rem;
+  color: var(--text);
+  font-weight: 800;
+  margin: 0;
+}
+
+.grid-empty-state p {
+  margin: 0.25rem 0 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  max-width: 340px;
+  line-height: 1.45;
+}
+
+/* Print Optimization for Tickets */
+@media print {
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  body > *:not(.modal) {
+    display: none !important;
+  }
+  .modal {
+    position: absolute !important;
+    inset: 0 !important;
+    background: none !important;
+    backdrop-filter: none !important;
+    padding: 0 !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: flex-start !important;
+  }
+  .modal-card {
+    box-shadow: none !important;
+    border: none !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .no-print, 
+  .modal-close,
+  button,
+  .site-header,
+  .site-footer {
+    display: none !important;
+  }
 }
