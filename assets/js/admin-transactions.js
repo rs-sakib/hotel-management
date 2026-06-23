@@ -66,14 +66,14 @@ function initAdminForms() {
       updateState((state) => {
         if (txItemType === "booking") {
           const item = state.bookings.find((b) => b.id === txId);
-          if (item) item.status = "approved";
+          if (item) item.payment = "paid";
         } else if (txItemType === "tripBooking") {
           const item = (state.tripBookings || []).find((tb) => tb.id === txId);
-          if (item) item.status = "approved";
+          if (item) item.payment = "paid";
         }
       });
       renderTransactionsPage();
-      showToast("Booking request approved.");
+      showToast("Payment verified and marked as paid.");
       return;
     }
 
@@ -81,14 +81,14 @@ function initAdminForms() {
       updateState((state) => {
         if (txItemType === "booking") {
           const item = state.bookings.find((b) => b.id === txId);
-          if (item) item.status = "rejected";
+          if (item) item.payment = "rejected";
         } else if (txItemType === "tripBooking") {
           const item = (state.tripBookings || []).find((tb) => tb.id === txId);
-          if (item) item.status = "rejected";
+          if (item) item.payment = "rejected";
         }
       });
       renderTransactionsPage();
-      showToast("Booking request rejected.");
+      showToast("Payment rejected.");
       return;
     }
 
@@ -96,14 +96,14 @@ function initAdminForms() {
       updateState((state) => {
         if (txItemType === "booking") {
           const item = state.bookings.find((b) => b.id === txId);
-          if (item) item.status = "pending";
+          if (item) item.payment = "pending";
         } else if (txItemType === "tripBooking") {
           const item = (state.tripBookings || []).find((tb) => tb.id === txId);
-          if (item) item.status = "pending";
+          if (item) item.payment = "pending";
         }
       });
       renderTransactionsPage();
-      showToast("Booking reset to pending.");
+      showToast("Payment reset to pending.");
       return;
     }
 
@@ -194,7 +194,7 @@ function initAdminForms() {
 
       const txId = dotsBtn.dataset.txId;
       const txItemType = dotsBtn.dataset.txItemType;
-      const bookingStatus = dotsBtn.dataset.bookingStatus;
+      const paymentStatus = dotsBtn.dataset.paymentStatus;
 
       const isSame = dropdown.style.display === "flex" && dropdown.dataset.activeTxId === txId;
       if (isSame) {
@@ -208,17 +208,17 @@ function initAdminForms() {
         btn.dataset.txId = txId;
         btn.dataset.txItemType = txItemType;
         if (btn.dataset.txAction === "approve") {
-          bookingStatus === "approved"
+          paymentStatus === "paid"
             ? btn.setAttribute("disabled", "true")
             : btn.removeAttribute("disabled");
         }
         if (btn.dataset.txAction === "reject") {
-          bookingStatus === "rejected"
+          paymentStatus === "rejected"
             ? btn.setAttribute("disabled", "true")
             : btn.removeAttribute("disabled");
         }
         if (btn.dataset.txAction === "set-pending") {
-          bookingStatus === "pending"
+          paymentStatus === "pending"
             ? btn.setAttribute("disabled", "true")
             : btn.removeAttribute("disabled");
         }
@@ -450,8 +450,8 @@ function renderTransactions(state) {
       method: booking.paymentMethod || "N/A",
       transactionId: booking.transactionId || "",
       amount: totalCost,
-      status: getTransactionStatus(booking.payment, booking.status),
-      bookingStatus: booking.status || "pending"
+      status: booking.payment || "pending",
+      paymentStatus: booking.payment || "pending"
     });
   });
 
@@ -473,8 +473,8 @@ function renderTransactions(state) {
       method: request.paymentMethod || "N/A",
       transactionId: request.transactionId || "",
       amount: depositAmount,
-      status: getTransactionStatus(request.payment, request.status),
-      bookingStatus: request.status || "pending"
+      status: request.payment || "pending",
+      paymentStatus: request.payment || "pending"
     });
   });
 
@@ -535,7 +535,7 @@ function renderTransactions(state) {
                   <button class="three-dots-btn" type="button" aria-label="Actions" 
                           data-tx-id="${tx.id}" 
                           data-tx-item-type="${tx.itemType}" 
-                          data-booking-status="${tx.bookingStatus}">⋮</button>
+                          data-payment-status="${tx.paymentStatus}">⋮</button>
                 </div>
               </td>
             </tr>
@@ -626,10 +626,8 @@ function setSummary(selector, items) {
   renderAdminSummary(root, items);
 }
 
-function getTransactionStatus(paymentStatus, bookingStatus) {
-  if (bookingStatus === "rejected") return "rejected";
-  if (bookingStatus !== "approved") return "pending";
-  return paymentStatus === "paid" ? "paid" : "unpaid";
+function getTransactionStatus(paymentStatus) {
+  return paymentStatus || "pending";
 }
 
 function getBookingNights(booking) {

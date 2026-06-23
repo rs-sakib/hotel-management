@@ -154,10 +154,12 @@ function executeBookingAction(bookingId, bookingAction, dotsBtn) {
     if (!booking) return;
     if (bookingAction === "approve") booking.status = "approved";
     if (bookingAction === "reject") booking.status = "rejected";
+    if (bookingAction === "set-pending") booking.status = "pending";
   });
 
   renderBookingsPage();
-  showToast("Booking updated.");
+  const toastMessages = { approve: "Booking approved.", reject: "Booking rejected.", "set-pending": "Booking reset to pending." };
+  showToast(toastMessages[bookingAction] || "Booking updated.");
 }
 
 function showBookingDetailModal({ title, rows }) {
@@ -212,18 +214,19 @@ function initAdminForms() {
       dropdown.querySelectorAll("[data-booking-action]").forEach((btn) => {
         btn.dataset.bookingId = bookingId;
         if (btn.dataset.bookingAction === "approve") {
-          if (bookingStatus === "approved") {
-            btn.setAttribute("disabled", "true");
-          } else {
-            btn.removeAttribute("disabled");
-          }
+          bookingStatus === "approved"
+            ? btn.setAttribute("disabled", "true")
+            : btn.removeAttribute("disabled");
         }
         if (btn.dataset.bookingAction === "reject") {
-          if (bookingStatus === "rejected") {
-            btn.setAttribute("disabled", "true");
-          } else {
-            btn.removeAttribute("disabled");
-          }
+          bookingStatus === "rejected"
+            ? btn.setAttribute("disabled", "true")
+            : btn.removeAttribute("disabled");
+        }
+        if (btn.dataset.bookingAction === "set-pending") {
+          bookingStatus === "pending"
+            ? btn.setAttribute("disabled", "true")
+            : btn.removeAttribute("disabled");
         }
       });
 
@@ -368,7 +371,7 @@ function renderBookings(state) {
                   </div>
                 </td>
                 <td>${escapeHtml(booking.checkIn)}<br>${escapeHtml(booking.checkOut)}</td>
-                <td>${statusPill(booking.payment === "paid" ? "paid" : "unpaid")}</td>
+                <td>${statusPill(booking.payment || "pending")}</td>
                 <td>${statusPill(booking.status)}</td>
                 <td>
                   <div class="actions-dropdown-container">
@@ -421,7 +424,7 @@ function renderBookings(state) {
                 </td>
                 <td>${escapeHtml(request.preferredDate || "Date pending")}</td>
                 <td>
-                  ${statusPill(request.payment === "paid" ? "paid" : "unpaid")}
+                  ${statusPill(request.payment || "pending")}
                   ${request.paymentMethod && request.paymentMethod !== "Payment method pending" ? `<br><small>${escapeHtml(request.paymentMethod)}</small>` : ""}
                   ${request.transactionId ? `<br><code style="font-family: monospace; font-size: 0.8rem; font-weight: bold; color: var(--gold);">${escapeHtml(request.transactionId)}</code>` : ""}
                 </td>
