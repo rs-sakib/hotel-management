@@ -82,7 +82,56 @@ function initTabs() {
   });
 }
 
-function executeBookingAction(bookingId, bookingAction) {
+function executeBookingAction(bookingId, bookingAction, dotsBtn) {
+  if (bookingAction === "view-details") {
+    const state = getState();
+    if (activeTab === "hotel") {
+      const booking = state.bookings.find((b) => b.id === bookingId);
+      const hotel = booking ? findHotel(state, booking.hotelId) : null;
+      const user = booking ? findUser(state, booking.userId) : null;
+      const nights = booking ? getBookingNights(booking) : 1;
+      const totalCost = hotel ? Number(hotel.price || 0) * nights : 0;
+      showBookingDetailModal({
+        title: hotel?.name || "Hotel booking",
+        rows: [
+          ["Guest", user?.name || "Unknown"],
+          ["Email", user?.email || "—"],
+          ["Hotel", hotel?.name || "—"],
+          ["Room type", booking?.roomType || "—"],
+          ["Guests", booking?.guests || "—"],
+          ["Check-in", booking?.checkIn || "—"],
+          ["Check-out", booking?.checkOut || "—"],
+          ["Nights", nights],
+          ["Total cost", formatCurrency(totalCost)],
+          ["Payment", booking?.payment || "—"],
+          ["Status", booking?.status || "—"]
+        ]
+      });
+    } else {
+      const request = (state.tripBookings || []).find((b) => b.id === bookingId);
+      const user = request ? findUser(state, request.userId) : null;
+      const trip = request ? state.trips?.find((t) => t.id === request.tripId) : null;
+      const deposit = trip ? Math.round(Number(trip.budget || 0) * 0.1) : 0;
+      showBookingDetailModal({
+        title: request?.tripTitle || "Trip request",
+        rows: [
+          ["Guest", user?.name || "Unknown"],
+          ["Email", user?.email || "—"],
+          ["Destination", request?.destination || "—"],
+          ["Travelers", request?.travelers || "—"],
+          ["Package", request?.packageType || "—"],
+          ["Preferred date", request?.preferredDate || "—"],
+          ["Deposit", formatCurrency(deposit)],
+          ["Payment method", request?.paymentMethod || "—"],
+          ["Transaction ID", request?.transactionId || "—"],
+          ["Payment", request?.payment || "—"],
+          ["Status", request?.status || "—"]
+        ]
+      });
+    }
+    return;
+  }
+
   if (bookingAction === "delete") {
     const itemText = activeTab === "hotel" ? "hotel booking request" : "trip booking request";
     showConfirm(`Delete this ${itemText}?`, () => {
@@ -109,6 +158,36 @@ function executeBookingAction(bookingId, bookingAction) {
 
   renderBookingsPage();
   showToast("Booking updated.");
+}
+
+function showBookingDetailModal({ title, rows }) {
+  let modal = document.getElementById("bookingDetailModal");
+  if (!modal) {
+    modal = document.createElement("div");
+    modal.id = "bookingDetailModal";
+    modal.className = "confirm-overlay";
+    modal.innerHTML = `
+      <div class="confirm-modal-card" style="max-width:480px; width:100%;">
+        <h3 id="bookingDetailTitle" style="margin-bottom:1rem;"></h3>
+        <dl id="bookingDetailBody" style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem 1rem; font-size:0.9rem; margin-bottom:1.25rem;"></dl>
+        <div class="confirm-actions">
+          <button class="primary-button compact" type="button" id="bookingDetailClose">Close</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    modal.addEventListener("click", (e) => { if (e.target === modal) modal.classList.remove("open"); });
+    document.getElementById("bookingDetailClose").addEventListener("click", () => modal.classList.remove("open"));
+  }
+
+  document.getElementById("bookingDetailTitle").textContent = title;
+  document.getElementById("bookingDetailBody").innerHTML = rows
+    .map(([label, value]) => `
+      <dt style="color:var(--muted); font-weight:600;">${escapeHtml(label)}</dt>
+      <dd style="font-weight:700; margin:0;">${escapeHtml(String(value))}</dd>
+    `).join("");
+
+  modal.classList.add("open");
 }
 
 function initAdminForms() {
@@ -177,7 +256,8 @@ function initAdminForms() {
     globalBookingDropdown.removeAttribute("data-active-booking-id");
 
     const { bookingId, bookingAction } = actionButton.dataset;
-    executeBookingAction(bookingId, bookingAction);
+    const dotsBtn = document.querySelector(`.three-dots-btn[data-booking-id="${bookingId}"]`);
+    executeBookingAction(bookingId, bookingAction, dotsBtn);
   });
 
   document.addEventListener("click", (event) => {
@@ -288,7 +368,7 @@ function renderBookings(state) {
                   </div>
                 </td>
                 <td>${escapeHtml(booking.checkIn)}<br>${escapeHtml(booking.checkOut)}</td>
-                <td>${statusPill(booking.payment === "paid" ? (booking.status === "approved" ? "paid" : "under-review") : "unpaid")}</td>
+                <td>${statusPill(booking.payment === "paid" ? "paid" : "unpaid")}</td>
                 <td>${statusPill(booking.status)}</td>
                 <td>
                   <div class="actions-dropdown-container">
@@ -341,7 +421,7 @@ function renderBookings(state) {
                 </td>
                 <td>${escapeHtml(request.preferredDate || "Date pending")}</td>
                 <td>
-                  ${statusPill(request.payment === "paid" ? (request.status === "approved" ? "paid" : "under-review") : "unpaid")}
+                  ${statusPill(request.payment === "paid" ? "paid" : "unpaid")}
                   ${request.paymentMethod && request.paymentMethod !== "Payment method pending" ? `<br><small>${escapeHtml(request.paymentMethod)}</small>` : ""}
                   ${request.transactionId ? `<br><code style="font-family: monospace; font-size: 0.8rem; font-weight: bold; color: var(--gold);">${escapeHtml(request.transactionId)}</code>` : ""}
                 </td>
