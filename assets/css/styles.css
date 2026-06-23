@@ -7258,10 +7258,13 @@ td small {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
-  body > *:not(.modal) {
+  body > *:not(.modal.open) {
     display: none !important;
   }
-  .modal {
+  .modal:not(.open) {
+    display: none !important;
+  }
+  .modal.open {
     position: absolute !important;
     inset: 0 !important;
     background: none !important;

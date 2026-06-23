@@ -1,5 +1,6 @@
 import { findHotel, getCurrentUser, getState, isAdminUser, updateState } from "./store.js";
 import { animateCounters, animatePage, counterValueMarkup, formatCurrency, formatStatus, initAuthChrome, initHeader, initTheme, showToast, statusPill, updateUserNavAvatar, userAvatarMarkup } from "./ui.js";
+import { initCustomControls } from "./controls.js";
 
 const currentUser = getCurrentUser();
 let activeFilter = "all";
@@ -638,6 +639,7 @@ function initDashboardActions() {
 // ─── Payment Modal ───────────────────────────────────────────────────────────
 function showPaymentModal(bookingId) {
   let overlay = document.getElementById("paymentModal");
+  const isNew = !overlay;
   if (!overlay) {
     overlay = document.createElement("div");
     overlay.id = "paymentModal";
@@ -650,7 +652,7 @@ function showPaymentModal(bookingId) {
           <button type="button" id="payModalClose" style="background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--muted);">&times;</button>
         </div>
         <p style="color:var(--muted);font-size:0.88rem;margin-bottom:1.25rem;">Send the full amount to the hotel's MFS account below, then enter your transaction details.</p>
-        <div id="payMethodList" style="display:grid;gap:0.5rem;margin-bottom:1.25rem;"></div>
+        <div id="payMethodList" style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:1.25rem;"></div>
         <form id="paymentForm" style="display:grid;gap:0.75rem;">
           <input type="hidden" id="payBookingId" />
           <label style="display:flex;flex-direction:column;gap:0.3rem;font-size:0.78rem;font-weight:700;color:var(--muted);">
@@ -697,17 +699,29 @@ function showPaymentModal(bookingId) {
   methodSelect.innerHTML = methods.map((m) => `<option value="${m.name}">${m.name}</option>`).join("") ||
     `<option value="N/A">No methods configured</option>`;
 
+  if (isNew) {
+    initCustomControls(overlay);
+  }
+
   // Show payment method numbers
   document.getElementById("payMethodList").innerHTML = methods.length
     ? methods.map((m) => `
-        <div style="display:flex;align-items:center;gap:0.65rem;padding:0.6rem 0.75rem;border:1px solid var(--line);border-radius:8px;background:var(--surface);">
-          <img src="${m.logo}" alt="${m.name}" style="width:36px;height:28px;object-fit:contain;border-radius:4px;background:#fff;border:1px solid var(--line);padding:2px;" />
-          <div>
-            <strong style="font-size:0.82rem;display:block;">${m.name}</strong>
-            <span style="font-size:0.78rem;color:var(--muted);font-family:monospace;">${m.number}</span>
+        <div style="display:flex;align-items:center;gap:0.5rem;padding:0.4rem 0.55rem;border:1px solid var(--line);border-radius:8px;background:var(--surface);cursor:pointer;" class="pay-method-card" data-method-name="${m.name}">
+          <img src="${m.logo}" alt="${m.name}" style="width:30px;height:22px;object-fit:contain;border-radius:4px;background:#fff;border:1px solid var(--line);padding:1px;" />
+          <div style="min-width:0;flex:1;">
+            <strong style="font-size:0.76rem;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${m.name}</strong>
+            <span style="font-size:0.7rem;color:var(--muted);font-family:monospace;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${m.number}</span>
           </div>
         </div>`).join("")
     : `<p style="font-size:0.82rem;color:var(--muted);">No payment methods configured by admin yet.</p>`;
+
+  overlay.querySelectorAll(".pay-method-card").forEach((card) => {
+    card.addEventListener("click", () => {
+      const select = document.getElementById("payMethodSelect");
+      select.value = card.dataset.methodName;
+      select.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+  });
 
   overlay.classList.add("open");
   if (window.gsap) {
