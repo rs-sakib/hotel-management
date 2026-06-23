@@ -92,32 +92,68 @@
       <div data-admin-content>
         <section class="admin-section active" data-admin-section="trips">
           <div class="admin-section-summary" data-trip-summary></div>
-          <div class="admin-grid-two">
+          <div class="admin-trip-manager">
             <article class="admin-card">
               <div class="card-heading">
                 <h2>Add trip</h2>
                 <span>Guest journey</span>
               </div>
-              <form class="stack-form" data-trip-form>
+              <form class="admin-trip-form" data-trip-form>
                 <input type="hidden" name="tripId" />
-                <input name="title" placeholder="Trip title" required />
-                <input name="type" placeholder="Trip type e.g. Business" required />
-                <input name="guest" placeholder="Guest or group" required />
-                <input name="destination" placeholder="Destination" required />
-                <input name="dates" placeholder="Date range" required />
-                <input name="duration" placeholder="Duration e.g. 4 days" required />
-                <input name="stays" type="number" min="0" placeholder="Hotel stays" required />
-                <input name="budget" type="number" min="0" placeholder="Budget" required />
-                <input name="manager" placeholder="Manager" required />
-                <input name="image" type="url" placeholder="Image URL" required />
-                <textarea name="concierge" rows="3" placeholder="Concierge plan" required></textarea>
-                <select name="status" required>
-                  <option>Planning</option>
-                  <option>Confirmed</option>
-                  <option>In progress</option>
-                  <option>Completed</option>
-                </select>
-                <div class="action-row">
+                <label class="form-field-group">
+                  <span>Trip title</span>
+                  <input name="title" placeholder="e.g. Executive Dhaka Summit" required />
+                </label>
+                <label class="form-field-group">
+                  <span>Trip type</span>
+                  <input name="type" placeholder="e.g. Business" required />
+                </label>
+                <label class="form-field-group">
+                  <span>Guest or group</span>
+                  <input name="guest" placeholder="e.g. Rahman Group" required />
+                </label>
+                <label class="form-field-group">
+                  <span>Destination</span>
+                  <input name="destination" placeholder="e.g. Dhaka, Bangladesh" required />
+                </label>
+                <label class="form-field-group">
+                  <span>Date range</span>
+                  <input name="dates" placeholder="e.g. Jun 18-21, 2026" required />
+                </label>
+                <label class="form-field-group">
+                  <span>Duration</span>
+                  <input name="duration" placeholder="e.g. 4 days" required />
+                </label>
+                <label class="form-field-group">
+                  <span>Hotel stays</span>
+                  <input name="stays" type="number" min="0" placeholder="e.g. 3" required />
+                </label>
+                <label class="form-field-group">
+                  <span>Budget (৳)</span>
+                  <input name="budget" type="number" min="0" placeholder="e.g. 50000" required />
+                </label>
+                <label class="form-field-group">
+                  <span>Manager</span>
+                  <input name="manager" placeholder="e.g. Sakib Admin" required />
+                </label>
+                <label class="form-field-group">
+                  <span>Image URL</span>
+                  <input name="image" type="url" placeholder="https://..." required />
+                </label>
+                <label class="form-field-group">
+                  <span>Status</span>
+                  <select name="status" required>
+                    <option>Planning</option>
+                    <option>Confirmed</option>
+                    <option>In progress</option>
+                    <option>Completed</option>
+                  </select>
+                </label>
+                <label class="form-field-group" style="grid-column: 1 / -1;">
+                  <span>Concierge plan</span>
+                  <textarea name="concierge" rows="3" placeholder="Describe the concierge plan..." required></textarea>
+                </label>
+                <div class="admin-form-actions">
                   <button class="primary-button" type="submit" data-trip-submit-label>Add trip</button>
                   <button class="secondary-button" type="button" data-cancel-trip-edit hidden>Cancel edit</button>
                 </div>

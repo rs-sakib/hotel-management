@@ -165,7 +165,8 @@ export function formatCurrency(value) {
 }
 
 export function formatStatus(status) {
-  return status.charAt(0).toUpperCase() + status.slice(1);
+  const formatted = String(status || '').replaceAll('-', ' ');
+  return formatted.charAt(0).toUpperCase() + formatted.slice(1);
 }
 
 export function statusPill(status) {

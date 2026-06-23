@@ -1,6 +1,6 @@
 import { clearCurrentUser, createId, getCurrentUser, getState, isAdminUser, updateState } from "./store.js";
 import { loadHotelCatalog } from "./hotel-catalog.js";
-import { animatePage, formatCurrency, initAuthChrome, initTheme, showToast, userAvatarMarkup } from "./ui.js";
+import { animatePage, formatCurrency, initAuthChrome, initTheme, renderAdminSummary, showToast, userAvatarMarkup } from "./ui.js";
 import { initCustomControls } from "./controls.js";
 
 const accessWarning = document.querySelector("[data-access-warning]");
@@ -112,11 +112,12 @@ function initAdminForms() {
 }
 
 function getHotelFormData(formData, id) {
+  const existingHotel = getState().hotels.find((h) => h.id === id);
   return {
     id,
     name: String(formData.get("name")).trim(),
     city: String(formData.get("city")).trim(),
-    rating: Number(formData.get("rating")),
+    rating: existingHotel ? Number(existingHotel.rating || 5.0) : 5.0,
     price: Number(formData.get("price")),
     rooms: Number(formData.get("rooms")),
     image: String(formData.get("image")).trim(),
@@ -132,7 +133,6 @@ function fillHotelForm(form, hotel) {
   form.elements.hotelId.value = hotel.id;
   form.elements.name.value = hotel.name || "";
   form.elements.city.value = hotel.city || "";
-  form.elements.rating.value = Number(hotel.rating || 0);
   form.elements.price.value = Number(hotel.price || 0);
   form.elements.rooms.value = Number(hotel.rooms || 0);
   form.elements.image.value = hotel.image || "";
@@ -282,21 +282,12 @@ function renderHotelsSummary(state) {
   const root = document.querySelector("[data-hotel-summary]");
   if (!root) return;
 
-  const items = [
-    ["Visible hotels", hotelRows.length],
-    ["Rooms", hotelRows.reduce((sum, hotel) => sum + Number(hotel.rooms || 0), 0)],
-    ["Cities", groupCount(hotelRows, (hotel) => hotel.city).length],
-    ["Avg rate", formatCurrency(average(hotelRows.map((hotel) => Number(hotel.price || 0))))]
-  ];
-
-  root.innerHTML = items
-    .map(([label, value]) => `
-      <article>
-        <span>${escapeHtml(label)}</span>
-        <strong>${escapeHtml(value)}</strong>
-      </article>
-    `)
-    .join("");
+  renderAdminSummary(root, [
+    { label: "Visible hotels", value: hotelRows.length, icon: "hotel", tone: "total" },
+    { label: "Rooms", value: hotelRows.reduce((sum, hotel) => sum + Number(hotel.rooms || 0), 0), icon: "room", tone: "approved" },
+    { label: "Cities", value: groupCount(hotelRows, (hotel) => hotel.city).length, icon: "city", tone: "pending" },
+    { label: "Avg rate", value: formatCurrency(average(hotelRows.map((hotel) => Number(hotel.price || 0)))), icon: "rate", tone: "paid" }
+  ]);
 }
 
 function getFilteredHotels(state) {

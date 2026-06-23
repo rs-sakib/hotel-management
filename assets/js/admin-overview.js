@@ -1,6 +1,6 @@
-import { clearCurrentUser, getCurrentUser, getState, isAdminUser } from "./store.js";
+import { clearCurrentUser, getCurrentUser, getState, isAdminUser, updateState } from "./store.js";
 import { loadHotelCatalog } from "./hotel-catalog.js";
-import { animatePage, formatCurrency, initAuthChrome, initTheme, userAvatarMarkup } from "./ui.js";
+import { adminStatIcon, animateCounters, animatePage, counterValueMarkup, formatCurrency, initAuthChrome, initTheme, userAvatarMarkup } from "./ui.js";
 import { initCustomControls } from "./controls.js";
 
 const accessWarning = document.querySelector("[data-access-warning]");
@@ -60,18 +60,20 @@ function renderOverview() {
 
 function renderMetrics(state) {
   const analysis = analyzeState(state);
-  document.querySelector("[data-admin-metrics]").innerHTML = [
-    ["Portfolio", state.hotels.length, `${analysis.cityCount} active locations`, "total", buildingIcon()],
-    ["Bookings", state.bookings.length, `${analysis.pending} pending review`, "pending", calendarIcon()],
-    ["Paid revenue", formatCurrency(analysis.paidRevenue), `${analysis.paidBookings} paid bookings`, "paid", dollarIcon()],
-    ["Open rooms", analysis.totalRooms, `${analysis.averageRating.toFixed(1)} average rating`, "approved", roomIcon()]
+  const root = document.querySelector("[data-admin-metrics]");
+  if (!root) return;
+  root.innerHTML = [
+    ["Portfolio", state.hotels.length, `${analysis.cityCount} active locations`, "total", adminStatIcon("hotel")],
+    ["Bookings", state.bookings.length, `${analysis.pending} pending review`, "pending", adminStatIcon("booking")],
+    ["Paid revenue", formatCurrency(analysis.paidRevenue), `${analysis.paidBookings} paid bookings`, "paid", adminStatIcon("rate")],
+    ["Open rooms", analysis.totalRooms, `${analysis.averageRating.toFixed(1)} average rating`, "approved", adminStatIcon("room")]
   ]
     .map(
       ([label, value, detail, type, icon]) => `
         <article class="metric-card ${type}">
           <div class="metric-info">
             <span>${escapeHtml(label)}</span>
-            <strong>${escapeHtml(value)}</strong>
+            <strong>${counterValueMarkup(value)}</strong>
             <small>${escapeHtml(detail)}</small>
           </div>
           <div class="metric-icon">${icon}</div>
@@ -79,6 +81,7 @@ function renderMetrics(state) {
       `
     )
     .join("");
+  animateCounters(root);
 }
 
 function renderOverviewCharts(state) {
@@ -410,7 +413,7 @@ function renderOverviewLists(state) {
               <h3>${escapeHtml(user?.name || "Unknown guest")}</h3>
               <p>${escapeHtml(hotel?.name || "Hotel removed")} / ${escapeHtml(formatCurrency(totalCost))}</p>
               <div class="action-row">
-                ${statusPill(booking.payment === "paid" ? "paid" : "unpaid")}
+                ${statusPill(booking.payment === "paid" ? (booking.status === "approved" ? "paid" : "under-review") : "unpaid")}
                 ${statusPill(booking.status)}
               </div>
             </article>
@@ -430,7 +433,7 @@ function compactBookingItem(state, booking) {
       <p>${escapeHtml(user?.name || "Unknown guest")} / ${escapeHtml(booking.checkIn)} to ${escapeHtml(booking.checkOut)} / ${escapeHtml(formatCurrency(totalCost))}</p>
       <div class="action-row">
         ${statusPill(booking.status)}
-        ${statusPill(booking.payment === "paid" ? "paid" : "unpaid")}
+        ${statusPill(booking.payment === "paid" ? (booking.status === "approved" ? "paid" : "under-review") : "unpaid")}
       </div>
     </article>
   `;

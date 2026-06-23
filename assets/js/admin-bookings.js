@@ -1,5 +1,5 @@
 import { clearCurrentUser, findHotel, findUser, getCurrentUser, getState, isAdminUser, updateState } from "./store.js";
-import { animatePage, formatCurrency, initAuthChrome, initTheme, showToast, statusPill, userAvatarMarkup } from "./ui.js";
+import { animatePage, formatCurrency, initAuthChrome, initTheme, renderAdminSummary, showToast, statusPill, userAvatarMarkup } from "./ui.js";
 import { initCustomControls } from "./controls.js";
 
 const accessWarning = document.querySelector("[data-access-warning]");
@@ -288,7 +288,7 @@ function renderBookings(state) {
                   </div>
                 </td>
                 <td>${escapeHtml(booking.checkIn)}<br>${escapeHtml(booking.checkOut)}</td>
-                <td>${statusPill(booking.payment === "paid" ? "paid" : "unpaid")}</td>
+                <td>${statusPill(booking.payment === "paid" ? (booking.status === "approved" ? "paid" : "under-review") : "unpaid")}</td>
                 <td>${statusPill(booking.status)}</td>
                 <td>
                   <div class="actions-dropdown-container">
@@ -341,7 +341,7 @@ function renderBookings(state) {
                 </td>
                 <td>${escapeHtml(request.preferredDate || "Date pending")}</td>
                 <td>
-                  ${statusPill(request.payment === "paid" ? "paid" : "unpaid")}
+                  ${statusPill(request.payment === "paid" ? (request.status === "approved" ? "paid" : "under-review") : "unpaid")}
                   ${request.paymentMethod && request.paymentMethod !== "Payment method pending" ? `<br><small>${escapeHtml(request.paymentMethod)}</small>` : ""}
                   ${request.transactionId ? `<br><code style="font-family: monospace; font-size: 0.8rem; font-weight: bold; color: var(--gold);">${escapeHtml(request.transactionId)}</code>` : ""}
                 </td>
@@ -380,21 +380,12 @@ function renderBookingsSummary(state) {
 
   if (activeTab === "hotel") {
     const bookingRows = getFilteredBookings(state);
-    const items = [
-      ["Visible Bookings", bookingRows.length],
-      ["Pending Review", bookingRows.filter((booking) => booking.status === "pending").length],
-      ["Paid Bookings", bookingRows.filter((booking) => booking.payment === "paid").length],
-      ["Hotel Revenue", formatCurrency(getBookingsRevenue(state, bookingRows))]
-    ];
-
-    root.innerHTML = items
-      .map(([label, value]) => `
-        <article>
-          <span>${escapeHtml(label)}</span>
-          <strong>${escapeHtml(value)}</strong>
-        </article>
-      `)
-      .join("");
+    renderAdminSummary(root, [
+      { label: "Visible bookings", value: bookingRows.length, icon: "booking", tone: "total" },
+      { label: "Pending review", value: bookingRows.filter((booking) => booking.status === "pending").length, icon: "pending", tone: "pending" },
+      { label: "Paid bookings", value: bookingRows.filter((booking) => booking.payment === "paid").length, icon: "paid", tone: "approved" },
+      { label: "Hotel revenue", value: formatCurrency(getBookingsRevenue(state, bookingRows)), icon: "rate", tone: "paid" }
+    ]);
   } else {
     const bookingRows = getFilteredTripBookings(state);
     const totalRevenue = bookingRows.reduce((sum, request) => {
@@ -404,21 +395,12 @@ function renderBookingsSummary(state) {
       return sum + Math.round(budget * 0.1);
     }, 0);
 
-    const items = [
-      ["Visible Requests", bookingRows.length],
-      ["Pending Approval", bookingRows.filter((r) => r.status === "pending").length],
-      ["Paid Deposit", bookingRows.filter((r) => r.payment === "paid").length],
-      ["Deposit Revenue", formatCurrency(totalRevenue)]
-    ];
-
-    root.innerHTML = items
-      .map(([label, value]) => `
-        <article>
-          <span>${escapeHtml(label)}</span>
-          <strong>${escapeHtml(value)}</strong>
-        </article>
-      `)
-      .join("");
+    renderAdminSummary(root, [
+      { label: "Visible requests", value: bookingRows.length, icon: "trip", tone: "total" },
+      { label: "Pending approval", value: bookingRows.filter((r) => r.status === "pending").length, icon: "pending", tone: "pending" },
+      { label: "Paid deposit", value: bookingRows.filter((r) => r.payment === "paid").length, icon: "paid", tone: "approved" },
+      { label: "Deposit revenue", value: formatCurrency(totalRevenue), icon: "rate", tone: "paid" }
+    ]);
   }
 }
 

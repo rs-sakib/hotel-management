@@ -1,5 +1,5 @@
 import { clearCurrentUser, createId, getCurrentUser, getState, isAdminUser, updateState } from "./store.js";
-import { animatePage, initAuthChrome, initTheme, showToast, statusPill, userAvatarMarkup } from "./ui.js";
+import { animatePage, initAuthChrome, initTheme, renderAdminSummary, showToast, statusPill, userAvatarMarkup } from "./ui.js";
 import { initCustomControls } from "./controls.js";
 
 const accessWarning = document.querySelector("[data-access-warning]");
@@ -278,20 +278,11 @@ function renderTripsSummary(state) {
   const root = document.querySelector("[data-trip-summary]");
   if (!root) return;
 
-  const items = [
-    ["Visible trips", tripRows.length],
-    ["Confirmed", tripRows.filter((trip) => trip.status === "Confirmed").length],
-    ["Planning", tripRows.filter((trip) => trip.status === "Planning").length]
-  ];
-
-  root.innerHTML = items
-    .map(([label, value]) => `
-      <article>
-        <span>${escapeHtml(label)}</span>
-        <strong>${escapeHtml(value)}</strong>
-      </article>
-    `)
-    .join("");
+  renderAdminSummary(root, [
+    { label: "Visible trips", value: tripRows.length, icon: "trip", tone: "total" },
+    { label: "Ready trips", value: tripRows.filter((trip) => trip.status === "Confirmed").length, icon: "active", tone: "approved" },
+    { label: "Planning", value: tripRows.filter((trip) => trip.status === "Planning").length, icon: "pending", tone: "pending" }
+  ]);
 }
 
 function getFilteredTrips(state) {

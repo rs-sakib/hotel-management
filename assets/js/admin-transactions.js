@@ -1,5 +1,5 @@
 import { clearCurrentUser, createId, findHotel, findUser, getCurrentUser, getState, isAdminUser, updateState } from "./store.js";
-import { animatePage, formatCurrency, initAuthChrome, initTheme, showToast, statusPill, userAvatarMarkup } from "./ui.js";
+import { animatePage, formatCurrency, initAuthChrome, initTheme, renderAdminSummary, showToast, statusPill, userAvatarMarkup } from "./ui.js";
 import { initCustomControls } from "./controls.js";
 
 const accessWarning = document.querySelector("[data-access-warning]");
@@ -98,7 +98,7 @@ function initAdminForms() {
           method: booking.paymentMethod || "N/A",
           transactionId: booking.transactionId || "",
           amount: totalCost,
-          status: booking.payment || "pending",
+          status: getTransactionStatus(booking.payment, booking.status),
           bookingStatus: booking.status || "pending",
           note: booking.note || "",
           createdAt: booking.createdAt || ""
@@ -122,7 +122,7 @@ function initAdminForms() {
           method: request.paymentMethod || "N/A",
           transactionId: request.transactionId || "",
           amount: depositAmount,
-          status: request.payment || "pending",
+          status: getTransactionStatus(request.payment, request.status),
           bookingStatus: request.status || "pending",
           note: request.note || "",
           createdAt: request.createdAt || ""
@@ -412,7 +412,7 @@ function renderTransactions(state) {
       method: booking.paymentMethod || "N/A",
       transactionId: booking.transactionId || "",
       amount: totalCost,
-      status: booking.payment || "pending",
+      status: getTransactionStatus(booking.payment, booking.status),
       bookingStatus: booking.status || "pending"
     });
   });
@@ -435,7 +435,7 @@ function renderTransactions(state) {
       method: request.paymentMethod || "N/A",
       transactionId: request.transactionId || "",
       amount: depositAmount,
-      status: request.payment || "pending",
+      status: getTransactionStatus(request.payment, request.status),
       bookingStatus: request.status || "pending"
     });
   });
@@ -472,10 +472,10 @@ function renderTransactions(state) {
     const totalAmount = filtered.reduce((sum, tx) => sum + (tx.status === "paid" ? tx.amount : 0), 0);
     const pendingCount = filtered.filter((tx) => tx.status !== "paid").length;
     setSummary("[data-transaction-summary]", [
-      ["Filtered transactions", filtered.length],
-      ["Pending verification", pendingCount],
-      ["Total Paid", formatCurrency(totalAmount)],
-      ["Unpaid bookings", filtered.filter((tx) => tx.status !== "paid").length]
+      { label: "Filtered transactions", value: filtered.length, icon: "transaction", tone: "total" },
+      { label: "Pending verification", value: pendingCount, icon: "pending", tone: "pending" },
+      { label: "Total paid", value: formatCurrency(totalAmount), icon: "paid", tone: "paid" },
+      { label: "Unpaid bookings", value: filtered.filter((tx) => tx.status !== "paid").length, icon: "booking", tone: "approved" }
     ]);
   }
 
@@ -491,7 +491,7 @@ function renderTransactions(state) {
               <td data-label="Method"><span class="status-pill">${escapeHtml(tx.method)}</span></td>
               <td data-label="Transaction ID" class="transaction-id-cell"><code style="font-family: monospace; font-size: 0.88rem; font-weight: bold; color: var(--gold);">${escapeHtml(tx.transactionId || "N/A")}</code></td>
               <td data-label="Amount"><strong>${formatCurrency(tx.amount)}</strong></td>
-              <td data-label="Status">${statusPill(tx.status === "paid" ? "paid" : "unpaid")}</td>
+              <td data-label="Status">${statusPill(tx.status)}</td>
               <td data-label="Actions">
                 <div class="actions-dropdown-container">
                   <button class="three-dots-btn" type="button" aria-label="Actions" 
@@ -585,14 +585,12 @@ function renderTransactionMethodFilter(state) {
 function setSummary(selector, items) {
   const root = document.querySelector(selector);
   if (!root) return;
-  root.innerHTML = items
-    .map(([label, value]) => `
-      <article>
-        <span>${escapeHtml(label)}</span>
-        <strong>${escapeHtml(value)}</strong>
-      </article>
-    `)
-    .join("");
+  renderAdminSummary(root, items);
+}
+
+function getTransactionStatus(paymentStatus, bookingStatus) {
+  if (bookingStatus !== "approved") return "pending";
+  return paymentStatus === "paid" ? "paid" : "unpaid";
 }
 
 function getBookingNights(booking) {

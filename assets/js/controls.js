@@ -32,6 +32,8 @@ function enhanceSelects(root) {
 
     const render = () => {
       const selected = select.options[select.selectedIndex] || select.options[0];
+      trigger.disabled = select.disabled;
+      wrapper.classList.toggle("is-disabled", select.disabled);
       wrapper.querySelector("[data-select-value]").textContent = selected?.textContent || "Select";
       menu.innerHTML = [...select.options]
         .map(
@@ -45,6 +47,7 @@ function enhanceSelects(root) {
     };
 
     trigger.addEventListener("click", () => {
+      if (select.disabled) return;
       closeFloatingControls(wrapper);
       wrapper.classList.toggle("open");
       trigger.setAttribute("aria-expanded", String(wrapper.classList.contains("open")));

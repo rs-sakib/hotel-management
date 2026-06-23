@@ -1,5 +1,5 @@
 import { findHotel, getCurrentUser, getState, isAdminUser, updateState } from "./store.js";
-import { animatePage, formatCurrency, formatStatus, initAuthChrome, initHeader, initTheme, showToast, statusPill, updateUserNavAvatar, userAvatarMarkup } from "./ui.js";
+import { animateCounters, animatePage, counterValueMarkup, formatCurrency, formatStatus, initAuthChrome, initHeader, initTheme, showToast, statusPill, updateUserNavAvatar, userAvatarMarkup } from "./ui.js";
 
 const currentUser = getCurrentUser();
 let activeFilter = "all";
@@ -71,7 +71,9 @@ function renderDashboard() {
   document.querySelector("[data-dashboard-subtitle]").textContent = `You have ${bookings.length} stay request${bookings.length === 1 ? "" : "s"} linked to your account.`;
 
   // Render metric cards with SVGs
-  document.querySelector("[data-dashboard-metrics]").innerHTML = [
+  const metricsRoot = document.querySelector("[data-dashboard-metrics]");
+  if (!metricsRoot) return;
+  metricsRoot.innerHTML = [
     [
       "Total bookings",
       bookings.length,
@@ -106,7 +108,7 @@ function renderDashboard() {
         <article class="metric-card ${type}">
           <div class="metric-info">
             <span>${label}</span>
-            <strong>${value}</strong>
+            <strong>${counterValueMarkup(value)}</strong>
             <small>${detail}</small>
           </div>
           <div class="metric-icon">
@@ -116,6 +118,7 @@ function renderDashboard() {
       `
     )
     .join("");
+  animateCounters(metricsRoot);
 
   // Render profile panel
   renderProfile();

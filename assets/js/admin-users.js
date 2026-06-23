@@ -1,5 +1,5 @@
 import { clearCurrentUser, getCurrentUser, getState, isAdminUser, updateState } from "./store.js";
-import { animatePage, initAuthChrome, initTheme, showToast, userAvatarMarkup } from "./ui.js";
+import { animatePage, initAuthChrome, initTheme, renderAdminSummary, showToast, userAvatarMarkup } from "./ui.js";
 import { initCustomControls } from "./controls.js";
 
 const accessWarning = document.querySelector("[data-access-warning]");
@@ -86,7 +86,8 @@ function renderUsersPage() {
 
 function renderUsers(state) {
   const filteredUsers = getFilteredUsers(state);
-  document.querySelector("[data-users-table]").innerHTML = filteredUsers.length
+  const table = document.querySelector("[data-users-table]");
+  table.innerHTML = filteredUsers.length
     ? filteredUsers
       .map((user) => `
           <tr>
@@ -99,7 +100,7 @@ function renderUsers(state) {
             <td>${escapeHtml(user.email)}</td>
             <td>${escapeHtml(user.phone || "")}</td>
             <td>
-              <select class="user-role-select" data-user-id="${user.id}" ${user.id === currentUser.id ? 'disabled' : ''} style="width: auto; height: 32px; padding: 0 0.5rem; border-radius: 6px; border: 1px solid var(--line); background: var(--surface-strong); color: var(--text); font-weight: 700; font-size: 0.78rem;">
+              <select class="user-role-select" data-user-id="${user.id}" ${user.id === currentUser.id ? "disabled" : ""}>
                 <option value="user" ${user.role === 'user' ? 'selected' : ''}>User</option>
                 <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>Admin</option>
               </select>
@@ -122,6 +123,8 @@ function renderUsers(state) {
           </div>
         </td>
       </tr>`;
+
+  initCustomControls(table);
 }
 
 function renderUsersSummary(state) {
@@ -129,21 +132,12 @@ function renderUsersSummary(state) {
   const root = document.querySelector("[data-user-summary]");
   if (!root) return;
 
-  const items = [
-    ["Visible users", userRows.length],
-    ["Admins", userRows.filter((user) => user.role === "admin").length],
-    ["Users", userRows.filter((user) => user.role === "user").length],
-    ["Active", userRows.filter((user) => user.status === "Active").length]
-  ];
-
-  root.innerHTML = items
-    .map(([label, value]) => `
-      <article>
-        <span>${escapeHtml(label)}</span>
-        <strong>${escapeHtml(value)}</strong>
-      </article>
-    `)
-    .join("");
+  renderAdminSummary(root, [
+    { label: "Visible users", value: userRows.length, icon: "user", tone: "total" },
+    { label: "Admins", value: userRows.filter((user) => user.role === "admin").length, icon: "admin", tone: "pending" },
+    { label: "Users", value: userRows.filter((user) => user.role === "user").length, icon: "user", tone: "paid" },
+    { label: "Active", value: userRows.filter((user) => user.status === "Active").length, icon: "active", tone: "approved" }
+  ]);
 }
 
 function getFilteredUsers(state) {
