@@ -77,6 +77,36 @@ function initAdminForms() {
       return;
     }
 
+    if (txAction === "reject") {
+      updateState((state) => {
+        if (txItemType === "booking") {
+          const item = state.bookings.find((b) => b.id === txId);
+          if (item) item.status = "rejected";
+        } else if (txItemType === "tripBooking") {
+          const item = (state.tripBookings || []).find((tb) => tb.id === txId);
+          if (item) item.status = "rejected";
+        }
+      });
+      renderTransactionsPage();
+      showToast("Booking request rejected.");
+      return;
+    }
+
+    if (txAction === "set-pending") {
+      updateState((state) => {
+        if (txItemType === "booking") {
+          const item = state.bookings.find((b) => b.id === txId);
+          if (item) item.status = "pending";
+        } else if (txItemType === "tripBooking") {
+          const item = (state.tripBookings || []).find((tb) => tb.id === txId);
+          if (item) item.status = "pending";
+        }
+      });
+      renderTransactionsPage();
+      showToast("Booking reset to pending.");
+      return;
+    }
+
     if (txAction === "view") {
       const state = getState();
       const transactions = [];
@@ -178,11 +208,19 @@ function initAdminForms() {
         btn.dataset.txId = txId;
         btn.dataset.txItemType = txItemType;
         if (btn.dataset.txAction === "approve") {
-          if (bookingStatus === "approved") {
-            btn.setAttribute("disabled", "true");
-          } else {
-            btn.removeAttribute("disabled");
-          }
+          bookingStatus === "approved"
+            ? btn.setAttribute("disabled", "true")
+            : btn.removeAttribute("disabled");
+        }
+        if (btn.dataset.txAction === "reject") {
+          bookingStatus === "rejected"
+            ? btn.setAttribute("disabled", "true")
+            : btn.removeAttribute("disabled");
+        }
+        if (btn.dataset.txAction === "set-pending") {
+          bookingStatus === "pending"
+            ? btn.setAttribute("disabled", "true")
+            : btn.removeAttribute("disabled");
         }
       });
 
@@ -589,6 +627,7 @@ function setSummary(selector, items) {
 }
 
 function getTransactionStatus(paymentStatus, bookingStatus) {
+  if (bookingStatus === "rejected") return "rejected";
   if (bookingStatus !== "approved") return "pending";
   return paymentStatus === "paid" ? "paid" : "unpaid";
 }
