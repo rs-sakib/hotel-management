@@ -450,6 +450,7 @@ function showNotificationTicket(bookingId) {
     window.gsap.fromTo(document.getElementById("notifTicketCard"),
       { scale: 0.9, opacity: 0, y: 20 }, { scale: 1, opacity: 1, y: 0, duration: 0.3, ease: "back.out(1.4)" });
   }
+}
 
 function updateNotificationDot() {
   const currentUser = getCurrentUser();

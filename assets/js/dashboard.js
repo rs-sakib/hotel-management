@@ -249,42 +249,6 @@ function renderBookingCard(state, booking) {
   // Stepper timeline calculation
   const step1Class = "completed"; // Booked
   const step2Class = booking.status === "approved" || booking.payment === "paid" ? "completed" : "active"; // Confirmed
-          <div class="profile-field editing">
-            <label>Full Name</label>
-            <input type="text" id="edit-name" value="${currentUser.name}" required />
-          </div>
-          <div class="profile-field editing">
-            <label>Email Address</label>
-            <input type="email" id="edit-email" value="${currentUser.email}" required />
-          </div>
-          <div class="profile-field editing">
-            <label>Phone Number</label>
-            <input type="text" id="edit-phone" value="${currentUser.phone || ""}" placeholder="+880 1700 000000" />
-          </div>
-        </form>
-        <div class="profile-actions">
-          <button class="primary-button compact" type="submit" form="profile-edit-form">Save Changes</button>
-          <button class="secondary-button compact" type="button" data-cancel-profile-edit>Cancel</button>
-        </div>
-      </div>
-    `;
-  }
-}
-
-function renderBookingCard(state, booking) {
-  const hotel = findHotel(state, booking.hotelId);
-  const hotelImg = hotel?.image || "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=300&q=80";
-
-  // Calculate nights and total price
-  const nights = Math.max(
-    1,
-    Math.round((new Date(booking.checkOut) - new Date(booking.checkIn)) / (1000 * 60 * 60 * 24))
-  );
-  const totalCost = nights * (hotel?.price || 0);
-
-  // Stepper timeline calculation
-  const step1Class = "completed"; // Booked
-  const step2Class = booking.status === "approved" || booking.payment === "paid" ? "completed" : "active"; // Confirmed
   const step3Class = booking.payment === "paid" ? "completed" : booking.status === "approved" ? "active" : "muted"; // Paid
 
   const conn1Class = booking.status === "approved" || booking.payment === "paid" ? "completed" : "";
